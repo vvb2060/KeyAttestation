@@ -1,7 +1,6 @@
 package io.github.vvb2060.keyattestation;
 
 import android.content.res.Resources;
-import android.util.Log;
 
 import com.google.android.attestation.AttestationApplicationId;
 import com.google.android.attestation.AttestationApplicationId.AttestationPackageInfo;
@@ -32,17 +31,16 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class KeyAttestation {
 
-    private static final String TAG = KeyAttestation.class.getCanonicalName();
     private static final StringBuilder sb = new StringBuilder();
 
     private static void print(String str) {
         sb.append(str).append('\n');
     }
 
-    public static String parseAttestationRecord(X509Certificate[] certs) throws IOException {
+    public static String parseAttestationRecord(X509Certificate cert) throws IOException {
         sb.delete(0, sb.length());
 
-        ParsedAttestationRecord parsedAttestationRecord = createParsedAttestationRecord(certs[0]);
+        ParsedAttestationRecord parsedAttestationRecord = createParsedAttestationRecord(cert);
 
         print("Attestation version: " + parsedAttestationRecord.attestationVersion);
         print("Attestation Security Level: " + parsedAttestationRecord.attestationSecurityLevel.name());
@@ -159,21 +157,11 @@ public class KeyAttestation {
             cert.checkValidity();
             cert.verify(parent.getPublicKey());
             parent = cert;
-            try {
-                CertificateRevocationStatus certStatus = CertificateRevocationStatus
-                        .fetchStatus(cert.getSerialNumber());
-                if (certStatus != null) {
-                    throw new CertificateException("Certificate revocation status is " + certStatus.status.name());
-                }
-            } catch (IOException e) {
-                Log.w(TAG, "Unable to fetch certificate revocation status. Fall back to using built-in data.", e);
-                sb.append("Unable to fetch certificate revocation status. Fall back to using built-in data.\n");
-                InputStreamReader reader = new InputStreamReader(resources.openRawResource(R.raw.status));
-                CertificateRevocationStatus certStatus = CertificateRevocationStatus
-                        .loadStatusFromFile(cert.getSerialNumber(), reader);
-                if (certStatus != null) {
-                    throw new CertificateException("Certificate revocation status is " + certStatus.status.name());
-                }
+            InputStreamReader reader = new InputStreamReader(resources.openRawResource(R.raw.status));
+            CertificateRevocationStatus certStatus = CertificateRevocationStatus
+                    .loadStatusFromFile(cert.getSerialNumber(), reader);
+            if (certStatus != null) {
+                throw new CertificateException("Certificate revocation status is " + certStatus.status.name());
             }
         }
 

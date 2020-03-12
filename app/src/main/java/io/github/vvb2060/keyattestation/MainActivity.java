@@ -88,8 +88,8 @@ public class MainActivity extends Activity {
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
         KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec
                 .Builder(ALIAS, KeyProperties.PURPOSE_SIGN)
-                .setAlgorithmParameterSpec(new ECGenParameterSpec("P-256"))
-                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
+                .setDigests(KeyProperties.DIGEST_SHA256)
                 .setCertificateNotBefore(new Date())
                 .setAttestationChallenge("key attestation test".getBytes());
         keyPairGenerator.initialize(builder.build());
@@ -140,7 +140,7 @@ public class MainActivity extends Activity {
         }
 
         try {
-            sb.append(KeyAttestation.parseAttestationRecord(certs));
+            sb.append(KeyAttestation.parseAttestationRecord(certs[0]));
         } catch (IOException e) {
             Log.e(TAG, "Unable to extract attestation sequence.", e);
             sb.append("Unable to extract attestation sequence.").append(e.getLocalizedMessage()).append('\n');

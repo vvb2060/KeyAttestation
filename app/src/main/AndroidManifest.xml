@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.github.vvb2060.keyattestation">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:label="Key Attestation"
         android:supportsRtl="true"
