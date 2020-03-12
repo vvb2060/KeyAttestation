@@ -1,0 +1,32 @@
+{
+  "entries": {
+    "6681152659205225093" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "8350192447815228107" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "9408173275444922801" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "11244410301401252959" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "15346629759498347257" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "1228286566665971148" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "17471682139930361099" : {
+      "status": "REVOKED",
+      "reason": "SOFTWARE_FLAW"
+    }
+  }
+}

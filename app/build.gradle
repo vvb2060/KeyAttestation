@@ -1,0 +1,46 @@
+apply plugin:  'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "io.github.vvb2060.keyattestation"
+        minSdkVersion 24
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.debug
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        buildConfig = false
+        viewBinding = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/**'
+        exclude 'org/**'
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.0.5"
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.64'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+}
