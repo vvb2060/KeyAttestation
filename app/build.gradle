@@ -8,8 +8,8 @@ android {
         applicationId 'io.github.vvb2060.keyattestation'
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '2.0'
     }
 
     buildTypes {
@@ -43,6 +43,7 @@ android {
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.64'
+    implementation 'com.google.guava:guava:28.2-jre'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }

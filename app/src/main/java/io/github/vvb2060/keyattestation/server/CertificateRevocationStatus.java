@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.google.android.attestation;
+package io.github.vvb2060.keyattestation.server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
