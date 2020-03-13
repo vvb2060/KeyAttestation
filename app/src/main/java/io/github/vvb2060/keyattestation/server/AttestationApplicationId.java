@@ -93,7 +93,6 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("AttestationApplicationId:");
         int noOfInfos = packageInfos.size();
         int i = 1;
         for (AttestationPackageInfo info : packageInfos) {

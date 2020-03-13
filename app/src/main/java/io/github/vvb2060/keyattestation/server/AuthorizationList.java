@@ -46,6 +46,9 @@ public class AuthorizationList {
     // Algorithm values.
     public static final int KM_ALGORITHM_RSA = 1;
     public static final int KM_ALGORITHM_EC = 3;
+    public static final int KM_ALGORITHM_AES = 32;
+    public static final int KM_ALGORITHM_3DES = 33;
+    public static final int KM_ALGORITHM_HMAC = 128;
 
     // EC Curves
     public static final int KM_EC_CURVE_P224 = 0;
@@ -59,6 +62,7 @@ public class AuthorizationList {
     public static final int KM_PAD_RSA_PSS = 3;
     public static final int KM_PAD_RSA_PKCS1_1_5_ENCRYPT = 4;
     public static final int KM_PAD_RSA_PKCS1_1_5_SIGN = 5;
+    public static final int KM_PAD_PKCS7 = 64;
 
     // Digest modes.
     public static final int KM_DIGEST_NONE = 0;
@@ -73,16 +77,18 @@ public class AuthorizationList {
     public static final int KM_ORIGIN_GENERATED = 0;
     public static final int KM_ORIGIN_IMPORTED = 2;
     public static final int KM_ORIGIN_UNKNOWN = 3;
+    public static final int KM_ORIGIN_SECURELY_IMPORTED = 4;
 
     // Operation Purposes.
     public static final int KM_PURPOSE_ENCRYPT = 0;
     public static final int KM_PURPOSE_DECRYPT = 1;
     public static final int KM_PURPOSE_SIGN = 2;
     public static final int KM_PURPOSE_VERIFY = 3;
+    public static final int KM_PURPOSE_WRAP = 5;
 
     // User authenticators.
     public static final int HW_AUTH_PASSWORD = 1 << 0;
-    public static final int HW_AUTH_FINGERPRINT = 1 << 1;
+    public static final int HW_AUTH_BIOMETRIC = 1 << 1;
 
     // Keymaster tag classes
     private static final int KM_ENUM = 1 << 28;
@@ -116,6 +122,7 @@ public class AuthorizationList {
     private static final int KM_TAG_TRUSTED_CONFIRMATION_REQUIRED = KM_BOOL | 508;
     private static final int KM_TAG_UNLOCKED_DEVICE_REQUIRED = KM_BOOL | 509;
     private static final int KM_TAG_ALL_APPLICATIONS = KM_BOOL | 600;
+    private static final int KM_TAG_APPLICATION_ID = KM_BYTES | 601;
     private static final int KM_TAG_CREATION_DATETIME = KM_DATE | 701;
     private static final int KM_TAG_ORIGIN = KM_ENUM | 702;
     private static final int KM_TAG_ROLLBACK_RESISTANT = KM_BOOL | 703;
@@ -142,6 +149,7 @@ public class AuthorizationList {
             .put(KM_PAD_RSA_PSS, "PSS")
             .put(KM_PAD_RSA_PKCS1_1_5_ENCRYPT, "PKCS1 ENCRYPT")
             .put(KM_PAD_RSA_PKCS1_1_5_SIGN, "PKCS1 SIGN")
+            .put(KM_PAD_PKCS7, "PKCS7")
             .build();
 
     // Map for converting digest values to strings
@@ -163,6 +171,7 @@ public class AuthorizationList {
             .put(KM_PURPOSE_ENCRYPT, "ENCRYPT")
             .put(KM_PURPOSE_SIGN, "SIGN")
             .put(KM_PURPOSE_VERIFY, "VERIFY")
+            .put(KM_PURPOSE_WRAP, "WRAP")
             .build();
 
     private Set<Integer> purposes;
@@ -201,6 +210,7 @@ public class AuthorizationList {
     private String model;
     private boolean userPresenceRequired;
     private boolean confirmationRequired;
+    private boolean unlockedDeviceRequired;
 
     public AuthorizationList(ASN1Encodable sequence) throws CertificateParsingException {
         if (!(sequence instanceof ASN1Sequence)) {
@@ -319,11 +329,17 @@ public class AuthorizationList {
                 case KM_TAG_ALL_APPLICATIONS & KEYMASTER_TAG_TYPE_MASK:
                     allApplications = true;
                     break;
+                case KM_TAG_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
+                    applicationId = Asn1Utils.getByteArrayFromAsn1(value);
+                    break;
                 case KM_TAG_TRUSTED_USER_PRESENCE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
                     userPresenceRequired = true;
                     break;
                 case KM_TAG_TRUSTED_CONFIRMATION_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
                     confirmationRequired = true;
+                    break;
+                case KM_TAG_UNLOCKED_DEVICE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    unlockedDeviceRequired = true;
                     break;
             }
         }
@@ -336,6 +352,12 @@ public class AuthorizationList {
                 return "RSA";
             case KM_ALGORITHM_EC:
                 return "ECDSA";
+            case KM_ALGORITHM_AES:
+                return "AES";
+            case KM_ALGORITHM_3DES:
+                return "3DES";
+            case KM_ALGORITHM_HMAC:
+                return "HMAC";
             default:
                 return "Unknown";
         }
@@ -363,8 +385,8 @@ public class AuthorizationList {
 
     public static String userAuthTypeToString(int userAuthType) {
         List<String> types = Lists.newArrayList();
-        if ((userAuthType & HW_AUTH_FINGERPRINT) != 0)
-            types.add("Fingerprint");
+        if ((userAuthType & HW_AUTH_BIOMETRIC) != 0)
+            types.add("Biometric");
         if ((userAuthType & HW_AUTH_PASSWORD) != 0)
             types.add("Password");
         return joinStrings(types);
@@ -378,6 +400,8 @@ public class AuthorizationList {
                 return "Imported";
             case KM_ORIGIN_UNKNOWN:
                 return "Unknown (KM0)";
+            case KM_ORIGIN_SECURELY_IMPORTED:
+                return "Securely Imported";
             default:
                 return "Unknown";
         }
@@ -453,6 +477,9 @@ public class AuthorizationList {
                     break;
                 case KM_PAD_RSA_PKCS1_1_5_SIGN:
                     builder.add(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1);
+                    break;
+                case KM_PAD_PKCS7:
+                    builder.add(KeyProperties.ENCRYPTION_PADDING_PKCS7);
                     break;
                 case KM_PAD_RSA_PSS:
                     builder.add(KeyProperties.SIGNATURE_PADDING_RSA_PSS);
@@ -659,11 +686,15 @@ public class AuthorizationList {
             s.append("\nUsage expire: ").append(formatDate(usageExpireDateTime));
         }
 
-        if (!noAuthRequired && userAuthType != null) {
+        if (noAuthRequired) s.append("\nNo Auth Required: true");
+        else if (userAuthType != null) {
             s.append("\nAuth types: ").append(userAuthTypeToString(userAuthType));
-            if (authTimeout != null) {
-                s.append("\nAuth timeout: ").append(authTimeout);
-            }
+            if (authTimeout != null) s.append("\nAuth timeout: ").append(authTimeout);
+            if (allowWhileOnBody) s.append("\nAllow While On Body: true");
+        }
+
+        if (allApplications) {
+            s.append("\nAll Applications: true");
         }
 
         if (applicationId != null) {
@@ -719,11 +750,33 @@ public class AuthorizationList {
             s.append("\nConfirmation required");
         }
 
+        if (unlockedDeviceRequired) {
+            s.append("\nUnlocked Device Required");
+        }
+
         if (brand != null) {
             s.append("\nBrand: ").append(brand);
         }
         if (device != null) {
             s.append("\nDevice type: ").append(device);
+        }
+        if (product != null) {
+            s.append("\nProduct: ").append(product);
+        }
+        if (serialNumber != null) {
+            s.append("\nSerial: ").append(serialNumber);
+        }
+        if (imei != null) {
+            s.append("\nIMEI: ").append(imei);
+        }
+        if (meid != null) {
+            s.append("\nMEID: ").append(meid);
+        }
+        if (manufacturer != null) {
+            s.append("\nManufacturer: ").append(manufacturer);
+        }
+        if (model != null) {
+            s.append("\nModel: ").append(model);
         }
         return s.toString();
     }
