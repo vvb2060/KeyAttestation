@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -31,7 +31,6 @@ import org.bouncycastle.asn1.DEROctetString;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.String;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;

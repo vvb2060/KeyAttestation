@@ -12,22 +12,23 @@
  * the License.
  */
 
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-
-import java.security.cert.CertificateParsingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateParsingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AttestationApplicationId implements java.lang.Comparable<AttestationApplicationId> {
     private static final int PACKAGE_INFOS_INDEX = 0;

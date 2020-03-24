@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="io.github.vvb2060.keyattestation">
 
     <application
+        android:allowBackup="false"
         android:label="Key Attestation"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault.Light.DarkActionBar"
-        tools:ignore="AllowBackup,MissingApplicationIcon">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="MissingApplicationIcon">
+        <activity android:name=".home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

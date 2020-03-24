@@ -1,9 +1,9 @@
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
-import android.content.res.Resources;
+import com.google.gson.JsonObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -12,8 +12,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-
-import io.github.vvb2060.keyattestation.R;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -50,18 +48,17 @@ public class VerifyCertificateChain {
             + "wDB5y0USicV3YgYGmi+NZfhA4URSh77Yd6uuJOJENRaNVTzk\n"
             + "-----END CERTIFICATE-----";
 
-    public static boolean verifyCertificateChain(X509Certificate[] certs, Resources resources)
+    public static boolean verifyCertificateChain(X509Certificate[] certs, InputStream stream)
             throws CertificateException, NoSuchAlgorithmException, InvalidKeyException,
             NoSuchProviderException, SignatureException {
         X509Certificate parent = certs[certs.length - 1];
+        JsonObject entries = CertificateRevocationStatus.parseStatus(stream);
         for (int i = certs.length - 1; i >= 0; i--) {
             X509Certificate cert = certs[i];
             cert.checkValidity();
             cert.verify(parent.getPublicKey());
             parent = cert;
-            InputStreamReader reader = new InputStreamReader(resources.openRawResource(R.raw.status));
-            CertificateRevocationStatus certStatus = CertificateRevocationStatus
-                    .loadStatusFromFile(cert.getSerialNumber(), reader);
+            CertificateRevocationStatus certStatus = CertificateRevocationStatus.decodeStatus(cert.getSerialNumber(), entries);
             if (certStatus != null) {
                 throw new CertificateException("Certificate revocation status is " + certStatus.status.name());
             }

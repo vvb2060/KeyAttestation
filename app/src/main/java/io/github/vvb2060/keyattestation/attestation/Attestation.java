@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;

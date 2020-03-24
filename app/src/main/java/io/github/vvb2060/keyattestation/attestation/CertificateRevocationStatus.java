@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.math.BigInteger;
 import java.net.URL;
 
@@ -44,36 +44,27 @@ public class CertificateRevocationStatus {
         expires = null;
     }
 
-    public static CertificateRevocationStatus loadStatusFromFile(BigInteger serialNumber,
-                                                                 InputStreamReader reader) {
-        return decodeStatus(serialNumber.toString(16), reader);
+    public static JsonObject parseStatus(InputStream stream) {
+        return JsonParser.parseReader(new InputStreamReader(stream))
+                .getAsJsonObject()
+                .getAsJsonObject("entries");
     }
 
     public static CertificateRevocationStatus fetchStatus(BigInteger serialNumber) throws IOException {
         URL url = new URL(STATUS_URL);
-
-        InputStreamReader statusListReader = new InputStreamReader(url.openStream());
-
-        return decodeStatus(serialNumber.toString(16), statusListReader);
-
+        return decodeStatus(serialNumber, parseStatus(url.openStream()));
     }
 
-    private static CertificateRevocationStatus decodeStatus(String serialNumber,
-                                                            Reader statusListReader) {
+    public static CertificateRevocationStatus decodeStatus(BigInteger serialNumber,
+                                                           JsonObject entries) {
         if (serialNumber == null) {
             throw new IllegalArgumentException("serialNumber cannot be null");
         }
-        serialNumber = serialNumber.toLowerCase();
-
-        JsonObject entries = JsonParser.parseReader(statusListReader)
-                .getAsJsonObject()
-                .getAsJsonObject("entries");
-
-        if (!entries.has(serialNumber)) {
+        String serialNumberString = serialNumber.toString(16).toLowerCase();
+        if (!entries.has(serialNumberString)) {
             return null;
         }
-
-        return new Gson().fromJson(entries.get(serialNumber), CertificateRevocationStatus.class);
+        return new Gson().fromJson(entries.get(serialNumberString), CertificateRevocationStatus.class);
     }
 
     public enum Status {

@@ -12,14 +12,13 @@
  * the License.
  */
 
-package io.github.vvb2060.keyattestation.server;
+package io.github.vvb2060.keyattestation.attestation;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 
-import java.security.cert.CertificateParsingException;
-
 import java.io.UnsupportedEncodingException;
+import java.security.cert.CertificateParsingException;
 
 public class AttestationPackageInfo implements java.lang.Comparable<AttestationPackageInfo> {
     private static final int PACKAGE_NAME_INDEX = 0;
