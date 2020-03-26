@@ -4,8 +4,9 @@
     package="io.github.vvb2060.keyattestation">
 
     <application
+        android:name=".AppApplication"
         android:allowBackup="false"
-        android:label="Key Attestation"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="MissingApplicationIcon">

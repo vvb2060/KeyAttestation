@@ -5,14 +5,14 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.vvb2060.keyattestation.Constants.TAG
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
+import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
+import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,7 @@ class HomeViewModel : ViewModel() {
         private const val CONSUMPTION_TIME_OFFSET = 2000000
     }
 
-    public val text = MediatorLiveData<Resource<String>>()
+    val attestationResult = MediatorLiveData<Resource<AttestationResult>>()
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean) {
@@ -62,8 +62,8 @@ class HomeViewModel : ViewModel() {
     }
 
     private suspend fun doAttestation(context: Context, useStrongBox: Boolean) = withContext(Dispatchers.IO) {
-        var certs: Array<X509Certificate?>? = null
-        val sb = StringBuilder()
+        val certs: Array<X509Certificate?>?
+        val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -74,45 +74,35 @@ class HomeViewModel : ViewModel() {
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
-                Log.e(TAG, "Strong box key attestation error.", e)
-                sb.append("Strong box key attestation error. ${e.getLocalizedMessage()}")
+                throw AttestationException("Strong box key attestation error.", e)
             } else {
-                Log.e(TAG, "The device does not support key attestation.", e)
-                sb.append("The device does not support key attestation. ${e.localizedMessage}")
+                throw AttestationException("The device does not support key attestation.", e)
             }
-            return@withContext sb.toString()
         } catch (e: Exception) {
-            Log.e(TAG, "Unable to get certificate.", e)
-            if (certs == null) {
-                sb.append("Unable to get certificate. ${e.localizedMessage}")
-                return@withContext sb.toString()
-            }
+            throw AttestationException("Unable to get certificate.", e)
         }
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs, context.resources.openRawResource(R.raw.status))
-            if (isGoogleRootCertificate) sb.append("The root certificate is correct.\n\n") else sb.append("The root certificate is NOT correct.\n\n")
         } catch (e: Exception) {
-            Log.e(TAG, "Certificate is not trusted.", e)
-            sb.append("Certificate is not trusted. ${e.localizedMessage}")
-            return@withContext sb.toString()
+            throw AttestationException("Certificate is not trusted.", e)
         }
         try {
-            val attestation = Attestation(certs!![0])
-            sb.append(attestation)
+            attestation = Attestation(certs[0])
         } catch (e: CertificateParsingException) {
-            Log.e(TAG, "Unable to parse attestation record.", e)
-            sb.append("Unable to parse attestation record. ${e.localizedMessage}".trimIndent())
+            throw AttestationException("Unable to parse attestation record.", e)
         }
-        sb.toString()
+        AttestationResult(attestation, isGoogleRootCertificate)
     }
 
     fun invalidateAttestation(context: Context, useStrongBox: Boolean) = viewModelScope.launch {
         try {
-            text.postValue(Resource.success(doAttestation(context, useStrongBox)))
+            attestationResult.postValue(Resource.success(doAttestation(context, useStrongBox)))
         } catch (e: CancellationException) {
 
+        } catch (e: AttestationException) {
+            attestationResult.postValue(Resource.error(e, null))
         } catch (e: Throwable) {
-            text.postValue(Resource.error(e, null))
+            attestationResult.postValue(Resource.error(AttestationException("unknown", e), null))
         }
     }
 }

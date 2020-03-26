@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Key Attestation</string>
+    <string name="bootloader_locked">Bootloader is locked</string>
+    <string name="bootloader_unlocked">Bootloader is unlocked</string>
+    <string name="bootloader_unknown">Bootloader status is unknown</string>
+    <string name="untrustworthy">Untrustworthy</string>
+    <string name="untrustworthy_not_google_cert">The root certificate is not signed by Google.</string>
+    <string name="untrustworthy_software">The attestation is not implemented by secure hardware, it can be easily modified.</string>
+
+    <string name="attestation_version">Attestation version</string>
+    <string name="attestation_security_level">Attestation security level</string>
+    <string name="keymaster_version">Keymaster version</string>
+    <string name="keymaster_security_level">Keymaster security level</string>
+    <string name="attestation_challenge">Attestation challenge</string>
+
+    <string name="security_level_software">Software</string>
+    <string name="security_level_trusted_environment">TrustedEnvironment</string>
+    <string name="security_level_strongbox">StrongBox</string>
+
+</resources>

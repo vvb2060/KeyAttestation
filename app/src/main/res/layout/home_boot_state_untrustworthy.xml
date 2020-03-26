@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/HomeCardStyle"
+    android:background="@drawable/home_boot_state_background"
+    android:backgroundTint="?colorAlert"
+    android:backgroundTintMode="src_in"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@android:id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_boot_untrustworthy_24"
+        android:tint="?android:textColorPrimaryInverse"
+        android:tintMode="src_in" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="@string/untrustworthy"
+            android:textAppearance="?textAppearanceSubtitle2"
+            android:textColor="?android:textColorPrimaryInverse"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="?textAppearanceBody2"
+            android:textColor="?android:textColorPrimaryInverse"
+            android:textSize="14sp"
+            tools:text="@string/untrustworthy_not_google_cert" />
+
+    </LinearLayout>
+
+</LinearLayout>
