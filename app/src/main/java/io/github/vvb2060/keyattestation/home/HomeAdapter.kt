@@ -25,10 +25,8 @@ class HomeAdapter : IdBasedRecyclerViewAdapter() {
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 
         var id = ID_DESCRIPTION_START
-        addItem(CommonItemViewHolder.COMMON_CREATOR, R.string.attestation_version to attestation.attestationVersion.toString(), id++)
-        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.attestation_security_level to attestation.attestationSecurityLevel, id++)
-        addItem(CommonItemViewHolder.COMMON_CREATOR, R.string.keymaster_version to attestation.keymasterVersion.toString(), id++)
-        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.keymaster_security_level to attestation.keymasterSecurityLevel, id++)
+        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.attestation to arrayOf(attestation.attestationVersion, attestation.attestationSecurityLevel), id++)
+        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.keymaster to arrayOf(attestation.keymasterVersion, attestation.keymasterSecurityLevel), id++)
         addItem(CommonItemViewHolder.COMMON_CREATOR, R.string.attestation_challenge to attestation.attestationChallengeOrBase64, id++)
 
         notifyDataSetChanged()

@@ -59,22 +59,15 @@ configurations.all {
 dependencies {
     def kotlin_coroutines_version = '1.3.3'
 
-    def androidx_annotation_version = "1.1.0"
-    def androidx_annotation_experimental_version = "1.0.0-beta01"
     def androidx_core_version = "1.2.0"
     def androidx_fragment_version = "1.2.3"
     def androidx_recyclerview_version = "1.1.0"
-    def androidx_interpolator_version = "1.0.0"
     def lifecycleVersion = "2.2.0"
 
-    def rikka_annotation_version = "1.0.0"
     def rikka_appcompat_version = "1.2.0-alpha02"
     def rikka_core_version = "1.1.0"
-    def rikka_material_version = "1.2.1"
-    def rikka_material_chooser_version = "1.0.0"
-    def rikka_material_help_version = "1.0.0"
+    def rikka_material_version = "1.3.0"
     def rikka_html_version = "1.0.0"
-    def rikka_preference_multiprocess_version = "1.0.0"
     def rikka_recyclerview_utils_version = "1.0.1"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'

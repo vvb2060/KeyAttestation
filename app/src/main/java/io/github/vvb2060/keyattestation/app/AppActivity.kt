@@ -13,6 +13,8 @@ open class AppActivity : MaterialActivity() {
     }
 
     override fun onApplyTranslucentSystemBars() {
+        super.onApplyTranslucentSystemBars()
+
         val window = window
         val theme = theme
 
@@ -20,11 +22,8 @@ open class AppActivity : MaterialActivity() {
             window?.decorView?.post {
                 if (window.decorView.rootWindowInsets?.systemWindowInsetBottom ?: 0 >= Resources.getSystem().displayMetrics.density * 40) {
                     window.navigationBarColor = theme.resolveColor(android.R.attr.navigationBarColor) and 0x00ffffff or -0x20000000
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        window.navigationBarDividerColor = theme.resolveColor(android.R.attr.navigationBarDividerColor)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            window.isNavigationBarContrastEnforced = false
-                        }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        window.isNavigationBarContrastEnforced = false
                     }
                 } else {
                     window.navigationBarColor = Color.TRANSPARENT

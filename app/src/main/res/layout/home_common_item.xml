@@ -3,27 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/content"
     style="@style/HomeCardStyle"
-    android:background="@drawable/home_common_item_background"
-    android:orientation="vertical"
+    android:background="?android:selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingStart="16dp"
     android:paddingEnd="16dp">
 
-    <TextView
-        android:id="@android:id/title"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:textAppearance="?textAppearanceSubtitle2"
-        android:textSize="16sp"
-        tools:text="title" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@android:id/summary"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="?textAppearanceSubtitle2"
+            android:textSize="16sp"
+            tools:text="title" />
+
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="?textAppearanceBody2"
+            android:textSize="14sp"
+            tools:text="summary" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@android:id/icon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:textAppearance="?textAppearanceBody2"
-        android:textSize="14sp"
-        tools:text="summary" />
+        android:layout_marginStart="16dp"
+        android:importantForAccessibility="no"
+        android:tintMode="src_in"
+        tools:src="@drawable/ic_trustworthy_24"
+        tools:tint="?colorSafe" />
 
 </LinearLayout>

@@ -8,10 +8,9 @@
     <string name="untrustworthy_not_google_cert">The root certificate is not signed by Google.</string>
     <string name="untrustworthy_software">The attestation is not implemented by secure hardware, it can be easily modified.</string>
 
-    <string name="attestation_version">Attestation version</string>
-    <string name="attestation_security_level">Attestation security level</string>
-    <string name="keymaster_version">Keymaster version</string>
-    <string name="keymaster_security_level">Keymaster security level</string>
+    <string name="attestation">Attestation</string>
+    <string name="keymaster">Keymaster</string>
+    <string name="attestation_summary_format">version: %1$d\nsecurity level: %2$s</string>
     <string name="attestation_challenge">Attestation challenge</string>
 
     <string name="security_level_software">Software</string>

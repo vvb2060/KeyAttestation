@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_boot_untrustworthy_24"
+        android:src="@drawable/ic_untrustworthy_24"
         android:tint="?android:textColorPrimaryInverse"
         android:tintMode="src_in" />
 

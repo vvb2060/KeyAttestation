@@ -15,7 +15,7 @@ class HomeItemDecoration(context: Context) : ItemDecoration() {
 
     private val drawable: Drawable = context.theme.resolveDrawable(R.attr.outlineButtonBackground)!!
     private val cardSpacing: Int = (context.resources.displayMetrics.density * 8).roundToInt()
-    private val cardExtraPadding: Int = (context.resources.displayMetrics.density * 2).roundToInt()
+    private val cardExtraPadding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val adapter = parent.adapter as HomeAdapter
