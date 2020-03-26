@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.Light" />
+    <style name="AppTheme" parent="Theme" />
 
     <style name="HomeCardStyle">
         <item name="android:layout_width">match_parent</item>
