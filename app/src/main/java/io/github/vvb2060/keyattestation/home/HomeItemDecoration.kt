@@ -14,17 +14,41 @@ import kotlin.math.roundToInt
 class HomeItemDecoration(context: Context) : ItemDecoration() {
 
     private val drawable: Drawable = context.theme.resolveDrawable(R.attr.outlineButtonBackground)!!
-    private val cardSpacing: Int = (context.resources.displayMetrics.density * 8).roundToInt()
-    private val cardExtraPadding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
+    private val cardMargin: Int = (context.resources.displayMetrics.density * 8).roundToInt()
+    private val cardPadding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
+
+    private fun hasTopMargin(adapter: HomeAdapter, position: Int): Boolean {
+        return position == 0
+    }
+
+    private fun hasBottomMargin(adapter: HomeAdapter, position: Int): Boolean {
+        return position == adapter.itemCount - 1 || !(adapter.allowFrameAt(position) && adapter.allowFrameAt(position + 1) && !adapter.shouldCommitFrameAt(position))
+    }
+
+    private fun hasTopPadding(adapter: HomeAdapter, position: Int): Boolean {
+        return adapter.allowFrameAt(position) && (position == 0 || adapter.shouldCommitFrameAt(position - 1) || !adapter.allowFrameAt(position - 1))
+    }
+
+    private fun hasBottomPadding(adapter: HomeAdapter, position: Int): Boolean {
+        return adapter.shouldCommitFrameAt(position)// && (position == adapter.itemCount - 1 || adapter.shouldCommitFrameAt(position))
+    }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val adapter = parent.adapter as HomeAdapter
         val position = parent.getChildAdapterPosition(view)
-        if (adapter.shouldCommitFrameAt(position)) {
-            outRect.bottom = cardSpacing + if (position < adapter.itemCount - 1) cardExtraPadding else 0
+
+        if (hasTopMargin(adapter, position)) {
+            outRect.top = cardMargin
         }
-        if (position == 0) {
-            outRect.top = cardSpacing
+        if (hasTopPadding(adapter, position)) {
+            outRect.top += cardPadding
+        }
+
+        if (hasBottomMargin(adapter, position)) {
+            outRect.bottom = cardMargin
+        }
+        if (hasBottomPadding(adapter, position)) {
+            outRect.bottom += cardPadding
         }
     }
 
@@ -57,7 +81,7 @@ class HomeItemDecoration(context: Context) : ItemDecoration() {
             if ((i == parent.childCount - 1) || adapter.shouldCommitFrameAt(position)) {
                 bottom = child.bottom
 
-                drawable.setBounds(left, top - cardExtraPadding, right, bottom + cardExtraPadding)
+                drawable.setBounds(left, top - cardPadding, right, bottom + cardPadding)
                 drawable.draw(c)
 
                 invalidatedPosition = true

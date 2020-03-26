@@ -43,7 +43,7 @@ class HomeAdapter : IdBasedRecyclerViewAdapter() {
             return true
         }
         return if (id < ID_DESCRIPTION_START) {
-            true
+            false
         } else {
             (getItemId(position + 1) / 1000 - id / 1000) > 0
         }
