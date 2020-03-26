@@ -9,6 +9,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:icon="@drawable/ic_launcher"
         tools:ignore="MissingApplicationIcon">
         <activity android:name=".home.HomeActivity">
             <intent-filter>
