@@ -5,8 +5,8 @@
     <item
         android:start="4dp"
         android:end="4dp"
-        android:top="4dp"
-        android:bottom="4dp">
+        android:top="2dp"
+        android:bottom="2dp">
 
         <aapt:attr name="android:drawable">
             <ripple android:color="?android:colorControlHighlight">

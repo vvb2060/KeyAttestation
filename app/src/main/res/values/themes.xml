@@ -27,6 +27,7 @@
     <style name="Theme" parent="Theme.Material">
         <item name="android:statusBarColor">?toolbarColor</item>
         <item name="android:colorPrimary">?toolbarColor</item>
+        <item name="android:colorBackground">@android:color/black</item>
 
         <item name="colorPrimary">@color/material_blue_grey_200</item>
         <item name="colorPrimaryVariant">@color/material_blue_grey_200</item>
@@ -38,8 +39,8 @@
         <item name="notificationColor">@color/material_teal_500</item>
 
         <!--<item name="preferenceTheme">@style/ThemeOverlay.Preference</item>-->
-        <item name="appBarStyle">@style/Widget.AppBar</item>
-        <item name="toolbarColor">@color/material_blue_grey_800</item>
+        <item name="appBarStyle">@style/Widget.AppBar.Solid</item>
+        <item name="toolbarColor">@android:color/black</item>
 
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>

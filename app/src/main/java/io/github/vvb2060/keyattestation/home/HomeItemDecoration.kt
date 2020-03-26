@@ -14,16 +14,17 @@ import kotlin.math.roundToInt
 class HomeItemDecoration(context: Context) : ItemDecoration() {
 
     private val drawable: Drawable = context.theme.resolveDrawable(R.attr.outlineButtonBackground)!!
-    private val padding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
+    private val cardSpacing: Int = (context.resources.displayMetrics.density * 8).roundToInt()
+    private val cardExtraPadding: Int = (context.resources.displayMetrics.density * 2).roundToInt()
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val adapter = parent.adapter as HomeAdapter
         val position = parent.getChildAdapterPosition(view)
         if (adapter.shouldCommitFrameAt(position)) {
-            outRect.bottom = padding
+            outRect.bottom = cardSpacing + if (position < adapter.itemCount - 1) cardExtraPadding else 0
         }
         if (position == 0) {
-            outRect.top = padding
+            outRect.top = cardSpacing
         }
     }
 
@@ -56,7 +57,7 @@ class HomeItemDecoration(context: Context) : ItemDecoration() {
             if ((i == parent.childCount - 1) || adapter.shouldCommitFrameAt(position)) {
                 bottom = child.bottom
 
-                drawable.setBounds(left, top, right, bottom)
+                drawable.setBounds(left, top - cardExtraPadding, right, bottom + cardExtraPadding)
                 drawable.draw(c)
 
                 invalidatedPosition = true
