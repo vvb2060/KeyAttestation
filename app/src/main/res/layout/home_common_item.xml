@@ -17,21 +17,16 @@
 
         <TextView
             android:id="@android:id/title"
+            style="@style/HomeItemTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textAppearance="?textAppearanceSubtitle2"
-            android:textSize="16sp"
             tools:text="title" />
 
         <TextView
             android:id="@android:id/summary"
+            style="@style/HomeItemSummaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textAppearance="?textAppearanceBody2"
-            android:textColor="?android:textColorSecondary"
-            android:textSize="14sp"
             tools:text="summary" />
 
     </LinearLayout>
