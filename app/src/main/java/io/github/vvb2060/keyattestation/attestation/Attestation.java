@@ -128,6 +128,13 @@ public class Attestation {
         return uniqueId;
     }
 
+    public String getUniqueIdBase64() {
+        if (uniqueId != null) {
+            return BaseEncoding.base64().encode(uniqueId);
+        }
+        return null;
+    }
+
     public AuthorizationList getSoftwareEnforced() {
         return softwareEnforced;
     }

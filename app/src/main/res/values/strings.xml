@@ -16,7 +16,10 @@
     <string name="attestation_summary_format">version: %1$d\nsecurity level: %2$s</string>
     <string name="attestation_challenge">Attestation challenge</string>
     <string name="attestation_challenge_description"><![CDATA[The purpose of the challenge value is to enable relying parties to verify that the key was created in response to a specific request.<p>In production environment, the challenge value should be randomly generated every time.]]></string>
+    <string name="unique_id">Unique ID</string>
+    <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is computed and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
 
+    <string name="empty">(empty)</string>
     <string name="security_level_software">Software</string>
     <string name="security_level_trusted_environment">TrustedEnvironment</string>
     <string name="security_level_strongbox" translatable="false">StrongBox</string>

@@ -2,8 +2,8 @@ package io.github.vvb2060.keyattestation.util
 
 import android.view.View
 import androidx.viewbinding.ViewBinding
-import rikka.recyclerview.BaseViewHolder
+import rikka.recyclerview.BaseListenerViewHolder
 
-open class ViewBindingViewHolder<T, VB : ViewBinding>(itemView: View, internal val binding: VB) : BaseViewHolder<T>(itemView) {
+open class ViewBindingViewHolder<T, VB : ViewBinding, L>(itemView: View, internal val binding: VB) : BaseListenerViewHolder<T, L>(itemView) {
 
 }

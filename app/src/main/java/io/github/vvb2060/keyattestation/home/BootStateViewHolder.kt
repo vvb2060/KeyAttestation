@@ -5,11 +5,10 @@ import android.view.View
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.databinding.HomeBootStateBinding
-import io.github.vvb2060.keyattestation.util.ViewBindingViewHolder
 import rikka.core.res.resolveColor
 import rikka.recyclerview.BaseViewHolder.Creator
 
-class BootStateViewHolder(itemView: View, binding: HomeBootStateBinding) : ViewBindingViewHolder<AttestationResult, HomeBootStateBinding>(itemView, binding) {
+class BootStateViewHolder(itemView: View, binding: HomeBootStateBinding) : HomeViewHolder<AttestationResult, HomeBootStateBinding>(itemView, binding) {
 
     companion object {
 

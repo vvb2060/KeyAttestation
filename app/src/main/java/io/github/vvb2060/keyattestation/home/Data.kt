@@ -32,9 +32,14 @@ abstract class Data {
                 R.string.attestation_challenge,
                 R.string.attestation_challenge_description,
                 attestation.attestationChallengeOrBase64)
+
+        fun createUniqueId(attestation: Attestation) = CommonData(
+                R.string.unique_id,
+                R.string.unique_id_description,
+                attestation.uniqueIdBase64)
     }
 }
 
-data class CommonData(override val title: Int, override val description: Int, val data: String) : Data()
+data class CommonData(override val title: Int, override val description: Int, val data: String?) : Data()
 
 data class SecurityLevelData(override val title: Int, override val description: Int, val securityLevelDescription: Int, val version: Int, val securityLevel: Int) : Data()

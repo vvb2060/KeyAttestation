@@ -3,18 +3,13 @@ package io.github.vvb2060.keyattestation.home
 import android.view.View
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
-import io.github.vvb2060.keyattestation.app.AlertDialogFragment
-import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVEL_STRONG_BOX
 import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT
 import io.github.vvb2060.keyattestation.databinding.HomeCommonItemBinding
-import io.github.vvb2060.keyattestation.ktx.toHtml
-import io.github.vvb2060.keyattestation.util.ViewBindingViewHolder
 import rikka.core.res.resolveColorStateList
-import rikka.html.text.HtmlCompat
 import rikka.recyclerview.BaseViewHolder.Creator
 
-open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBinding) : ViewBindingViewHolder<T, HomeCommonItemBinding>(itemView, binding) {
+open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBinding) : HomeViewHolder<T, HomeCommonItemBinding>(itemView, binding) {
 
     companion object {
 
@@ -25,18 +20,17 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                 init {
                     this.binding.icon.isVisible = false
                     this.itemView.setOnClickListener {
-                        AlertDialogFragment.Builder(it.context)
-                                .title(data.title)
-                                .message(it.context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
-                                .positiveButton(android.R.string.ok)
-                                .build()
-                                .show((it.context as AppActivity).supportFragmentManager)
+                        listener.onCommonDataClick(data)
                     }
                 }
 
                 override fun onBind() {
                     binding.title.setText(data.title)
-                    binding.summary.text = data.data
+                    if (!data.data.isNullOrBlank()) {
+                        binding.summary.text = data.data
+                    } else {
+                        binding.summary.setText(R.string.empty)
+                    }
                 }
             }
         }
@@ -47,12 +41,7 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
 
                 init {
                     this.itemView.setOnClickListener {
-                        AlertDialogFragment.Builder(itemView.context)
-                                .title(data.title)
-                                .message("${context.getString(data.description)}<p>${context.getString(data.securityLevelDescription)}".toHtml(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM or HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
-                                .positiveButton(android.R.string.ok)
-                                .build()
-                                .show((itemView.context as AppActivity).supportFragmentManager)
+                        listener.onSecurityLevelDataClick(data)
                     }
                 }
 

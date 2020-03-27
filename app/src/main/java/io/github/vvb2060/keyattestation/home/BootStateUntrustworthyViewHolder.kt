@@ -5,10 +5,9 @@ import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.databinding.HomeBootStateUntrustworthyBinding
-import io.github.vvb2060.keyattestation.util.ViewBindingViewHolder
 import rikka.recyclerview.BaseViewHolder.Creator
 
-class BootStateUntrustworthyViewHolder(itemView: View, binding: HomeBootStateUntrustworthyBinding) : ViewBindingViewHolder<AttestationResult, HomeBootStateUntrustworthyBinding>(itemView, binding) {
+class BootStateUntrustworthyViewHolder(itemView: View, binding: HomeBootStateUntrustworthyBinding) : HomeViewHolder<AttestationResult, HomeBootStateUntrustworthyBinding>(itemView, binding) {
 
     companion object {
 

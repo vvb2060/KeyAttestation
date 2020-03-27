@@ -7,7 +7,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.text.method.LinkMovementMethod
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -53,7 +55,9 @@ open class AlertDialogFragment : DialogFragment() {
 
     open fun onAlertDialogCreated(dialog: AlertDialog, savedInstanceState: Bundle?) {}
 
-    open fun onShow(dialog: AlertDialog) {}
+    open fun onShow(dialog: AlertDialog) {
+        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
+    }
 
     override fun getDialog(): AlertDialog? {
         return super.getDialog() as AlertDialog?
