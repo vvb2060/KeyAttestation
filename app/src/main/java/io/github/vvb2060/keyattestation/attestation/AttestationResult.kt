@@ -3,6 +3,7 @@ package io.github.vvb2060.keyattestation.attestation
 import android.text.TextUtils
 import com.google.common.base.CharMatcher
 import com.google.common.io.BaseEncoding
+import io.github.vvb2060.keyattestation.attestation.AuthorizationList.*
 
 data class AttestationResult(val attestation: Attestation, val isGoogleRootCertificate: Boolean)
 
@@ -30,12 +31,12 @@ val AuthorizationList.purposesDisplayName: String?
         val texts = ArrayList<String>()
         for (i in purposes) {
             texts.add(when (i) {
-                0 -> "ENCRYPT"
-                1 -> "DECRYPT"
-                2 -> "SIGN"
-                3 -> "VERIFY"
-                4 -> "DERIVE_KEY"
-                5 -> "WRAP_KEY"
+                KM_PURPOSE_ENCRYPT -> "ENCRYPT"
+                KM_PURPOSE_DECRYPT -> "DECRYPT"
+                KM_PURPOSE_SIGN -> "SIGN"
+                KM_PURPOSE_VERIFY -> "VERIFY"
+                4 -> "DERIVE"
+                KM_PURPOSE_WRAP -> "WRAP"
                 else -> "unknown ($i)"
             })
         }
@@ -45,10 +46,11 @@ val AuthorizationList.purposesDisplayName: String?
 val AuthorizationList.algorithmDisplayName: String?
     get() {
         return when (algorithm) {
-            1 -> "RSA"
-            3 -> "EC"
-            32 -> "AES"
-            128 -> "HMAC"
+            KM_ALGORITHM_RSA -> "RSA"
+            KM_ALGORITHM_EC -> "EC"
+            KM_ALGORITHM_AES -> "AES"
+            KM_ALGORITHM_3DES -> "3DES"
+            KM_ALGORITHM_HMAC -> "HMAC"
             null -> null
             else -> "unknown ($algorithm)"
         }
@@ -61,15 +63,46 @@ val AuthorizationList.digestsDisplayName: String?
         val texts = ArrayList<String>()
         for (i in digests) {
             texts.add(when (i) {
-                0 -> "NONE"
-                1 -> "MD5"
-                2 -> "SHA1"
-                3 -> "SHA_2_224"
-                4 -> "SHA_2_256"
-                5 -> "SHA_2_384"
-                6 -> "SHA_2_512"
-                else -> "unknown ($algorithm)"
+                KM_DIGEST_NONE -> "NONE"
+                KM_DIGEST_MD5 -> "MD5"
+                KM_DIGEST_SHA1 -> "SHA1"
+                KM_DIGEST_SHA_2_224 -> "SHA224"
+                KM_DIGEST_SHA_2_256 -> "SHA256"
+                KM_DIGEST_SHA_2_384 -> "SHA384"
+                KM_DIGEST_SHA_2_512 -> "SHA512"
+                else -> "unknown ($i)"
             })
         }
         return TextUtils.join(", ", texts)
+    }
+
+val AuthorizationList.paddingDisplayName: String?
+    get() {
+        if (paddingModes == null)
+            return null
+        val texts = ArrayList<String>()
+        for (i in paddingModes) {
+            texts.add(when (i) {
+                KM_PAD_NONE -> "NONE"
+                KM_PAD_RSA_OAEP -> "OAEP"
+                KM_PAD_RSA_PSS -> "PSS"
+                KM_PAD_RSA_PKCS1_1_5_ENCRYPT -> "PKCS1 ENCRYPT"
+                KM_PAD_RSA_PKCS1_1_5_SIGN -> "PKCS1 SIGN"
+                KM_PAD_PKCS7 -> "PKCS7"
+                else -> "unknown ($i)"
+            })
+        }
+        return TextUtils.join(", ", texts)
+    }
+
+val AuthorizationList.ecCurveDisplayName: String?
+    get() {
+        return when (ecCurve) {
+            KM_EC_CURVE_P224 -> "secp224r1"
+            KM_EC_CURVE_P256 -> "secp256r1"
+            KM_EC_CURVE_P384 -> "secp384r1"
+            KM_EC_CURVE_P521 -> "secp521r1"
+            null -> null
+            else -> "unknown ($ecCurve)"
+        }
     }

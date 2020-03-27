@@ -166,7 +166,7 @@ public class AuthorizationList {
 
     // Map for converting purpose values to strings
     private static final ImmutableMap<Integer, String> purposeMap = ImmutableMap
-            .<Integer, String> builder()
+            .<Integer, String>builder()
             .put(KM_PURPOSE_DECRYPT, "DECRYPT")
             .put(KM_PURPOSE_ENCRYPT, "ENCRYPT")
             .put(KM_PURPOSE_SIGN, "SIGN")
@@ -533,6 +533,10 @@ public class AuthorizationList {
         return noAuthRequired;
     }
 
+    public boolean getNoAuthRequired() {
+        return noAuthRequired;
+    }
+
     public Integer getUserAuthType() {
         return userAuthType;
     }
@@ -545,7 +549,15 @@ public class AuthorizationList {
         return allowWhileOnBody;
     }
 
+    public boolean getAllowWhileOnBody() {
+        return allowWhileOnBody;
+    }
+
     public boolean isAllApplications() {
+        return allApplications;
+    }
+
+    public boolean getAllApplications() {
         return allApplications;
     }
 
@@ -565,8 +577,20 @@ public class AuthorizationList {
         return rollbackResistant;
     }
 
+    public boolean getRollbackResistant() {
+        return rollbackResistant;
+    }
+
     public boolean isRollbackResistance() {
         return rollbackResistance;
+    }
+
+    public boolean getRollbackResistance() {
+        return rollbackResistance;
+    }
+
+    public boolean getUnlockedDeviceRequired() {
+        return unlockedDeviceRequired;
     }
 
     public RootOfTrust getRootOfTrust() {

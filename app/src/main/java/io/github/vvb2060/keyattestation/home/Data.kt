@@ -13,7 +13,9 @@ abstract class Data {
 
 data class CommonData(override val title: Int, override val description: Int, val data: String?) : Data()
 
-data class AuthorizationItemData(override val title: Int, override val description: Int, val data: String?, val tee: Boolean) : Data()
+data class AuthorizationItemData(override val title: Int, override val description: Int, val data: String?, val tee: Boolean) : Data() {
+    constructor(title: Int, description: Int, data: String?, fallback: String?) : this(title, description, data ?: fallback, data != null)
+}
 
 data class SecurityLevelData(override val title: Int, override val description: Int, val securityLevelDescription: Int, val version: Int, val securityLevel: Int) : Data()
 
