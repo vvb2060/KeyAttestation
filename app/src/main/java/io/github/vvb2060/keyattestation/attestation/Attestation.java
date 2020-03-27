@@ -115,24 +115,8 @@ public class Attestation {
         return attestationChallenge;
     }
 
-    public String getAttestationChallengeOrBase64() {
-        String stringChallenge = new String(attestationChallenge);
-        if (CharMatcher.ascii().matchesAllOf(stringChallenge)) {
-            return stringChallenge;
-        } else {
-            return BaseEncoding.base64().encode(attestationChallenge) + " (base64)";
-        }
-    }
-
     public byte[] getUniqueId() {
         return uniqueId;
-    }
-
-    public String getUniqueIdBase64() {
-        if (uniqueId != null) {
-            return BaseEncoding.base64().encode(uniqueId);
-        }
-        return null;
     }
 
     public AuthorizationList getSoftwareEnforced() {

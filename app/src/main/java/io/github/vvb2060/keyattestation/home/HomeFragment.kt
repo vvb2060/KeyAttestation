@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.app.AppFragment
@@ -72,6 +73,17 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         }
     }
 
+    override fun onSubtitleDataClick(data: SubtitleData) {
+        val context = requireContext()
+
+        AlertDialogFragment.Builder(context)
+                .title(data.title)
+                .message(context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
+                .positiveButton(android.R.string.ok)
+                .build()
+                .show(requireActivity().supportFragmentManager)
+    }
+
     override fun onCommonDataClick(data: CommonData) {
         val context = requireContext()
 
@@ -92,5 +104,21 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 .positiveButton(android.R.string.ok)
                 .build()
                 .show((context as AppActivity).supportFragmentManager)
+    }
+
+    override fun onAuthorizationItemDataClick(data: AuthorizationItemData) {
+        val context = requireContext()
+
+        val message = if (!data.data.isNullOrBlank()) "${context.getString(data.description)}<p>* ${context.getString(if (data.tee) R.string.tee_enforced_description else R.string.sw_enforced_description)}"
+                .toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
+        else
+            context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
+
+        AlertDialogFragment.Builder(context)
+                .title(data.title)
+                .message(message)
+                .positiveButton(android.R.string.ok)
+                .build()
+                .show(requireActivity().supportFragmentManager)
     }
 }

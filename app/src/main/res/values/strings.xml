@@ -8,20 +8,37 @@
     <string name="untrustworthy_not_google_cert">The root certificate is not signed by Google.</string>
     <string name="untrustworthy_software">The attestation is not implemented by secure hardware, it can be easily modified.</string>
 
-    <string name="attestation">Attestation</string>
+    <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>
-    <string name="keymaster">Keymaster</string>
+    <string name="keymaster" translatable="false">Keymaster</string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster hardware abstraction layer (HAL). Use 0 to represent version 0.2 or 0.3, 1 to represent version 1.0, and 2 to represent version 2.0.]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>The security of the implementation.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>Implemented by the Android system. This is much less secure than the other two levels and should only in older devices.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>Implemented in secure hardware, such as a TEE (Trusted Execution Environment).</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>Implemented in a dedicated hardware security module. Devices initially shipped with Android 9 or higher could have the module installed.</li></ul>]]></string>
     <string name="attestation_summary_format">version: %1$d\nsecurity level: %2$s</string>
-    <string name="attestation_challenge">Attestation challenge</string>
+    <string name="attestation_challenge" translatable="false">Attestation challenge</string>
     <string name="attestation_challenge_description"><![CDATA[The purpose of the challenge value is to enable relying parties to verify that the key was created in response to a specific request.<p>In production environment, the challenge value should be randomly generated every time.]]></string>
-    <string name="unique_id">Unique ID</string>
+    <string name="unique_id" translatable="false">Unique ID</string>
     <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is computed and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
 
     <string name="empty">(empty)</string>
     <string name="security_level_software">Software</string>
     <string name="security_level_trusted_environment">TrustedEnvironment</string>
     <string name="security_level_strongbox" translatable="false">StrongBox</string>
+
+    <string name="sw_enforced" translatable="false">SW</string>
+    <string name="sw_enforced_description"><![CDATA[This item is enforced by the Android system, not by the device\'s TEE.]]></string>
+    <string name="tee_enforced" translatable="false">TEE</string>
+    <string name="tee_enforced_description"><![CDATA[This item is enforced by the device\'s TEE.]]></string>
+    <string name="authorization_list">Authorization list</string>
+    <string name="authorization_list_description"><![CDATA[This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.]]></string>
+    <string name="purposes">Purpose</string>
+    <string name="purposes_description"><![CDATA[Specifies the set of purposes for which the key may be used.]]></string>
+    <string name="algorithm">Algorithm</string>
+    <string name="algorithm_description"><![CDATA[Specifies the cryptographic algorithm with which the key is used.]]></string>
+    <string name="key_size">Key size</string>
+    <string name="key_size_description"><![CDATA[Specifies the size, in bits, of the key, measuring in the normal way for the key\'s algorithm.]]></string>
+    <string name="digests">Digests</string>
+    <string name="digests_description"><![CDATA[Specifies the digest algorithms that may be used with the key to perform signing and verification operations.]]></string>
+    <string name="padding">Padding</string>
+    <string name="padding_description"><![CDATA[Specifies the padding modes that may be used with the key. This tag is relevant to RSA and AES keys.]]></string>
 
 </resources>

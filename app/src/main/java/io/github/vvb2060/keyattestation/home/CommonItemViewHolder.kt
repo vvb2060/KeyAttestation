@@ -18,9 +18,11 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
             object : CommonItemViewHolder<CommonData>(binding.root, binding) {
 
                 init {
-                    this.binding.icon.isVisible = false
-                    this.itemView.setOnClickListener {
-                        listener.onCommonDataClick(data)
+                    this.binding.apply {
+                        icon.isVisible = false
+                        root.setOnClickListener {
+                            listener.onCommonDataClick(data)
+                        }
                     }
                 }
 
@@ -35,13 +37,47 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
             }
         }
 
+        val AUTHORIZATION_ITEM_CREATOR = Creator<AuthorizationItemData> { inflater, parent ->
+            val binding = HomeCommonItemBinding.inflate(inflater, parent, false)
+            object : CommonItemViewHolder<AuthorizationItemData>(binding.root, binding) {
+
+                init {
+                    this.binding.apply {
+                        root.setOnClickListener {
+                            listener.onAuthorizationItemDataClick(data)
+                        }
+                        icon.isVisible = false
+                    }
+                }
+
+                override fun onBind() {
+                    binding.apply {
+                        icon.setImageDrawable(context.getDrawable(R.drawable.ic_trustworthy_24))
+                        title.setText(data.title)
+                        if (!data.data.isNullOrBlank()) {
+                            summary.text = data.data
+                            text1.setText(if (data.tee) R.string.tee_enforced else R.string.sw_enforced)
+                            text1.isVisible = true
+                        } else {
+                            summary.setText(R.string.empty)
+                            text1.isVisible = false
+                        }
+                    }
+                }
+            }
+        }
+
         val SECURITY_LEVEL_CREATOR = Creator<SecurityLevelData> { inflater, parent ->
             val binding = HomeCommonItemBinding.inflate(inflater, parent, false)
             object : CommonItemViewHolder<SecurityLevelData>(binding.root, binding) {
 
                 init {
-                    this.itemView.setOnClickListener {
-                        listener.onSecurityLevelDataClick(data)
+                    this.binding.apply {
+                        text1.isVisible = false
+                        icon.background = null
+                        root.setOnClickListener {
+                            listener.onSecurityLevelDataClick(data)
+                        }
                     }
                 }
 
