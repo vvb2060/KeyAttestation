@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_background_dark">#2C5778</color>
+    <color name="color_background_dark">#365161</color>
+    <color name="color_floating_background_dark">#465f6d</color>
     <color name="icon_background">#1765a4</color>
+    <color name="color_safe">#efe0f7fA</color>
+    <color name="color_warning">#efffd180</color>
+    <color name="color_alert">#efff8a80</color>
+    <color name="color_accent">#E1F5FE</color>
 </resources>

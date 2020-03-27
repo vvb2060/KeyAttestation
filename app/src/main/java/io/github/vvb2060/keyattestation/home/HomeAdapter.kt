@@ -1,6 +1,5 @@
 package io.github.vvb2060.keyattestation.home
 
-import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
@@ -25,9 +24,9 @@ class HomeAdapter : IdBasedRecyclerViewAdapter() {
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 
         var id = ID_DESCRIPTION_START
-        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.attestation to arrayOf(attestation.attestationVersion, attestation.attestationSecurityLevel), id++)
-        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, R.string.keymaster to arrayOf(attestation.keymasterVersion, attestation.keymasterSecurityLevel), id++)
-        addItem(CommonItemViewHolder.COMMON_CREATOR, R.string.attestation_challenge to attestation.attestationChallengeOrBase64, id++)
+        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, Data.createAttestationLevel(attestation), id++)
+        addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, Data.createKeymasterLevel(attestation), id++)
+        addItem(CommonItemViewHolder.COMMON_CREATOR, Data.createAttestationChallenge(attestation), id++)
 
         notifyDataSetChanged()
     }

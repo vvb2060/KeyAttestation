@@ -7,10 +7,13 @@
         <item name="android:colorBackground">@color/color_background_dark</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.ActionBar.PopupTheme</item>
 
-        <item name="colorPrimary">@color/material_blue_grey_200</item>
-        <item name="colorPrimaryVariant">@color/material_blue_grey_200</item>
-        <item name="colorSecondary">@color/material_blue_grey_200</item>
-        <item name="colorSecondaryVariant">@color/material_blue_grey_200</item>
+        <item name="colorBackgroundFloating">@color/color_floating_background_dark</item>
+        <item name="android:colorBackgroundFloating">@color/color_floating_background_dark</item>
+
+        <item name="colorPrimary">@color/color_accent</item>
+        <item name="colorPrimaryVariant">@color/color_accent</item>
+        <item name="colorSecondary">@color/color_accent</item>
+        <item name="colorSecondaryVariant">@color/color_accent</item>
         <item name="colorOnSecondary">@android:color/black</item>
         <item name="actionBarTheme">@style/ThemeOverlay.ActionBar</item>
         <item name="toolbarStyle">@style/Widget.Material.Toolbar</item>
@@ -19,6 +22,9 @@
         <!--<item name="preferenceTheme">@style/ThemeOverlay.Preference</item>-->
         <item name="appBarStyle">@style/Widget.AppBar.Solid</item>
         <item name="toolbarColor">@color/color_background_dark</item>
+        <item name="colorSafe">@color/color_safe</item>
+        <item name="colorWarning">@color/color_warning</item>
+        <item name="colorAlert">@color/color_alert</item>
 
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>

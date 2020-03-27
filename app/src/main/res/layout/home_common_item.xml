@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:textAppearance="?textAppearanceBody2"
+            android:textColor="?android:textColorSecondary"
             android:textSize="14sp"
             tools:text="summary" />
 
