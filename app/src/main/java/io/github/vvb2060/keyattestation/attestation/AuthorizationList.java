@@ -184,16 +184,16 @@ public class AuthorizationList {
     private Date activeDateTime;
     private Date originationExpireDateTime;
     private Date usageExpireDateTime;
-    private boolean noAuthRequired;
+    private Boolean noAuthRequired;
     private Integer userAuthType;
     private Integer authTimeout;
-    private boolean allowWhileOnBody;
-    private boolean allApplications;
+    private Boolean allowWhileOnBody;
+    private Boolean allApplications;
     private byte[] applicationId;
     private Date creationDateTime;
     private Integer origin;
-    private boolean rollbackResistant;
-    private boolean rollbackResistance;
+    private Boolean rollbackResistant;
+    private Boolean rollbackResistance;
     private RootOfTrust rootOfTrust;
     private Integer osVersion;
     private Integer osPatchLevel;
@@ -208,9 +208,9 @@ public class AuthorizationList {
     private String product;
     private String manufacturer;
     private String model;
-    private boolean userPresenceRequired;
-    private boolean confirmationRequired;
-    private boolean unlockedDeviceRequired;
+    private Boolean userPresenceRequired;
+    private Boolean confirmationRequired;
+    private Boolean unlockedDeviceRequired;
 
     public AuthorizationList(ASN1Encodable sequence) throws CertificateParsingException {
         if (!(sequence instanceof ASN1Sequence)) {
@@ -529,11 +529,11 @@ public class AuthorizationList {
         return usageExpireDateTime;
     }
 
-    public boolean isNoAuthRequired() {
+    public Boolean isNoAuthRequired() {
         return noAuthRequired;
     }
 
-    public boolean getNoAuthRequired() {
+    public Boolean getNoAuthRequired() {
         return noAuthRequired;
     }
 
@@ -545,19 +545,19 @@ public class AuthorizationList {
         return authTimeout;
     }
 
-    public boolean isAllowWhileOnBody() {
+    public Boolean isAllowWhileOnBody() {
         return allowWhileOnBody;
     }
 
-    public boolean getAllowWhileOnBody() {
+    public Boolean getAllowWhileOnBody() {
         return allowWhileOnBody;
     }
 
-    public boolean isAllApplications() {
+    public Boolean isAllApplications() {
         return allApplications;
     }
 
-    public boolean getAllApplications() {
+    public Boolean getAllApplications() {
         return allApplications;
     }
 
@@ -573,23 +573,23 @@ public class AuthorizationList {
         return origin;
     }
 
-    public boolean isRollbackResistant() {
+    public Boolean isRollbackResistant() {
         return rollbackResistant;
     }
 
-    public boolean getRollbackResistant() {
+    public Boolean getRollbackResistant() {
         return rollbackResistant;
     }
 
-    public boolean isRollbackResistance() {
+    public Boolean isRollbackResistance() {
         return rollbackResistance;
     }
 
-    public boolean getRollbackResistance() {
+    public Boolean getRollbackResistance() {
         return rollbackResistance;
     }
 
-    public boolean getUnlockedDeviceRequired() {
+    public Boolean getUnlockedDeviceRequired() {
         return unlockedDeviceRequired;
     }
 
@@ -643,17 +643,29 @@ public class AuthorizationList {
 
     public String getManufacturer() {
         return manufacturer;
-    };
+    }
+
+    ;
 
     public String getModel() {
         return model;
-    };
+    }
 
-    public boolean isUserPresenceRequired() {
+    ;
+
+    public Boolean isUserPresenceRequired() {
         return userPresenceRequired;
     }
 
-    public boolean isConfirmationRequired() {
+    public Boolean getUserPresenceRequired() {
+        return userPresenceRequired;
+    }
+
+    public Boolean isConfirmationRequired() {
+        return confirmationRequired;
+    }
+
+    public Boolean getConfirmationRequired() {
         return confirmationRequired;
     }
 

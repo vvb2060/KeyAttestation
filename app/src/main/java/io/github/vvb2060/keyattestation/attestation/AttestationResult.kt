@@ -2,6 +2,7 @@ package io.github.vvb2060.keyattestation.attestation
 
 import android.text.TextUtils
 import com.google.common.base.CharMatcher
+import com.google.common.collect.Lists
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList.*
 
@@ -105,4 +106,14 @@ val AuthorizationList.ecCurveDisplayName: String?
             null -> null
             else -> "unknown ($ecCurve)"
         }
+    }
+
+val AuthorizationList.userAuthDisplayName: String?
+    get() {
+        if (userAuthType == null)
+            return null
+        val types: MutableList<String> = Lists.newArrayList()
+        if (userAuthType and HW_AUTH_BIOMETRIC != 0) types.add("Biometric")
+        if (userAuthType and HW_AUTH_PASSWORD != 0) types.add("Password")
+        return TextUtils.join(", ", types)
     }
