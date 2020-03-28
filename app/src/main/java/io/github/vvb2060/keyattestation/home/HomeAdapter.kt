@@ -68,11 +68,23 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         val tee = createAuthorizationItems(attestation.teeEnforced)
         val sw = createAuthorizationItems(attestation.softwareEnforced)
         for (i in tee.indices) {
+            if (tee[i] == null && sw[i] == null) {
+                continue
+            }
+
             addItem(CommonItemViewHolder.AUTHORIZATION_ITEM_CREATOR, AuthorizationItemData(
                     authorizationItemTitles[i],
                     authorizationItemDescriptions[i],
                     tee[i],
                     sw[i]), id++)
+
+            if (tee[i] != null && sw[i] != null) {
+                addItem(CommonItemViewHolder.AUTHORIZATION_ITEM_CREATOR, AuthorizationItemData(
+                        authorizationItemTitles[i],
+                        authorizationItemDescriptions[i],
+                        sw[i],
+                        false), id++)
+            }
         }
 
         notifyDataSetChanged()
