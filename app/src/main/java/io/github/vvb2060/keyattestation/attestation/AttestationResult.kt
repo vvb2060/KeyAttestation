@@ -25,7 +25,7 @@ val Attestation.uniqueIdBase64: String?
         } else null
     }
 
-val AuthorizationList.purposesDisplayName: String?
+val AuthorizationList.purposesDisplay: String?
     get() {
         if (purposes == null)
             return null
@@ -44,7 +44,7 @@ val AuthorizationList.purposesDisplayName: String?
         return TextUtils.join(", ", texts)
     }
 
-val AuthorizationList.algorithmDisplayName: String?
+val AuthorizationList.algorithmDisplay: String?
     get() {
         return when (algorithm) {
             KM_ALGORITHM_RSA -> "RSA"
@@ -57,7 +57,7 @@ val AuthorizationList.algorithmDisplayName: String?
         }
     }
 
-val AuthorizationList.digestsDisplayName: String?
+val AuthorizationList.digestsDisplay: String?
     get() {
         if (digests == null)
             return null
@@ -77,7 +77,7 @@ val AuthorizationList.digestsDisplayName: String?
         return TextUtils.join(", ", texts)
     }
 
-val AuthorizationList.paddingDisplayName: String?
+val AuthorizationList.paddingDisplay: String?
     get() {
         if (paddingModes == null)
             return null
@@ -96,7 +96,7 @@ val AuthorizationList.paddingDisplayName: String?
         return TextUtils.join(", ", texts)
     }
 
-val AuthorizationList.ecCurveDisplayName: String?
+val AuthorizationList.ecCurveDisplay: String?
     get() {
         return when (ecCurve) {
             KM_EC_CURVE_P224 -> "secp224r1"
@@ -108,7 +108,7 @@ val AuthorizationList.ecCurveDisplayName: String?
         }
     }
 
-val AuthorizationList.userAuthDisplayName: String?
+val AuthorizationList.userAuthDisplay: String?
     get() {
         if (userAuthType == null)
             return null
@@ -116,4 +116,41 @@ val AuthorizationList.userAuthDisplayName: String?
         if (userAuthType and HW_AUTH_BIOMETRIC != 0) types.add("Biometric")
         if (userAuthType and HW_AUTH_PASSWORD != 0) types.add("Password")
         return TextUtils.join(", ", types)
+    }
+
+val AuthorizationList.rootOfTrustDisplay: String?
+    get() {
+        if (rootOfTrust == null)
+            return null
+        val sb = StringBuilder()
+        sb.append("verified boot key: ").append(BaseEncoding.base64().encode(rootOfTrust.verifiedBootKey)).append(" (base64)").append('\n')
+        sb.append("device locked: ").append(rootOfTrust.isDeviceLocked).append('\n')
+        sb.append("verified boot state: ").append(RootOfTrust.verifiedBootStateToString(rootOfTrust.verifiedBootState)).append('\n')
+        if (rootOfTrust.verifiedBootHash != null) {
+            sb.append("verified boot hash: ").append(BaseEncoding.base64().encode(rootOfTrust.verifiedBootHash)).append(" (base64)")
+        }
+
+        return sb.trim().toString()
+    }
+
+val AuthorizationList.attestationApplicationIdDisplay: String?
+    get() {
+        if (attestationApplicationId == null)
+            return null
+
+        val sb = StringBuilder()
+        val pkgCount: Int = attestationApplicationId.attestationPackageInfos.size
+        for ((i, info) in attestationApplicationId.attestationPackageInfos.withIndex()) {
+            sb.append("package ${i + 1}/$pkgCount:\n")
+            sb.append(info.packageName).append(" (version code ${info.version})").append('\n')
+        }
+        sb.append('\n')
+        val sigCount: Int = attestationApplicationId.signatureDigests.size
+        for ((i, sig) in attestationApplicationId.signatureDigests.withIndex()) {
+            sb.append("signature digest ${i + 1}/$sigCount:\n")
+            for (b in sig) {
+                sb.append(String.format("%02X ", b))
+            }
+        }
+        return sb.trim().toString()
     }
