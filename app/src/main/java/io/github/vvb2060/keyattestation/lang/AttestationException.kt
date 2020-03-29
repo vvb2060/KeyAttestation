@@ -39,6 +39,9 @@ class AttestationException(var code: Int, cause: Throwable?) : RuntimeException(
                 CODE_NOT_SUPPORT -> {
                     R.string.error_not_support_summary
                 }
+                CODE_CERT_NOT_TRUSTED -> {
+                    R.string.error_cert_not_trusted
+                }
                 CODE_STRONGBOX_UNAVAILABLE -> {
                     R.string.error_strongbox_unavailable_summary
                 }
