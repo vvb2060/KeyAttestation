@@ -1,6 +1,5 @@
 package io.github.vvb2060.keyattestation.home
 
-import android.util.Log
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
 import io.github.vvb2060.keyattestation.lang.AttestationException
@@ -25,7 +24,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun updateData(attestationResult: AttestationResult) {
-        Log.i("?!", "updateData")
         val attestation = attestationResult.attestation
         val isGoogleRootCertificate = attestationResult.isGoogleRootCertificate
 
@@ -95,7 +93,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun updateData(e: AttestationException) {
-        Log.i("?!", "updateData2")
         clear()
         addItem(HeaderViewHolder.CREATOR, HeaderData(
                 e.titleResId,
