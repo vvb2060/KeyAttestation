@@ -10,10 +10,10 @@
     <string name="strongbox_unavailable">StrongBox not available</string>
     <string name="strongbox_unavailable_summary">Your device is declared to have StrongBox support but StrongBox is unavailable.</string>
 
-    <string name="error_message_subtitle">Message for developers</string>
+    <string name="error_message_subtitle">Messages for developers</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_not_support">Key attestation is not supported</string>
-    <string name="error_not_support_summary">Your device does not support key attestation or the trust environment on your device is broken.</string>
+    <string name="error_not_support_summary">Your device does not support key attestation or the trusted environment on your device is broken.</string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
     <string name="error_cant_parse_record">Unable to parse attestation record</string>
 
