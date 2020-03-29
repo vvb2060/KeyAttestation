@@ -1,5 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
+import android.util.Log
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
 import io.github.vvb2060.keyattestation.lang.AttestationException
@@ -19,14 +20,14 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     init {
-        setHasStableIds(true)
+        setHasStableIds(false)
         setListener(listener)
     }
 
     fun updateData(attestationResult: AttestationResult) {
+        Log.i("?!", "updateData")
         val attestation = attestationResult.attestation
         val isGoogleRootCertificate = attestationResult.isGoogleRootCertificate
-        val strongBoxUnavailable = attestationResult.strongBoxUnavailable
 
         clear()
         if (!isGoogleRootCertificate) {
@@ -35,13 +36,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     R.string.not_google_cert_summary,
                     R.drawable.ic_error_outline_24,
                     R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
-        }
-        if (strongBoxUnavailable) {
-            addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.strongbox_unavailable,
-                    R.string.strongbox_unavailable_summary,
-                    R.drawable.ic_error_outline_24,
-                    R.attr.colorAlert), ID_STRONGBOX_BROKEN)
         }
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 
@@ -101,6 +95,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun updateData(e: AttestationException) {
+        Log.i("?!", "updateData2")
         clear()
         addItem(HeaderViewHolder.CREATOR, HeaderData(
                 e.titleResId,
@@ -113,11 +108,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun allowFrameAt(position: Int): Boolean {
+        if (position < 0) return false
         val id = getItemId(position)
         return id >= ID_DESCRIPTION_START
     }
 
     fun shouldCommitFrameAt(position: Int): Boolean {
+        if (position < 0) return false
         val id = getItemId(position)
         if (position == itemCount - 1) {
             return true
@@ -134,7 +131,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         private const val ID_ERROR = 0L
         private const val ID_BOOT_STATE = 1L
         private const val ID_NOT_GOOGLE_CERT = 2L
-        private const val ID_STRONGBOX_BROKEN = 3L
         private const val ID_DESCRIPTION_START = 3000L
         private const val ID_AUTHORIZATION_LIST_START = 4000L
         private const val ID_ERROR_MESSAGE = 100000L

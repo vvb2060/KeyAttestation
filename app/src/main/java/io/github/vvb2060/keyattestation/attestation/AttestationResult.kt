@@ -6,7 +6,7 @@ import com.google.common.collect.Lists
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList.*
 
-data class AttestationResult(val attestation: Attestation, val isGoogleRootCertificate: Boolean, val strongBoxUnavailable: Boolean)
+data class AttestationResult(val isStrongBox: Boolean, val attestation: Attestation, val isGoogleRootCertificate: Boolean)
 
 val Attestation.attestationChallengeOrBase64: String?
     get() {

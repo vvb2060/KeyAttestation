@@ -9,6 +9,7 @@ class AttestationException(var code: Int, cause: Throwable?) : RuntimeException(
         const val CODE_NOT_SUPPORT = 0
         const val CODE_CERT_NOT_TRUSTED = 1
         const val CODE_CANT_PARSE_ATTESTATION_RECORD = 2
+        const val CODE_STRONGBOX_UNAVAILABLE = 3
     }
 
     val titleResId: Int
@@ -23,6 +24,9 @@ class AttestationException(var code: Int, cause: Throwable?) : RuntimeException(
                 CODE_CANT_PARSE_ATTESTATION_RECORD -> {
                     R.string.error_cant_parse_record
                 }
+                CODE_STRONGBOX_UNAVAILABLE -> {
+                    R.string.error_strongbox_unavailable
+                }
                 else -> {
                     R.string.error_unknown
                 }
@@ -34,6 +38,9 @@ class AttestationException(var code: Int, cause: Throwable?) : RuntimeException(
             return when (code) {
                 CODE_NOT_SUPPORT -> {
                     R.string.error_not_support_summary
+                }
+                CODE_STRONGBOX_UNAVAILABLE -> {
+                    R.string.error_strongbox_unavailable_summary
                 }
                 else -> {
                     0

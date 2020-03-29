@@ -1,6 +1,7 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
@@ -31,12 +32,15 @@ class HomeViewModel : ViewModel() {
 
     companion object {
 
-        private const val ALIAS = "Key1"
         private const val ORIGINATION_TIME_OFFSET = 1000000
         private const val CONSUMPTION_TIME_OFFSET = 2000000
     }
 
     val attestationResult = MediatorLiveData<Resource<AttestationResult>>()
+
+    var preferStrongBox = true
+
+    val hasStrongBox = MediatorLiveData<Boolean>()
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean) {
@@ -61,20 +65,20 @@ class HomeViewModel : ViewModel() {
         keyPairGenerator.generateKeyPair()
     }
 
-    private suspend fun doAttestation(context: Context, useStrongBox: Boolean, strongBoxUnavailable: Boolean): AttestationResult {
+    private fun doAttestation(context: Context, alias: String, useStrongBox: Boolean): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            generateKey(ALIAS, useStrongBox && !strongBoxUnavailable)
-            val certificates = keyStore.getCertificateChain(ALIAS)
+            generateKey(alias, useStrongBox)
+            val certificates = keyStore.getCertificateChain(alias)
             certs = arrayOfNulls(certificates.size)
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
-                return doAttestation(context, useStrongBox, strongBoxUnavailable)
+                throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
             } else {
                 // The device does not support key attestation
                 throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
@@ -96,21 +100,45 @@ class HomeViewModel : ViewModel() {
             // Unable to parse attestation record
             throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
         }
-        return AttestationResult(attestation, isGoogleRootCertificate, strongBoxUnavailable)
+        return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
 
-    fun invalidateAttestation(context: Context, preferStrongBox: Boolean) = viewModelScope.launch {
+    private suspend fun loadHasStrongBox(context: Context): Boolean {
         try {
             withContext(Dispatchers.IO) {
-                Resource.success(doAttestation(context, preferStrongBox, false))
+                hasStrongBox.postValue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE))
             }
         } catch (e: CancellationException) {
-            null
+            return false
+        } catch (e: Throwable) {
+            hasStrongBox.postValue(false)
+        }
+        return true
+    }
+
+    fun invalidateAttestation(context: Context) = viewModelScope.launch {
+        attestationResult.postValue(Resource.loading(null))
+
+        if (hasStrongBox.value == null) {
+            if (!loadHasStrongBox(context)) {
+                return@launch
+            }
+        }
+
+        try {
+            withContext(Dispatchers.IO) {
+                val useStrongBox = hasStrongBox.value!! && preferStrongBox
+                val alias = if (useStrongBox) "Key2" else "Key1"
+                Resource.success(doAttestation(context, alias, useStrongBox))
+            }
+        } catch (e: CancellationException) {
+            return@launch
         } catch (e: AttestationException) {
             Resource.error(e, null)
         } catch (e: Throwable) {
             Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
-        }?.let {
+        }.let {
             attestationResult.postValue(it)
         }
     }

@@ -1,11 +1,9 @@
 package io.github.vvb2060.keyattestation.home
 
-import android.content.pm.PackageManager
-import android.os.Build
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -32,6 +30,20 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         HomeAdapter(this)
     }
 
+    private val preference by lazy {
+        requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+    }
+
+    init {
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = HomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -54,8 +66,11 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         val context = requireContext()
+
+        viewModel.hasStrongBox.observe(viewLifecycleOwner) {
+            activity?.invalidateOptionsMenu()
+        }
 
         viewModel.attestationResult.observe(viewLifecycleOwner) {
             when (it?.status) {
@@ -75,10 +90,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 }
             }
         }
-        val useStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-        if (savedInstanceState == null) {
-            viewModel.invalidateAttestation(context, useStrongBox)
+
+        if (viewModel.attestationResult.value == null) {
+            viewModel.invalidateAttestation(context)
         }
     }
 
@@ -129,5 +143,20 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 .positiveButton(android.R.string.ok)
                 .build()
                 .show(requireActivity().supportFragmentManager)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.findItem(R.id.use_strongbox).isVisible = viewModel.hasStrongBox.value == true
+        menu.findItem(R.id.use_strongbox).isChecked = viewModel.preferStrongBox
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.use_strongbox) {
+            item.isChecked = !item.isChecked
+            viewModel.preferStrongBox = item.isChecked
+            viewModel.invalidateAttestation(requireContext())
+            preference.edit { putBoolean("prefer_strongbox", item.isChecked) }
+            true
+        } else super.onOptionsItemSelected(item)
     }
 }

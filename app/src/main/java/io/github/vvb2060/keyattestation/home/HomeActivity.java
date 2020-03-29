@@ -32,8 +32,8 @@ public class HomeActivity extends AppBarFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu, menu);
-        return false;
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
     }
 
     @Override

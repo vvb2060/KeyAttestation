@@ -31,7 +31,7 @@
             android:textAppearance="?textAppearanceSubtitle2"
             android:textColor="?android:textColorPrimaryInverse"
             android:textSize="16sp"
-            tools:text="@string/strongbox_unavailable" />
+            tools:text="@string/error_strongbox_unavailable" />
 
         <TextView
             android:id="@android:id/summary"
@@ -41,7 +41,7 @@
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorPrimaryInverse"
             android:textSize="14sp"
-            tools:text="@string/strongbox_unavailable_summary" />
+            tools:text="@string/error_strongbox_unavailable_summary" />
 
     </LinearLayout>
 
