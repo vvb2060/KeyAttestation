@@ -4,9 +4,18 @@
     <string name="bootloader_locked">Bootloader is locked</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
-    <string name="untrustworthy">Untrustworthy</string>
-    <string name="untrustworthy_not_google_cert">The root certificate is not signed by Google.</string>
-    <string name="untrustworthy_software">The attestation is not implemented by secure hardware, it can be easily modified.</string>
+    <string name="bootloader_unknown_summary_software_attestation">Your device does not support hardware-level key attestation.</string>
+    <string name="not_google_cert">No Google Hardware Attestation Root certificate</string>
+    <string name="not_google_cert_summary">Devices released before Android 7.0 (2016) or without pre-installed Google Play do not have the certificate.</string>
+    <string name="strongbox_unavailable">StrongBox not available</string>
+    <string name="strongbox_unavailable_summary">Your device is declared to have StrongBox support but StrongBox is unavailable.</string>
+
+    <string name="error_message_subtitle">Message for developers</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_not_support">Key attestation is not supported</string>
+    <string name="error_not_support_summary">Your device does not support key attestation or the trust environment on your device is broken.</string>
+    <string name="error_cert_not_trusted">Certificate is not trusted</string>
+    <string name="error_cant_parse_record">Unable to parse attestation record</string>
 
     <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>

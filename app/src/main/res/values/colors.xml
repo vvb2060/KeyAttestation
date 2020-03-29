@@ -6,5 +6,6 @@
     <color name="color_safe">#efe0f7fA</color>
     <color name="color_warning">#efffd180</color>
     <color name="color_alert">#efff8a80</color>
+    <color name="color_inactive">#88ffffff</color>
     <color name="color_accent">#E1F5FE</color>
 </resources>

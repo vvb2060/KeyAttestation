@@ -11,6 +11,8 @@ abstract class Data {
         @StringRes get
 }
 
+data class HeaderData(override val title: Int, override val description: Int, val icon: Int, val color: Int) : Data()
+
 data class CommonData(override val title: Int, override val description: Int, val data: String?) : Data()
 
 data class AuthorizationItemData(override val title: Int, override val description: Int, val data: String?, val tee: Boolean) : Data() {

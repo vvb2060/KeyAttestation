@@ -25,6 +25,7 @@
         <item name="colorSafe">@color/color_safe</item>
         <item name="colorWarning">@color/color_warning</item>
         <item name="colorAlert">@color/color_alert</item>
+        <item name="colorInactive">@color/color_inactive</item>
 
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>

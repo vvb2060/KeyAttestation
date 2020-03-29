@@ -61,48 +61,57 @@ class HomeViewModel : ViewModel() {
         keyPairGenerator.generateKeyPair()
     }
 
-    private suspend fun doAttestation(context: Context, useStrongBox: Boolean) = withContext(Dispatchers.IO) {
+    private suspend fun doAttestation(context: Context, useStrongBox: Boolean, strongBoxUnavailable: Boolean): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            generateKey(ALIAS, useStrongBox)
+            generateKey(ALIAS, useStrongBox && !strongBoxUnavailable)
             val certificates = keyStore.getCertificateChain(ALIAS)
             certs = arrayOfNulls(certificates.size)
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
-                throw AttestationException("Strong box key attestation error.", e)
+                return doAttestation(context, useStrongBox, strongBoxUnavailable)
             } else {
-                throw AttestationException("The device does not support key attestation.", e)
+                // The device does not support key attestation
+                throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
             }
         } catch (e: Exception) {
-            throw AttestationException("Unable to get certificate.", e)
+            // Unable to get certificate
+            // throw AttestationException(AttestationException.CODE_CANT_GET_CERT, e)
+            throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs, context.resources.openRawResource(R.raw.status))
         } catch (e: Exception) {
-            throw AttestationException("Certificate is not trusted.", e)
+            // Certificate is not trusted
+            throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
         }
         try {
             attestation = Attestation(certs[0])
         } catch (e: CertificateParsingException) {
-            throw AttestationException("Unable to parse attestation record.", e)
+            // Unable to parse attestation record
+            throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
         }
-        AttestationResult(attestation, isGoogleRootCertificate)
+        return AttestationResult(attestation, isGoogleRootCertificate, strongBoxUnavailable)
     }
 
-    fun invalidateAttestation(context: Context, useStrongBox: Boolean) = viewModelScope.launch {
+    fun invalidateAttestation(context: Context, preferStrongBox: Boolean) = viewModelScope.launch {
         try {
-            attestationResult.postValue(Resource.success(doAttestation(context, useStrongBox)))
+            withContext(Dispatchers.IO) {
+                Resource.success(doAttestation(context, preferStrongBox, false))
+            }
         } catch (e: CancellationException) {
-
+            null
         } catch (e: AttestationException) {
-            attestationResult.postValue(Resource.error(e, null))
+            Resource.error(e, null)
         } catch (e: Throwable) {
-            attestationResult.postValue(Resource.error(AttestationException("unknown", e), null))
+            Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+        }?.let {
+            attestationResult.postValue(it)
         }
     }
 }

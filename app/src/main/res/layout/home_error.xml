@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/HomeCardStyle"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_message_subtitle"
+        android:textAppearance="?textAppearanceSubtitle2"
+        android:textColor="?colorAccent" />
+
+    <TextView
+        android:id="@android:id/text1"
+        style="@style/HomeItemSummaryText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="monospace"
+        tools:text="text" />
+
+</LinearLayout>

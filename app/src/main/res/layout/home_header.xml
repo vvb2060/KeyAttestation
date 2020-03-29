@@ -3,20 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/HomeCardStyle"
     android:background="@drawable/home_boot_state_background"
-    android:backgroundTint="?colorAlert"
     android:backgroundTintMode="src_in"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:backgroundTint="?colorAlert">
 
     <ImageView
         android:id="@android:id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_untrustworthy_24"
         android:tint="?android:textColorPrimaryInverse"
-        android:tintMode="src_in" />
+        android:tintMode="src_in"
+        tools:src="@drawable/ic_error_outline_24" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,10 +28,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="@string/untrustworthy"
             android:textAppearance="?textAppearanceSubtitle2"
             android:textColor="?android:textColorPrimaryInverse"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="@string/strongbox_unavailable" />
 
         <TextView
             android:id="@android:id/summary"
@@ -42,7 +41,7 @@
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorPrimaryInverse"
             android:textSize="14sp"
-            tools:text="@string/untrustworthy_not_google_cert" />
+            tools:text="@string/strongbox_unavailable_summary" />
 
     </LinearLayout>
 

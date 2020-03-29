@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import io.github.vvb2060.keyattestation.R
@@ -14,6 +15,7 @@ import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.app.AppFragment
 import io.github.vvb2060.keyattestation.databinding.HomeBinding
 import io.github.vvb2060.keyattestation.ktx.toHtml
+import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
 import rikka.material.widget.BorderView.OnBorderVisibilityChangedListener
@@ -45,9 +47,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
         val context = view.context
 
-        binding.root.borderVisibilityChangedListener = OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
-        binding.root.adapter = adapter
-        binding.root.addItemDecoration(HomeItemDecoration(context))
+        binding.list.borderVisibilityChangedListener = OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
+        binding.list.adapter = adapter
+        binding.list.addItemDecoration(HomeItemDecoration(context))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -58,11 +60,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         viewModel.attestationResult.observe(viewLifecycleOwner) {
             when (it?.status) {
                 Status.SUCCESS -> {
+                    binding.progress.isVisible = false
+                    binding.list.isVisible = true
                     adapter.updateData(it.data!!)
                 }
                 Status.ERROR -> {
+                    binding.progress.isVisible = false
+                    binding.list.isVisible = true
+                    adapter.updateData(it.error as AttestationException)
                 }
                 Status.LOADING -> {
+                    binding.progress.isVisible = true
+                    binding.list.isVisible = false
                 }
             }
         }

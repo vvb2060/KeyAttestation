@@ -2,6 +2,7 @@ package io.github.vvb2060.keyattestation.home
 
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
+import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
 class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
@@ -24,14 +25,23 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
     fun updateData(attestationResult: AttestationResult) {
         val attestation = attestationResult.attestation
-        val locked = attestation.teeEnforced?.rootOfTrust?.isDeviceLocked
         val isGoogleRootCertificate = attestationResult.isGoogleRootCertificate
-        val isSoftware = attestation.attestationSecurityLevel == Attestation.KM_SECURITY_LEVEL_SOFTWARE
-        val trustworthy = isGoogleRootCertificate && !isSoftware
+        val strongBoxUnavailable = attestationResult.strongBoxUnavailable
 
         clear()
-        if (locked != null && !trustworthy) {
-            addItem(BootStateUntrustworthyViewHolder.CREATOR, attestationResult, ID_BOOT_STATE_UNTRUSTWORTHY)
+        if (!isGoogleRootCertificate) {
+            addItem(HeaderViewHolder.CREATOR, HeaderData(
+                    R.string.not_google_cert,
+                    R.string.not_google_cert_summary,
+                    R.drawable.ic_error_outline_24,
+                    R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+        }
+        if (strongBoxUnavailable) {
+            addItem(HeaderViewHolder.CREATOR, HeaderData(
+                    R.string.strongbox_unavailable,
+                    R.string.strongbox_unavailable_summary,
+                    R.drawable.ic_error_outline_24,
+                    R.attr.colorAlert), ID_STRONGBOX_BROKEN)
         }
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 
@@ -90,6 +100,18 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         notifyDataSetChanged()
     }
 
+    fun updateData(e: AttestationException) {
+        clear()
+        addItem(HeaderViewHolder.CREATOR, HeaderData(
+                e.titleResId,
+                e.descriptionResId,
+                R.drawable.ic_error_outline_24,
+                R.attr.colorInactive), ID_ERROR)
+
+        addItem(ErrorViewHolder.CREATOR, e, ID_ERROR_MESSAGE)
+        notifyDataSetChanged()
+    }
+
     fun allowFrameAt(position: Int): Boolean {
         val id = getItemId(position)
         return id >= ID_DESCRIPTION_START
@@ -109,10 +131,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
     companion object {
 
+        private const val ID_ERROR = 0L
         private const val ID_BOOT_STATE = 1L
-        private const val ID_BOOT_STATE_UNTRUSTWORTHY = 2L
+        private const val ID_NOT_GOOGLE_CERT = 2L
+        private const val ID_STRONGBOX_BROKEN = 3L
         private const val ID_DESCRIPTION_START = 3000L
         private const val ID_AUTHORIZATION_LIST_START = 4000L
+        private const val ID_ERROR_MESSAGE = 100000L
 
         private fun createAuthorizationItems(list: AuthorizationList): Array<String?> {
             return arrayOf(
