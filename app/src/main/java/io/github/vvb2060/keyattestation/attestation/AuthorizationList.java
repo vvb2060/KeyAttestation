@@ -143,7 +143,7 @@ public class AuthorizationList {
 
     // Map for converting padding values to strings
     private static final ImmutableMap<Integer, String> paddingMap = ImmutableMap
-            .<Integer, String> builder()
+            .<Integer, String>builder()
             .put(KM_PAD_NONE, "NONE")
             .put(KM_PAD_RSA_OAEP, "OAEP")
             .put(KM_PAD_RSA_PSS, "PSS")
@@ -154,7 +154,7 @@ public class AuthorizationList {
 
     // Map for converting digest values to strings
     private static final ImmutableMap<Integer, String> digestMap = ImmutableMap
-            .<Integer, String> builder()
+            .<Integer, String>builder()
             .put(KM_DIGEST_NONE, "NONE")
             .put(KM_DIGEST_MD5, "MD5")
             .put(KM_DIGEST_SHA1, "SHA1")
@@ -627,31 +627,27 @@ public class AuthorizationList {
 
     public String getSerialNumber() {
         return serialNumber;
-    };
+    }
 
     public String getImei() {
         return imei;
-    };
+    }
 
     public String getMeid() {
         return meid;
-    };
+    }
 
     public String getProduct() {
         return product;
-    };
+    }
 
     public String getManufacturer() {
         return manufacturer;
     }
 
-    ;
-
     public String getModel() {
         return model;
     }
-
-    ;
 
     public Boolean isUserPresenceRequired() {
         return userPresenceRequired;

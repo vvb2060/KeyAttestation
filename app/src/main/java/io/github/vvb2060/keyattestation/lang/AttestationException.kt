@@ -2,7 +2,7 @@ package io.github.vvb2060.keyattestation.lang
 
 import io.github.vvb2060.keyattestation.R
 
-class AttestationException(var code: Int, cause: Throwable?) : RuntimeException(cause) {
+class AttestationException(private var code: Int, cause: Throwable?) : RuntimeException(cause) {
 
     companion object {
         const val CODE_UNKNOWN = -1

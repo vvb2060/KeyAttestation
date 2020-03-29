@@ -69,7 +69,7 @@ open class AlertDialogFragment : DialogFragment() {
 
     private fun launchIntent(intent: Intent?) {
         if (intent != null) {
-            // TODO
+            //Do nothing.
         }
     }
 
