@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">447201635392-lv0t066fotca4f5dkto0cepl0b439ram.apps.googleusercontent.com</string>
+    <string name="firebase_database_url" translatable="false">https://key-attestation.firebaseio.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">447201635392</string>
+    <string name="google_api_key" translatable="false">AIzaSyDy8bGNHI_P_jTGDY9LisF-DyIs4DfVF08</string>
+    <string name="google_app_id" translatable="false">1:447201635392:android:ebb13b75322ae78b3583a5</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDy8bGNHI_P_jTGDY9LisF-DyIs4DfVF08</string>
+    <string name="google_storage_bucket" translatable="false">key-attestation.appspot.com</string>
+    <string name="project_id" translatable="false">key-attestation</string>
+</resources>

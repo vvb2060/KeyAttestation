@@ -42,6 +42,7 @@ android {
         exclude 'META-INF/**'
         exclude 'kotlin/**'
         exclude 'org/**'
+        exclude '**.properties'
     }
 
     lintOptions.checkReleaseBuilds false
@@ -95,4 +96,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
 }

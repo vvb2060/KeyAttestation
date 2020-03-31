@@ -9,9 +9,11 @@ import android.security.keystore.StrongBoxUnavailableException
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
+import io.github.vvb2060.keyattestation.attestation.RootOfTrust
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
@@ -35,6 +37,8 @@ class HomeViewModel : ViewModel() {
         private const val ORIGINATION_TIME_OFFSET = 1000000
         private const val CONSUMPTION_TIME_OFFSET = 2000000
     }
+
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val attestationResult = MediatorLiveData<Resource<AttestationResult>>()
 
@@ -70,6 +74,7 @@ class HomeViewModel : ViewModel() {
         val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
+            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             generateKey(alias, useStrongBox)
@@ -78,27 +83,43 @@ class HomeViewModel : ViewModel() {
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
+                firebaseAnalytics.setUserProperty("doAttestation", "StrongBox Unavailable")
                 throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
             } else {
                 // The device does not support key attestation
+                firebaseAnalytics.setUserProperty("doAttestation", "Not Support")
                 throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
             }
         } catch (e: Exception) {
             // Unable to get certificate
             // throw AttestationException(AttestationException.CODE_CANT_GET_CERT, e)
+            firebaseAnalytics.setUserProperty("doAttestation", "Unable Get Cert")
             throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs, context.resources.openRawResource(R.raw.status))
         } catch (e: Exception) {
             // Certificate is not trusted
+            firebaseAnalytics.setUserProperty("doAttestation", "Cert Not Trusted")
             throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
         }
         try {
             attestation = Attestation(certs[0])
         } catch (e: CertificateParsingException) {
             // Unable to parse attestation record
+            firebaseAnalytics.setUserProperty("doAttestation", "Parse Error")
             throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
+        }
+        firebaseAnalytics.apply {
+            setUserProperty("doAttestation", "Done")
+            setUserProperty("isGoogleRootCertificate", isGoogleRootCertificate.toString())
+            setUserProperty("attestationVersion", attestation.attestationVersion.toString())
+            setUserProperty("attestationSecurityLevel", attestation.attestationSecurityLevel
+                    .let { Attestation.securityLevelToString(it) })
+            setUserProperty("isDeviceLocked", attestation.teeEnforced?.rootOfTrust?.isDeviceLocked
+                    ?.toString() ?: "NULL")
+            setUserProperty("verifiedBootState", attestation.teeEnforced?.rootOfTrust?.verifiedBootState
+                    ?.let { RootOfTrust.verifiedBootStateToString(it) } ?: "NULL")
         }
         return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
