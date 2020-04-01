@@ -10,15 +10,21 @@
     <string name="not_google_cert">No Google Hardware Attestation Root certificate</string>
     <string name="not_google_cert_summary">Devices released before Android 7.0 (2016) or without pre-installed Google Play do not have the certificate.</string>
 
-    <string name="error_message_subtitle">Messages for developers</string>
+    <string name="error_message_subtitle">Error messages (for developers):</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_not_support">Not supported by your device</string>
-    <string name="error_not_support_summary">Your device does not support key attestation or the trusted environment on your device is broken.</string>
+    <string name="error_not_support_summary"><![CDATA[
+    Your device does not support key attestation or the trusted environment on your device is broken.
+    ]]></string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
-    <string name="error_cert_not_trusted_summary">The attestation key on your device is revoked or the generated certificate is invalid.</string>
+    <string name="error_cert_not_trusted_summary"><![CDATA[
+    The attestation key on your device is revoked or the generated certificate is invalid.
+    ]]></string>
     <string name="error_cant_parse_record">Unable to parse attestation record</string>
     <string name="error_strongbox_unavailable">StrongBox not available</string>
-    <string name="error_strongbox_unavailable_summary">Your device is declared to have StrongBox support but it is actually unavailable.\n\nYou turn it off in the menu.</string>
+    <string name="error_strongbox_unavailable_summary"><![CDATA[
+    Your device is declared to have StrongBox support but it is actually unavailable.
+    ]]></string>
 
     <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>

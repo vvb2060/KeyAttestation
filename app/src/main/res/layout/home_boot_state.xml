@@ -5,7 +5,7 @@
     style="@style/HomeCardStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/home_boot_state_background"
+    android:background="@drawable/home_item_background_solid"
     android:backgroundTintMode="src_in"
     android:drawablePadding="24dp"
     android:drawableTint="?android:textColorPrimaryInverse"

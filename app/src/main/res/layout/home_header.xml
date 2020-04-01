@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/HomeCardStyle"
-    android:background="@drawable/home_boot_state_background"
+    android:background="@drawable/home_item_background_solid"
     android:backgroundTintMode="src_in"
     android:gravity="center_vertical"
     android:orientation="horizontal"

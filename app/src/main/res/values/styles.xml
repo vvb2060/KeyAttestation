@@ -27,6 +27,7 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textAppearance">?textAppearanceBody2</item>
         <item name="android:textColor">@color/material_on_surface_emphasis_medium</item>
+        <item name="android:lineSpacingExtra">1sp</item>
     </style>
 
 </resources>

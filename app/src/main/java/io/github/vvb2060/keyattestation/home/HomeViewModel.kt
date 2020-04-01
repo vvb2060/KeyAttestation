@@ -200,6 +200,10 @@ class HomeViewModel : ViewModel() {
                             Log.w("KeyAttestation", "attestation error", it)
                         }
 
+                        if (useStrongBox) {
+                            preferStrongBox = false
+                        }
+
                         if (e is AttestationException) {
                             Resource.error(e, null)
                         } else {

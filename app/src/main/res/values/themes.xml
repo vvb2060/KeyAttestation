@@ -20,7 +20,7 @@
         <item name="notificationColor">@color/material_teal_500</item>
 
         <!--<item name="preferenceTheme">@style/ThemeOverlay.Preference</item>-->
-        <item name="appBarStyle">@style/Widget.AppBar.Solid</item>
+        <item name="appBarStyle">@style/Widget.AppBar</item>
         <item name="toolbarColor">@color/color_background_dark</item>
         <item name="colorSafe">@color/color_safe</item>
         <item name="colorWarning">@color/color_warning</item>
@@ -34,13 +34,7 @@
     </style>
 
     <style name="Widget.AppBar" parent="">
-        <item name="android:background">?toolbarColor</item>
         <item name="android:theme">?actionBarTheme</item>
-        <item name="android:stateListAnimator">@animator/raise_animator</item>
-        <item name="android:elevation">2dp</item>
-    </style>
-
-    <style name="Widget.AppBar.Solid">
         <item name="android:background">?android:colorBackground</item>
         <item name="android:stateListAnimator">@animator/raise_animator</item>
         <item name="android:elevation">0dp</item>

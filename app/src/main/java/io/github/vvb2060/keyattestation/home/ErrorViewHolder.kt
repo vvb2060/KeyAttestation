@@ -1,8 +1,11 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.view.View
+import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.databinding.HomeErrorBinding
+import io.github.vvb2060.keyattestation.ktx.toHtml
 import io.github.vvb2060.keyattestation.lang.AttestationException
+import rikka.html.text.HtmlCompat
 import rikka.recyclerview.BaseViewHolder.Creator
 
 class ErrorViewHolder(itemView: View, binding: HomeErrorBinding) : HomeViewHolder<AttestationException, HomeErrorBinding>(itemView, binding) {
@@ -16,14 +19,22 @@ class ErrorViewHolder(itemView: View, binding: HomeErrorBinding) : HomeViewHolde
     }
 
     override fun onBind() {
+        val context = itemView.context
         binding.apply {
             val sb = StringBuilder()
+            sb.append(context.getString(data.descriptionResId)).append("<p>")
+
+            //sb.append("<font face=\"sans-serif-medium\">")
+            sb.append(context.getString(R.string.error_message_subtitle)).append("<br>")
+            //sb.append("</font>")
+            sb.append("<font face=\"monospace\">")
             var tr = data.cause
             while (tr?.cause != null && tr.cause != tr) {
-                sb.append("${tr::class.java.name}: ${tr.message}").append("\n\n")
+                sb.append("${tr::class.java.name}: ${tr.message}").append("<br>")
                 tr = tr.cause
             }
-            text1.text = sb.trim().toString()
+            sb.append("</font>")
+            text1.text = sb.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
         }
     }
 }

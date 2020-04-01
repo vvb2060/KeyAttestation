@@ -96,7 +96,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         clear()
         addItem(HeaderViewHolder.CREATOR, HeaderData(
                 e.titleResId,
-                e.descriptionResId,
+                0,
                 R.drawable.ic_error_outline_24,
                 R.attr.colorInactive), ID_ERROR)
 
