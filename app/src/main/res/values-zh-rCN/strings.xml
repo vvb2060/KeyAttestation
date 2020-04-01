@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">密钥认证</string>
+    <string name="use_strongbox">使用 StrongBox</string>
+
+    <string name="bootloader_locked">Bootloader 已锁定</string>
+    <string name="bootloader_unlocked">Bootloader 已解锁</string>
+    <string name="bootloader_unknown">Bootloader 状态未知</string>
+    <string name="bootloader_unknown_summary_software_attestation">您的设备不支持硬件级别的密钥认证。</string>
+    <string name="not_google_cert">没有 Google 硬件认证根证书</string>
+    <string name="not_google_cert_summary">在 Android 7.0 发布前（2016 年）发布的设备或没有预装 Google Play 的设备没有该证书。</string>
+
+    <string name="error_message_subtitle">错误消息（针对开发者）：</string>
+    <string name="error_unknown">未知错误</string>
+    <string name="error_not_support">不被您的设备支持</string>
+    <string name="error_not_support_summary"><![CDATA[
+    您的设备不支持密钥证明，或者设备上的安全环境已损坏。
+    ]]></string>
+    <string name="error_cert_not_trusted">证书不受信任</string>
+    <string name="error_cert_not_trusted_summary"><![CDATA[
+    设备上的证明密钥被吊销或生成的证书无效。
+    ]]></string>
+    <string name="error_cant_parse_record">无法解析证明记录</string>
+    <string name="error_strongbox_unavailable">StrongBox 不可用</string>
+    <string name="error_strongbox_unavailable_summary"><![CDATA[
+    您的设备声明具有StrongBox支持，但实际上不可用。
+    ]]></string>
+
+    <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬件抽象层 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>实现的安全性。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>由 Android 实现。该级别比其他两种级别不安全很多且只应该出现在旧设备上.</li><li gap="8sp"><font face="sans-serif-medium">安全环境</font><br>在安全的硬件中实现，例如 TEE（Trusted Execution Environment，受信任的执行环境）。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在专用的硬件安全模块中实现。在 Android 9 发布后发布的设备可能安装该模块。</li></ul>]]></string>
+    <string name="attestation_summary_format">版本：%1$d\n安全等级：%2$s</string>
+    <string name="attestation_challenge_description"><![CDATA[质询值的目的是使依赖方能够验证是否已响应特定请求创建了密钥。<p>在生产环境中，质询值应每次都随机生成。]]></string>
+    <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过计算得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
+
+    <string name="empty">（空）</string>
+    <string name="security_level_software">软件</string>
+    <string name="security_level_trusted_environment">安全环境</string>
+    <string name="security_level_strongbox" translatable="false">StrongBox</string>
+
+    <string name="sw_enforced" translatable="false">SW</string>
+    <string name="sw_enforced_description"><![CDATA[此项目由 Android 系统（而非设备的 TEE）强制执行。]]></string>
+    <string name="tee_enforced" translatable="false">TEE</string>
+    <string name="tee_enforced_description"><![CDATA[此项目由设备的 TEE 强制执行。]]></string>
+</resources>

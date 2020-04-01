@@ -12,7 +12,7 @@ android {
         targetSdkVersion 29
         versionCode 3
         versionName '3.0'
-        resConfigs "en"
+        resConfigs "en", "zh-rCN"
     }
 
     buildTypes {
