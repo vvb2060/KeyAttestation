@@ -11,6 +11,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
@@ -189,12 +190,21 @@ class HomeViewModel : ViewModel() {
                     results[i] = try {
                         val attestationResult = doAttestation(context, ALIAS[i], useStrongBox)
                         Resource.success(attestationResult)
-                    } catch (e: AttestationException) {
-                        Log.i("KeyAttestation", "attestation error", e.cause!!)
-                        Resource.error(e, null)
                     } catch (e: Throwable) {
-                        Log.i("KeyAttestation", "attestation error", e.cause!!)
-                        Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                        val cause = if (e is AttestationException) e.cause!! else e
+                        cause.also {
+                            FirebaseCrashlytics.getInstance().apply {
+                                setCustomKey("useStrongBox", useStrongBox)
+                                recordException(it)
+                            }
+                            Log.w("KeyAttestation", "attestation error", it)
+                        }
+
+                        if (e is AttestationException) {
+                            Resource.error(e, null)
+                        } else {
+                            Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                        }
                     }
                 }
                 attestationResults.postValue(results)
@@ -219,5 +229,6 @@ class HomeViewModel : ViewModel() {
         } catch (e: CancellationException) {
             return@launch
         }
+
     }
 }

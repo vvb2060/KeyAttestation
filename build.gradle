@@ -16,6 +16,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0-beta03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta03'
     }
 }
 
