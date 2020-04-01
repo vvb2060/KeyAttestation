@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
@@ -42,8 +41,6 @@ class HomeViewModel : ViewModel() {
         private const val CONSUMPTION_TIME_OFFSET = 2000000
         private val ALIAS = arrayOf("Key1", "Key2")
     }
-
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val attestationResults = MediatorLiveData<Array<Resource<AttestationResult>>>()
 
@@ -127,7 +124,7 @@ class HomeViewModel : ViewModel() {
         return true
     }
 
-    private fun logSuccess(attestationResult: AttestationResult, hasStrongBox: Boolean) {
+    private fun logSuccess(firebaseAnalytics: FirebaseAnalytics, attestationResult: AttestationResult, hasStrongBox: Boolean) {
         try {
             firebaseAnalytics.apply {
                 setUserProperty("doAttestation", if (hasStrongBox && !attestationResult.isStrongBox) "Fallback" else "Done")
@@ -144,7 +141,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun logFailure(e: Throwable) {
+    private fun logFailure(firebaseAnalytics: FirebaseAnalytics, e: Throwable) {
         try {
             firebaseAnalytics.apply {
                 if (e is AttestationException) {
@@ -168,11 +165,8 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    @SuppressLint("HardwareIds")
+    @SuppressLint("MissingPermission", "HardwareIds")
     fun invalidateAttestations(context: Context) = viewModelScope.launch {
-        val ssaid = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context).apply { setUserId(ssaid) }
-        val firebaseCrashlytics = FirebaseCrashlytics.getInstance().apply { setUserId(ssaid) }
         val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
 
         attestationResults.postValue(results)
@@ -190,6 +184,9 @@ class HomeViewModel : ViewModel() {
 
         try {
             withContext(Dispatchers.IO) {
+                val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+                val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+
                 for (i in 0..1) {
                     val useStrongBox = i == 1
                     if (useStrongBox && !hasStrongBox) continue
@@ -223,15 +220,15 @@ class HomeViewModel : ViewModel() {
                 when {
                     strongBoxResult.status == Status.SUCCESS -> {
                         // StrongBox succeed
-                        logSuccess(strongBoxResult.data!!, hasStrongBox)
+                        logSuccess(firebaseAnalytics, strongBoxResult.data!!, hasStrongBox)
                     }
                     result.status == Status.SUCCESS -> {
                         // normal succeed
-                        logSuccess(result.data!!, hasStrongBox)
+                        logSuccess(firebaseAnalytics, result.data!!, hasStrongBox)
                     }
                     else -> {
                         // all failed
-                        logFailure(result.error as AttestationException)
+                        logFailure(firebaseAnalytics, result.error as AttestationException)
                     }
                 }
             }
