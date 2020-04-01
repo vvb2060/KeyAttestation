@@ -6,6 +6,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
+import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import io.github.vvb2060.keyattestation.attestation.RootOfTrust
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
+import io.github.vvb2060.keyattestation.util.Status
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,13 +38,14 @@ class HomeViewModel : ViewModel() {
 
         private const val ORIGINATION_TIME_OFFSET = 1000000
         private const val CONSUMPTION_TIME_OFFSET = 2000000
+        private val ALIAS = arrayOf("Key1", "Key2")
     }
 
-    val attestationResult = MediatorLiveData<Resource<AttestationResult>>()
-
-    var preferStrongBox = true
+    val attestationResults = MediatorLiveData<Array<Resource<AttestationResult>>>()
 
     val hasStrongBox = MediatorLiveData<Boolean>()
+
+    var preferStrongBox = true
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean) {
@@ -120,11 +123,11 @@ class HomeViewModel : ViewModel() {
         return true
     }
 
-    private fun logSuccess(context: Context, attestationResult: AttestationResult, hasStrongBox: Boolean?) {
+    private fun logSuccess(context: Context, attestationResult: AttestationResult, hasStrongBox: Boolean) {
         try {
             FirebaseAnalytics.getInstance(context).apply {
-                setUserProperty("doAttestation", "Done")
-                setUserProperty("hasStrongBox", hasStrongBox?.toString() ?: "NULL")
+                setUserProperty("doAttestation", if (hasStrongBox && !attestationResult.isStrongBox) "Fallback" else "Done")
+                setUserProperty("hasStrongBox", hasStrongBox.toString())
                 setUserProperty("isGoogleRootCertificate", attestationResult.isGoogleRootCertificate.toString())
                 setUserProperty("attestationVersion", attestationResult.attestation.attestationVersion.toString())
                 setUserProperty("attestationSecurityLevel", attestationResult.attestation.attestationSecurityLevel
@@ -162,8 +165,10 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun invalidateAttestation(context: Context) = viewModelScope.launch {
-        attestationResult.postValue(Resource.loading(null))
+    fun invalidateAttestations(context: Context) = viewModelScope.launch {
+        val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
+
+        attestationResults.postValue(results)
 
         if (hasStrongBox.value == null) {
             if (!loadHasStrongBox(context)) {
@@ -171,31 +176,48 @@ class HomeViewModel : ViewModel() {
             }
         }
 
-        val useStrongBox = hasStrongBox.value!! && preferStrongBox
+        val hasStrongBox = hasStrongBox.value == true
+        if (!hasStrongBox) {
+            preferStrongBox = false
+        }
 
         try {
             withContext(Dispatchers.IO) {
-                val alias = if (useStrongBox) "Key2" else "Key1"
-                val attestationResult = doAttestation(context, alias, useStrongBox)
-                if (hasStrongBox.value != true || (hasStrongBox.value == true && attestationResult.isStrongBox)) {
-                    logSuccess(context, attestationResult, hasStrongBox.value)
+                for (i in 0..1) {
+                    val useStrongBox = i == 1
+                    if (useStrongBox && !hasStrongBox) continue
+                    results[i] = try {
+                        val attestationResult = doAttestation(context, ALIAS[i], useStrongBox)
+                        Resource.success(attestationResult)
+                    } catch (e: AttestationException) {
+                        Log.i("KeyAttestation", "attestation error", e.cause!!)
+                        Resource.error(e, null)
+                    } catch (e: Throwable) {
+                        Log.i("KeyAttestation", "attestation error", e.cause!!)
+                        Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                    }
                 }
-                Resource.success(attestationResult)
+                attestationResults.postValue(results)
+
+                val strongBoxResult = results[1]
+                val result = results[0]
+                when {
+                    strongBoxResult.status == Status.SUCCESS -> {
+                        // StrongBox succeed
+                        logSuccess(context, strongBoxResult.data!!, hasStrongBox)
+                    }
+                    result.status == Status.SUCCESS -> {
+                        // normal succeed
+                        logSuccess(context, result.data!!, hasStrongBox)
+                    }
+                    else -> {
+                        // all failed
+                        logFailure(context, result.error as AttestationException)
+                    }
+                }
             }
         } catch (e: CancellationException) {
             return@launch
-        } catch (e: AttestationException) {
-            e.cause!!.printStackTrace()
-
-            logFailure(context, e)
-            Resource.error(e, null)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-
-            logFailure(context, e)
-            Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
-        }.let {
-            attestationResult.postValue(it)
         }
     }
 }

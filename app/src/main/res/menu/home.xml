@@ -6,9 +6,4 @@
         android:showAsAction="never"
         android:checkable="true"
         android:title="@string/use_strongbox" />
-
-    <item
-        android:id="@+id/logcat"
-        android:showAsAction="never"
-        android:title="@string/save_log" />
 </menu>

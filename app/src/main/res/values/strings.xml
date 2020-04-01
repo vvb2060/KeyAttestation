@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Key Attestation</string>
     <string name="use_strongbox">Use StrongBox</string>
-    <string name="save_log">Save log</string>
 
     <string name="bootloader_locked">Bootloader is locked</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>

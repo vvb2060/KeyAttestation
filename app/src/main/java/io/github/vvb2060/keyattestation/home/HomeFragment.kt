@@ -72,17 +72,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
             activity?.invalidateOptionsMenu()
         }
 
-        viewModel.attestationResult.observe(viewLifecycleOwner) {
-            when (it?.status) {
+        viewModel.attestationResults.observe(viewLifecycleOwner) {
+            val res = it[if (viewModel.preferStrongBox) 1 else 0]
+            when (res.status) {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
                     binding.list.isVisible = true
-                    adapter.updateData(it.data!!)
+                    adapter.updateData(res.data!!)
                 }
                 Status.ERROR -> {
                     binding.progress.isVisible = false
                     binding.list.isVisible = true
-                    adapter.updateData(it.error as AttestationException)
+                    adapter.updateData(res.error as AttestationException)
                 }
                 Status.LOADING -> {
                     binding.progress.isVisible = true
@@ -91,8 +92,8 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
             }
         }
 
-        if (viewModel.attestationResult.value == null) {
-            viewModel.invalidateAttestation(context)
+        if (viewModel.attestationResults.value == null) {
+            viewModel.invalidateAttestations(context)
         }
     }
 
@@ -154,7 +155,13 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         return if (item.itemId == R.id.use_strongbox) {
             item.isChecked = !item.isChecked
             viewModel.preferStrongBox = item.isChecked
-            viewModel.invalidateAttestation(requireContext())
+            val index = if (viewModel.preferStrongBox) 1 else 0
+            val res = viewModel.attestationResults.value?.get(index)
+            if (res?.status == Status.SUCCESS) {
+                adapter.updateData(res.data!!)
+            } else if (res?.status == Status.ERROR) {
+                adapter.updateData(res.error as AttestationException)
+            }
             preference.edit { putBoolean("prefer_strongbox", item.isChecked) }
             true
         } else super.onOptionsItemSelected(item)
