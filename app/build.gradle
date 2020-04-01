@@ -105,3 +105,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.3.0'
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta03'
 }
+
+android.applicationVariants.all { variant ->
+    if (variant.buildType.minifyEnabled) {
+        copy {
+            from 'src/main/res/values'
+            into "build/generated/res/google-services/${variant.getName()}/values"
+            include 'google-services.xml'
+            rename { String s ->
+                s.replace("google-services.xml", "values.xml")
+            }
+        }
+    }
+}
