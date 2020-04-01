@@ -38,8 +38,6 @@ class HomeViewModel : ViewModel() {
         private const val CONSUMPTION_TIME_OFFSET = 2000000
     }
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
-
     val attestationResult = MediatorLiveData<Resource<AttestationResult>>()
 
     var preferStrongBox = true
@@ -74,7 +72,6 @@ class HomeViewModel : ViewModel() {
         val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
-            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             generateKey(alias, useStrongBox)
@@ -83,44 +80,29 @@ class HomeViewModel : ViewModel() {
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
-                firebaseAnalytics.setUserProperty("doAttestation", "StrongBox Unavailable")
                 throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
             } else {
                 // The device does not support key attestation
-                firebaseAnalytics.setUserProperty("doAttestation", "Not Support")
                 throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
             }
         } catch (e: Exception) {
             // Unable to get certificate
             // throw AttestationException(AttestationException.CODE_CANT_GET_CERT, e)
-            firebaseAnalytics.setUserProperty("doAttestation", "Unable Get Cert")
             throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs, context.resources.openRawResource(R.raw.status))
         } catch (e: Exception) {
             // Certificate is not trusted
-            firebaseAnalytics.setUserProperty("doAttestation", "Cert Not Trusted")
             throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
         }
         try {
             attestation = Attestation(certs[0])
         } catch (e: CertificateParsingException) {
             // Unable to parse attestation record
-            firebaseAnalytics.setUserProperty("doAttestation", "Parse Error")
             throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
         }
-        firebaseAnalytics.apply {
-            setUserProperty("doAttestation", "Done")
-            setUserProperty("isGoogleRootCertificate", isGoogleRootCertificate.toString())
-            setUserProperty("attestationVersion", attestation.attestationVersion.toString())
-            setUserProperty("attestationSecurityLevel", attestation.attestationSecurityLevel
-                    .let { Attestation.securityLevelToString(it) })
-            setUserProperty("isDeviceLocked", attestation.teeEnforced?.rootOfTrust?.isDeviceLocked
-                    ?.toString() ?: "NULL")
-            setUserProperty("verifiedBootState", attestation.teeEnforced?.rootOfTrust?.verifiedBootState
-                    ?.let { RootOfTrust.verifiedBootStateToString(it) } ?: "NULL")
-        }
+
         return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
 
@@ -138,6 +120,48 @@ class HomeViewModel : ViewModel() {
         return true
     }
 
+    private fun logSuccess(context: Context, attestationResult: AttestationResult, hasStrongBox: Boolean?) {
+        try {
+            FirebaseAnalytics.getInstance(context).apply {
+                setUserProperty("doAttestation", "Done")
+                setUserProperty("hasStrongBox", hasStrongBox?.toString() ?: "NULL")
+                setUserProperty("isGoogleRootCertificate", attestationResult.isGoogleRootCertificate.toString())
+                setUserProperty("attestationVersion", attestationResult.attestation.attestationVersion.toString())
+                setUserProperty("attestationSecurityLevel", attestationResult.attestation.attestationSecurityLevel
+                        .let { Attestation.securityLevelToString(it) })
+                setUserProperty("isDeviceLocked", attestationResult.attestation.teeEnforced?.rootOfTrust?.isDeviceLocked
+                        ?.toString() ?: "NULL")
+                setUserProperty("verifiedBootState", attestationResult.attestation.teeEnforced?.rootOfTrust?.verifiedBootState
+                        ?.let { RootOfTrust.verifiedBootStateToString(it) } ?: "NULL")
+            }
+        } catch (e: Throwable) {
+        }
+    }
+
+    private fun logFailure(context: Context, e: Throwable) {
+        try {
+            FirebaseAnalytics.getInstance(context).apply {
+                if (e is AttestationException) {
+                    setUserProperty("doAttestation", when (e.code) {
+                        AttestationException.CODE_NOT_SUPPORT -> "Not support"
+                        AttestationException.CODE_CERT_NOT_TRUSTED -> "Unable get cert"
+                        AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD -> "Parse error"
+                        AttestationException.CODE_STRONGBOX_UNAVAILABLE -> "Fallback"
+                        else -> "Unknown"
+                    })
+                } else {
+                    setUserProperty("doAttestation", "Unknown")
+                }
+                setUserProperty("isGoogleRootCertificate", "NULL")
+                setUserProperty("attestationVersion", "NULL")
+                setUserProperty("attestationSecurityLevel", "NULL")
+                setUserProperty("isDeviceLocked", "NULL")
+                setUserProperty("verifiedBootState", "NULL")
+            }
+        } catch (e: Throwable) {
+        }
+    }
+
     fun invalidateAttestation(context: Context) = viewModelScope.launch {
         attestationResult.postValue(Resource.loading(null))
 
@@ -147,17 +171,28 @@ class HomeViewModel : ViewModel() {
             }
         }
 
+        val useStrongBox = hasStrongBox.value!! && preferStrongBox
+
         try {
             withContext(Dispatchers.IO) {
-                val useStrongBox = hasStrongBox.value!! && preferStrongBox
                 val alias = if (useStrongBox) "Key2" else "Key1"
-                Resource.success(doAttestation(context, alias, useStrongBox))
+                val attestationResult = doAttestation(context, alias, useStrongBox)
+                if (hasStrongBox.value != true || (hasStrongBox.value == true && attestationResult.isStrongBox)) {
+                    logSuccess(context, attestationResult, hasStrongBox.value)
+                }
+                Resource.success(attestationResult)
             }
         } catch (e: CancellationException) {
             return@launch
         } catch (e: AttestationException) {
+            e.cause!!.printStackTrace()
+
+            logFailure(context, e)
             Resource.error(e, null)
         } catch (e: Throwable) {
+            e.printStackTrace()
+
+            logFailure(context, e)
             Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
         }.let {
             attestationResult.postValue(it)
