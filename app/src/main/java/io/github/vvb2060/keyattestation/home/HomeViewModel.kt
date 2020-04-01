@@ -1,12 +1,13 @@
 package io.github.vvb2060.keyattestation.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,6 +42,8 @@ class HomeViewModel : ViewModel() {
         private const val CONSUMPTION_TIME_OFFSET = 2000000
         private val ALIAS = arrayOf("Key1", "Key2")
     }
+
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     val attestationResults = MediatorLiveData<Array<Resource<AttestationResult>>>()
 
@@ -124,11 +127,10 @@ class HomeViewModel : ViewModel() {
         return true
     }
 
-    private fun logSuccess(context: Context, attestationResult: AttestationResult, hasStrongBox: Boolean) {
+    private fun logSuccess(attestationResult: AttestationResult, hasStrongBox: Boolean) {
         try {
-            FirebaseAnalytics.getInstance(context).apply {
+            firebaseAnalytics.apply {
                 setUserProperty("doAttestation", if (hasStrongBox && !attestationResult.isStrongBox) "Fallback" else "Done")
-                setUserProperty("hasStrongBox", hasStrongBox.toString())
                 setUserProperty("isGoogleRootCertificate", attestationResult.isGoogleRootCertificate.toString())
                 setUserProperty("attestationVersion", attestationResult.attestation.attestationVersion.toString())
                 setUserProperty("attestationSecurityLevel", attestationResult.attestation.attestationSecurityLevel
@@ -142,9 +144,9 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun logFailure(context: Context, e: Throwable) {
+    private fun logFailure(e: Throwable) {
         try {
-            FirebaseAnalytics.getInstance(context).apply {
+            firebaseAnalytics.apply {
                 if (e is AttestationException) {
                     setUserProperty("doAttestation", when (e.code) {
                         AttestationException.CODE_NOT_SUPPORT -> "Not support"
@@ -166,7 +168,11 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    @SuppressLint("HardwareIds")
     fun invalidateAttestations(context: Context) = viewModelScope.launch {
+        val ssaid = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context).apply { setUserId(ssaid) }
+        val firebaseCrashlytics = FirebaseCrashlytics.getInstance().apply { setUserId(ssaid) }
         val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
 
         attestationResults.postValue(results)
@@ -193,11 +199,10 @@ class HomeViewModel : ViewModel() {
                     } catch (e: Throwable) {
                         val cause = if (e is AttestationException) e.cause!! else e
                         cause.also {
-                            FirebaseCrashlytics.getInstance().apply {
+                            firebaseCrashlytics.apply {
                                 setCustomKey("useStrongBox", useStrongBox)
                                 recordException(it)
                             }
-                            Log.w("KeyAttestation", "attestation error", it)
                         }
 
                         if (useStrongBox) {
@@ -218,15 +223,15 @@ class HomeViewModel : ViewModel() {
                 when {
                     strongBoxResult.status == Status.SUCCESS -> {
                         // StrongBox succeed
-                        logSuccess(context, strongBoxResult.data!!, hasStrongBox)
+                        logSuccess(strongBoxResult.data!!, hasStrongBox)
                     }
                     result.status == Status.SUCCESS -> {
                         // normal succeed
-                        logSuccess(context, result.data!!, hasStrongBox)
+                        logSuccess(result.data!!, hasStrongBox)
                     }
                     else -> {
                         // all failed
-                        logFailure(context, result.error as AttestationException)
+                        logFailure(result.error as AttestationException)
                     }
                 }
             }
