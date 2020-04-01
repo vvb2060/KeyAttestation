@@ -2,6 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.firebase.crashlytics'
 
+def gitCommitCount
+try {
+    gitCommitCount = Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+} catch(ignored) {
+    gitCommitCount = 1
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion '29.0.3'
@@ -10,8 +17,8 @@ android {
         applicationId 'io.github.vvb2060.keyattestation'
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 3
-        versionName '3.0'
+        versionCode gitCommitCount
+        versionName '1.0.0'
         resConfigs "en", "zh-rCN"
     }
 
