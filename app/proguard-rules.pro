@@ -8,3 +8,6 @@
 	public static void checkFieldIsNotNull(...);
 	public static void checkParameterIsNotNull(...);
 }
+
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception

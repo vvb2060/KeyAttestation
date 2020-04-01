@@ -1,6 +1,5 @@
 package io.github.vvb2060.keyattestation.home
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -165,7 +164,6 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    @SuppressLint("MissingPermission", "HardwareIds")
     fun invalidateAttestations(context: Context) = viewModelScope.launch {
         val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
 
