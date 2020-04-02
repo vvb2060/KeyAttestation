@@ -38,8 +38,8 @@
     <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is computed and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
 
     <string name="empty">(empty)</string>
-    <string name="security_level_software">Software</string>
-    <string name="security_level_trusted_environment">TrustedEnvironment</string>
+    <string name="security_level_software" translatable="false">Software</string>
+    <string name="security_level_trusted_environment" translatable="false">TrustedEnvironment</string>
     <string name="security_level_strongbox" translatable="false">StrongBox</string>
 
     <string name="sw_enforced" translatable="false">SW</string>
@@ -70,7 +70,8 @@
     <string name="authorization_list_applicationId">Application Id</string>
     <string name="authorization_list_creationDateTime">Creation date time</string>
     <string name="authorization_list_origin">Origin</string>
-    <string name="authorization_list_rootOfTrust">RootOfTrust</string>
+    <string name="authorization_list_rollbackResistant">Rollback Resistant</string>
+    <string name="authorization_list_rootOfTrust">Root Of Trust</string>
     <string name="authorization_list_osVersion">OS version</string>
     <string name="authorization_list_osPatchLevel">OS patch level</string>
     <string name="authorization_list_attestationApplicationId">Attestation application Id</string>
@@ -89,19 +90,23 @@
     This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.
     ]]></string>
     <string name="authorization_list_purpose_description"><![CDATA[
-    Specifies the set of purposes for which the key may be used.]]></string>
+    Specifies the set of purposes for which the key may be used.
+    ]]></string>
     <string name="authorization_list_algorithm_description"><![CDATA[
-    Specifies the cryptographic algorithm with which the key is used.
+    Specifies the cryptographic algorithm with which the key is used. In an attestation AuthorizationList object, the algorithm value is always RSA or EC.
     ]]></string>
     <string name="authorization_list_keySize_description"><![CDATA[
     Specifies the size, in bits, of the key, measuring in the normal way for the key\'s algorithm.
     ]]></string>
     <string name="authorization_list_digest_description"><![CDATA[
-    Specifies the digest algorithms that may be used with the key to perform signing and verification operations.
+    Specifies the digest algorithms that may be used with the key to perform signing and verification operations. This tag is relevant to RSA, ECDSA and HMAC keys.
     ]]></string>
-    <string name="authorization_list_padding_description"><![CDATA[Specifies the padding modes that may be used with the key. This tag is relevant to RSA and AES keys.
+    <string name="authorization_list_padding_description"><![CDATA[
+    Specifies the padding modes that may be used with the key. This tag is relevant to RSA and AES keys.
     ]]></string>
-    <string name="authorization_list_ecCurve_description" />
+    <string name="authorization_list_ecCurve_description"><![CDATA[
+    The set of parameters used to generate an elliptic curve (EC) key pair, which uses ECDSA for signing and verification, within the Android system keystore.
+    ]]></string>
     <string name="authorization_list_rsaPublicExponent_description"><![CDATA[
     Specifies the value of the public exponent for an RSA key pair. This tag is relevant only to RSA keys, and necessary for all RSA keys.
     ]]></string>
@@ -130,19 +135,19 @@
     This tag is applicable only for Android Wear devices with on-body sensors. At this point, it\'s not expected that any TEE will be able to provide secure access to an on-body sensor, or that on-body sensors are very secure, so this is expected to be a purely software-enforced feature.
     ]]></string>
     <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
-    Present only in key attestation version 3.<p>Specifies that this key is usable only if the user has provided proof of physical presence.
+    Specifies that this key is usable only if the user has provided proof of physical presence.
     ]]></string>
     <string name="authorization_list_trustedConfirmationRequired_description"><![CDATA[
-    Present only in key attestation version 3.<p>Specifies that the key is usable only if the user provides confirmation of the data to be signed using an approval token.
+    Specifies that the key is usable only if the user provides confirmation of the data to be signed using an approval token.
     ]]></string>
     <string name="authorization_list_unlockedDeviceRequired_description"><![CDATA[
-    Present only in key attestation version 3.
+    Require the device screen to be unlocked if the key is used.
     ]]></string>
     <string name="authorization_list_allApplications_description"><![CDATA[
     Indicates whether all apps on a device can access the key pair.
     ]]></string>
     <string name="authorization_list_applicationId_description"><![CDATA[
-
+    When provided to generateKey or importKey, this tag specifies data that is necessary during all uses of the key.
     ]]></string>
     <string name="authorization_list_creationDateTime_description"><![CDATA[
     Specifies the date and time the key was created, in milliseconds since January 1, 1970. This tag is optional and informational only.
@@ -150,46 +155,49 @@
     <string name="authorization_list_origin_description"><![CDATA[
     Specifies where the key was created, if known. This tag may not be specified during key generation or import, and must be added to the key characteristics by the trustlet.
     ]]></string>
+    <string name="authorization_list_rollbackResistant_description"><![CDATA[
+    Indicates that the key is rollback-resistant, meaning that when deleted by deleteKey or deleteAllKeys, the key is guaranteed to be permanently deleted and unusable. It\'s possible that keys without this tag could be deleted and then restored from backup.
+    ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
     This collection of values defines key information about the device\'s status.
     ]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
-    Present only in Keymaster version 1.0 or higher.<p>The version of the Android operating system associated with the Keymaster, specified as a six-digit integer. For example, version 8.1.0 is represented as 080100.
+    The version of the Android operating system associated with the Keymaster, specified as a six-digit integer. For example, version 8.1.0 is represented as 080100.
     ]]></string>
     <string name="authorization_list_osPatchLevel_description"><![CDATA[
-    Present only in Keymaster version 1.0 or higher.<p>The month and year associated with the security patch that is being used within the Keymaster, specified as a six-digit integer. For example, the August 2018 patch is represented as 201808.
+    The month and year associated with the security patch that is being used within the Keymaster, specified as a six-digit integer. For example, the August 2018 patch is represented as 201808.
     ]]></string>
     <string name="authorization_list_attestationApplicationId_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Used to identify the set of possible applications of which one has initiated a key attestation.
+    This data structure reflects the Android platform\'s belief as to which apps are allowed to use the secret key material under attestation. The ID can comprise multiple packages if and only if multiple packages share the same UID.
     ]]></string>
     <string name="authorization_list_attestationIdBrand_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the device\'s brand name, as returned by Build.BRAND in Android. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s brand name, as returned by Build.BRAND in Android. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdDevice_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the device\'s device name, as returned by Build.DEVICE in Android. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s device name, as returned by Build.DEVICE in Android. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdProduct_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the device\'s product name, as returned by Build.PRODUCT in Android. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s product name, as returned by Build.PRODUCT in Android. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdSerial_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.Provides the device\'s serial number. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s serial number. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the IMEIs for all radios on the device. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the IMEIs for all radios on the device. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdMeid_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the MEIDs for all radios on the device. This field will only be set when requesting attestation of the device\'s identifiers.
+    Provides the MEIDs for all radios on the device. This field will only be set when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the device\'s manufacturer name, as returned by Build.MANUFACTURER in Android. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s manufacturer name, as returned by Build.MANUFACTURER in Android. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdModel_description"><![CDATA[
-    Present only in key attestation versions 2 and 3.<p>Provides the device\'s model name, as returned by Build.MODEL in Android. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the device\'s model name, as returned by Build.MODEL in Android. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
-    Present only in key attestation version 3.<p>Specifies the vendor image security patch level that must be installed on the device for this key to be used. The value appears in the form YYYYMMDD, representing the date of the vendor security patch. For example, if a key were generated on an Android device with the vendor\'s August 1, 2018 security patch installed, this value would be 20180801.
+    Specifies the vendor image security patch level that must be installed on the device for this key to be used. The value appears in the form YYYYMMDD, representing the date of the vendor security patch. For example, if a key were generated on an Android device with the vendor\'s August 1, 2018 security patch installed, this value would be 20180801.
     ]]></string>
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
-    Present only in key attestation version 3.<p>Specifies the kernel image security patch level that must be installed on the device for this key to be used. The value appears in the form YYYYMMDD, representing the date of the system security patch. For example, if a key were generated on an Android device with the system\'s August 5, 2018 security patch installed, this value would be 20180805.
+    Specifies the kernel image security patch level that must be installed on the device for this key to be used. The value appears in the form YYYYMMDD, representing the date of the system security patch. For example, if a key were generated on an Android device with the system\'s August 5, 2018 security patch installed, this value would be 20180805.
     ]]></string>
 </resources>

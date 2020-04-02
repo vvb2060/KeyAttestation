@@ -415,7 +415,7 @@ public class AuthorizationList {
                 .toString();
     }
 
-    private static String formatDate(Date date) {
+    public static String formatDate(Date date) {
         return DateFormat.getDateTimeInstance().format(date);
     }
 
