@@ -6,40 +6,152 @@
     <string name="bootloader_locked">Bootloader 已锁定</string>
     <string name="bootloader_unlocked">Bootloader 已解锁</string>
     <string name="bootloader_unknown">Bootloader 状态未知</string>
-    <string name="bootloader_unknown_summary_software_attestation">您的设备不支持硬件级别的密钥认证。</string>
+    <string name="bootloader_unknown_summary_software_attestation">该设备不支持硬件级别的密钥认证。</string>
     <string name="not_google_cert">没有 Google 硬件认证根证书</string>
-    <string name="not_google_cert_summary">在 Android 7.0 发布前（2016 年 8 月）发布的设备或没有预装 Google Play 的设备没有该证书。</string>
+    <string name="not_google_cert_summary">出厂版本在 Android 7.0 之前或没有预装 Google Play 的设备没有该证书。</string>
 
-    <string name="error_message_subtitle">错误消息（针对开发者）：</string>
+    <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>
-    <string name="error_not_support">不被您的设备支持</string>
+    <string name="error_not_support">该设备不支持密钥认证</string>
     <string name="error_not_support_summary"><![CDATA[
-    这不表明我们的应用有问题，相反这可能是因为您的设备制造商没有正确地实现密钥证明功能。<br>另外一种可能的情况是，您的设备上的安全环境已损坏。对于少部分厂商的部分设备，只要解锁 bootloader，安全环境就会被破坏。
+    该设备未实现密钥认证功能，或设备的安全环境已损坏。<br>处理方法：咨询该设备的制造商，是否支持密钥认证功能以及安全环境自毁条件，例如解锁 Bootloader。
     ]]></string>
     <string name="error_cert_not_trusted">证书不受信任</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
-    设备上的证明密钥被吊销或生成的证书无效。
+    证书链中有证书被吊销或生成的证书无效。
     ]]></string>
     <string name="error_cant_parse_record">无法解析证明记录</string>
     <string name="error_strongbox_unavailable">StrongBox 不可用</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
-    您的设备声明具有 StrongBox 支持，但实际上不可用。
+    该设备声明具有 StrongBox 支持，但实际上不可用。
     ]]></string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬件抽象层 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
-    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>实现的安全性。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>由 Android 实现。该级别比其他两种级别不安全很多且只应该出现在旧设备上.</li><li gap="8sp"><font face="sans-serif-medium">安全环境</font><br>在安全的硬件中实现，例如 TEE（Trusted Execution Environment，受信任的执行环境）。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在专用的硬件安全模块中实现。在 Android 9 发布后（2018 年 8 月）发布的设备可能安装该模块。</li></ul>]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>在 Android 系统中实现。此位置没有 TEE 安全，但比应用的进程空间安全，能抵御针对应用的攻击。</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>在安全硬件中实现，例如 TEE（Trusted Execution Environment，受信任的执行环境），能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在专用的硬件安全模块中实现，能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
     <string name="attestation_summary_format">版本：%1$d\n安全等级：%2$s</string>
     <string name="attestation_challenge_description"><![CDATA[质询值的目的是使依赖方能够验证是否已响应特定请求创建了密钥。<p>在生产环境中，质询值应每次都随机生成。]]></string>
     <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过计算得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
 
     <string name="empty">（空）</string>
-    <string name="security_level_software">软件</string>
-    <string name="security_level_trusted_environment">安全环境</string>
-    <string name="security_level_strongbox" translatable="false">StrongBox</string>
 
     <string name="sw_enforced" translatable="false">SW</string>
     <string name="sw_enforced_description"><![CDATA[此项目由 Android 系统（而非设备的 TEE）强制执行。]]></string>
     <string name="tee_enforced" translatable="false">TEE</string>
     <string name="tee_enforced_description"><![CDATA[此项目由设备的 TEE 强制执行。]]></string>
+
+    <string name="authorization_list_description"><![CDATA[
+    此数据结构包含密钥对的属性本身，如 Keymaster 硬件抽象层 (HAL) 中所定义。<p>应用开发者将这些值与设备的当前状态或一组预期值进行比较，以验证密钥对是否仍适用。
+    ]]></string>
+    <string name="authorization_list_purpose_description"><![CDATA[
+    用于指定相应密钥可用于哪些目的。
+    ]]></string>
+    <string name="authorization_list_algorithm_description"><![CDATA[
+    用于指定与相应密钥配合使用的加密算法。在认证 AuthorizationList 对象中，算法值始终为 RSA 或 EC。
+    ]]></string>
+    <string name="authorization_list_keySize_description"><![CDATA[
+    用于指定相应密钥的大小（以位数计，按适用于相应密钥算法的一般方式衡量）。
+    ]]></string>
+    <string name="authorization_list_digest_description"><![CDATA[
+    用于指定可与相应密钥配合使用以执行签名和验证操作的摘要算法。此标记与 RSA 密钥、ECDSA 密钥和 HMAC 密钥有关。
+    ]]></string>
+    <string name="authorization_list_padding_description"><![CDATA[
+    用于指定可与相应密钥配合使用的填充模式。此标记与 RSA 密钥和 AES 密钥有关。
+    ]]></string>
+    <string name="authorization_list_ecCurve_description"><![CDATA[
+    用于生成椭圆曲线 (EC) 密钥对的参数集，该参数集在 Android 系统密钥库中使用 ECDSA 进行签名和验证。
+    ]]></string>
+    <string name="authorization_list_rsaPublicExponent_description"><![CDATA[
+    用于为 RSA 密钥对指定公开指数的值。此标记仅与 RSA 密钥有关，而且是所有 RSA 密钥都必需的标记。
+    ]]></string>
+    <string name="authorization_list_rollbackResistance_description"><![CDATA[
+    用于表明密钥可抗回滚，也就是说，当通过 deleteKey 或 deleteAllKeys 删除密钥后，可保证该密钥已被永久删除且无法再使用。如果密钥不带此标记，那么在被删除后，可能能够从备份中恢复。
+    ]]></string>
+    <string name="authorization_list_activeDateTime_description"><![CDATA[
+    用于指定相应密钥变为有效状态的日期和时间。
+    ]]></string>
+    <string name="authorization_list_originationExpireDateTime_description"><![CDATA[
+    用于指定相应密钥无法再用于签名和加密目的的过期日期和时间。
+    ]]></string>
+    <string name="authorization_list_usageExpireDateTime_description"><![CDATA[
+    用于指定相应密钥无法再用于验证和解密目的的过期日期和时间。
+    ]]></string>
+    <string name="authorization_list_noAuthRequired_description"><![CDATA[
+    用于指定无需进行身份验证即可使用相应密钥。
+    ]]></string>
+    <string name="authorization_list_userAuthType_description"><![CDATA[
+    用于指定可以使用哪些类型的用户身份验证程序来授权使用相应密钥。
+    ]]></string>
+    <string name="authorization_list_authTimeout_description"><![CDATA[
+    用于指定授权在多长时间内使用相应密钥（以秒数计，从通过身份验证开始算起）。
+    ]]></string>
+    <string name="authorization_list_allowWhileOnBody_description"><![CDATA[
+    此标记仅适用于配备贴身传感器的 Android Wear 设备。目前，TEE 并不能提供对贴身传感器的安全访问，贴身传感器也不是非常安全，因此这应该是一项完全由软件强制执行的功能。
+    ]]></string>
+    <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
+    指定仅在用户提供了物理存在证明时，此密钥才可用。
+    ]]></string>
+    <string name="authorization_list_trustedConfirmationRequired_description"><![CDATA[
+    指定仅在用户确认使用审批令牌签署数据时，此密钥才可用。
+    ]]></string>
+    <string name="authorization_list_unlockedDeviceRequired_description"><![CDATA[
+    要求解锁设备屏幕后才能使用该密钥。
+    ]]></string>
+    <string name="authorization_list_allApplications_description"><![CDATA[
+    指示设备上的所有应用是否都可以访问密钥对。
+    ]]></string>
+    <string name="authorization_list_applicationId_description"><![CDATA[
+    将此标记提供给 generateKey 或 importKey 后，此标记用于指定使用相应密钥时均须提供的数据。
+    ]]></string>
+    <string name="authorization_list_creationDateTime_description"><![CDATA[
+    用于指定相应密钥的创建日期和时间（以距 1970 年 1 月 1 日的毫秒数计）。此标记为可选标记，仅供参考。
+    ]]></string>
+    <string name="authorization_list_origin_description"><![CDATA[
+    用于指定相应密钥是在哪里创建的（如果知道）。在生成或导入密钥期间可以不指定此标记，但此标记必须要由 Trustlet 添加到密钥特性中。
+    ]]></string>
+    <string name="authorization_list_rollbackResistant_description"><![CDATA[
+    用于表明密钥可抗回滚，也就是说，当通过 deleteKey 或 deleteAllKeys 删除密钥后，可保证该密钥已被永久删除且无法再使用。如果密钥不带此标记，那么在被删除后，可能能够从备份中恢复。
+    ]]></string>
+    <string name="authorization_list_rootOfTrust_description"><![CDATA[
+    这个值集合可以定义与设备状态有关的密钥信息。
+    ]]></string>
+    <string name="authorization_list_osVersion_description"><![CDATA[
+    与 Keymaster 关联的 Android 操作系统的版本，使用一个 6 位整数表示。例如，版本 8.1.0 表示为 080100。
+    ]]></string>
+    <string name="authorization_list_osPatchLevel_description"><![CDATA[
+    与 Keymaster 中使用的安全补丁程序关联的月份和年度，使用一个 6 位整数表示。例如，2018 年 8 月的补丁程序表示为 201808。
+    ]]></string>
+    <string name="authorization_list_attestationApplicationId_description"><![CDATA[
+    此数据结构反映了 Android 平台对于允许哪些应用使用认证中的密钥材料的观点。当且仅当多个软件包共享同一 UID 时，此 ID 才可以包含多个软件包。
+    ]]></string>
+    <string name="authorization_list_attestationIdBrand_description"><![CDATA[
+    提供设备的品牌名称（由 Android 中的 Build.BRAND 返回）。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdDevice_description"><![CDATA[
+    提供设备的设备名称（由 Android 中的 Build.DEVICE 返回）。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdProduct_description"><![CDATA[
+    提供设备的产品名称（由 Android 中的 Build.PRODUCT 返回）。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdSerial_description"><![CDATA[
+    提供设备的序列号。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdImei_description"><![CDATA[
+    为设备上的所有无线装置提供 IMEI。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdMeid_description"><![CDATA[
+    为设备上的所有无线装置提供 MEID。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
+    提供设备的制造商名称（由 Android 中的 Build.MANUFACTURER 返回）。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdModel_description"><![CDATA[
+    提供设备的型号名称（由 Android 中的 Build.MODEL 返回）。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
+    指定要使用此密钥必须在设备上安装的供应商映像安全补丁程序级别。此值以 YYYYMMDD 的形式显示，表示供应商安全补丁程序的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了供应商于 2018 年 8 月 1 日提供的安全补丁程序，其值将表示为 20180801。
+    ]]></string>
+    <string name="authorization_list_bootPatchLevel_description"><![CDATA[
+    指定要使用此密钥必须在设备上安装的内核映像安全补丁程序级别。此值以 YYYYMMDD 的形式显示，表示系统安全补丁程序的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了系统于 2018 年 8 月 5 日提供的安全补丁程序，其值将表示为 20180805。
+    ]]></string>
 </resources>
