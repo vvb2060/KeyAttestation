@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">金鑰认证</string>
+    <string name="use_strongbox">使用 StrongBox</string>
+
+    <string name="bootloader_locked">Bootloader 狀態已鎖定</string>
+    <string name="bootloader_unlocked">Bootloader 狀態已解鎖</string>
+    <string name="bootloader_unknown">Bootloader 状态不明</string>
+    <string name="bootloader_unknown_summary_software_attestation">您的裝置不支援硬體等級的金鑰認證。</string>
+    <string name="not_google_cert">没有 Google 硬體認證的根證書</string>
+    <string name="not_google_cert_summary">在 Android 7.0 發佈前（2016 年）發佈過的裝置或没有內建 Google Play 的裝置不會有該證書。</string>
+
+    <string name="error_message_subtitle">錯誤訊息（針對開發者）：</string>
+    <string name="error_unknown">不明的錯誤</string>
+    <string name="error_not_support">您的裝置不支援認證</string>
+    <string name="error_not_support_summary"><![CDATA[
+    您的裝置不支援金鑰證明或者裝置上的安全環境已損毀。
+    ]]></string>
+    <string name="error_cert_not_trusted">證書不被信任</string>
+    <string name="error_cert_not_trusted_summary"><![CDATA[
+    裝置上的金鑰證明已被吊銷或者產生的證書無效。
+    ]]></string>
+    <string name="error_cant_parse_record">無法分析證明紀錄</string>
+    <string name="error_strongbox_unavailable">StrongBox 無法使用</string>
+    <string name="error_strongbox_unavailable_summary"><![CDATA[
+    您的裝置聲明具有 StrongBox 支援，但實際上無法使用。
+    ]]></string>
+
+    <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>金鑰认证功能的版本。]]></string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬體抽象層（HAL）的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>實現的安全性。<p><ul><li gap="8sp"><font face="sans-serif-medium">軟體</font><br>由 Android 實現。此等級比其他兩種等級更不安全且只應該出現在舊裝置上。</li><li gap="8sp"><font face="sans-serif-medium">安全環境</font><br>在安全的硬體中實現，例如：TEE（Trusted Execution Environment，受信任的執行環境）。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在專用的硬體安全模組中實現。在 Android 9（2018年）發佈後的裝置可能安裝該模組。</li></ul>]]></string>
+    <string name="attestation_summary_format">版本：%1$d\n安全等级：%2$s</string>
+    <string name="attestation_challenge_description"><![CDATA[質詢值的目的是讓依賴方能夠驗證是否已回應特定需求產生了金鑰。<p>在生產環境中，質詢值應每次都隨機產生。]]></string>
+    <string name="unique_id_description"><![CDATA[此值雖然僅使用於標識裝置，但只能在限定時間內使用。此值通過計算後只能由系統應用程式使用。在所有其他的應用程式中，uniqueId 是空白的。]]></string>
+
+    <string name="empty">（空白）</string>
+    <string name="security_level_software">軟體</string>
+    <string name="security_level_trusted_environment">安全環境</string>
+    <string name="security_level_strongbox" translatable="false">StrongBox</string>
+
+    <string name="sw_enforced" translatable="false">SW</string>
+    <string name="sw_enforced_description"><![CDATA[此項目由 Android 系统（而非裝置的 TEE）強制執行。]]></string>
+    <string name="tee_enforced" translatable="false">TEE</string>
+    <string name="tee_enforced_description"><![CDATA[此項目由裝置的 TEE 強制執行。]]></string>
+</resources>
