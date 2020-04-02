@@ -1,7 +1,10 @@
 package io.github.vvb2060.keyattestation.home
 
+import com.google.common.base.CharMatcher
+import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
-import io.github.vvb2060.keyattestation.attestation.*
+import io.github.vvb2060.keyattestation.attestation.AttestationResult
+import io.github.vvb2060.keyattestation.attestation.AuthorizationList
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
@@ -55,12 +58,16 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.attestation_challenge,
                 R.string.attestation_challenge_description,
-                attestation.attestationChallengeOrBase64), id++)
+                attestation.attestationChallenge?.let {
+                    val stringChallenge = String(it)
+                    if (CharMatcher.ascii().matchesAllOf(stringChallenge)) stringChallenge
+                    else BaseEncoding.base64().encode(it) + " (base64)"
+                }), id++)
 
         addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.unique_id,
                 R.string.unique_id_description,
-                attestation.uniqueIdBase64), id++)
+                attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id++)
 
         id = ID_AUTHORIZATION_LIST_START
         addItem(SubtitleViewHolder.CREATOR, SubtitleData(
@@ -134,19 +141,19 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
         private fun createAuthorizationItems(list: AuthorizationList): Array<String?> {
             return arrayOf(
-                    list.purposesDisplay,
-                    list.algorithmDisplay,
+                    list.purposes?.let { AuthorizationList.purposesToString(it) },
+                    list.algorithm?.let { AuthorizationList.algorithmToString(it) },
                     list.keySize?.toString(),
-                    list.digestsDisplay,
-                    list.paddingDisplay,
-                    list.ecCurveDisplay,
+                    list.digests?.let { AuthorizationList.digestsToString(it) },
+                    list.paddingModes?.let { AuthorizationList.paddingModesToString(it) },
+                    list.ecCurve?.let { AuthorizationList.ecCurveAsString(it) },
                     list.rsaPublicExponent?.toString(),
                     list.rollbackResistance?.toString(),
                     list.activeDateTime?.let { AuthorizationList.formatDate(it) },
                     list.originationExpireDateTime?.let { AuthorizationList.formatDate(it) },
                     list.usageExpireDateTime?.let { AuthorizationList.formatDate(it) },
                     list.noAuthRequired?.toString(),
-                    list.userAuthDisplay,
+                    list.userAuthType?.let { AuthorizationList.userAuthTypeToString(it) },
                     list.authTimeout?.toString(),
                     list.allowWhileOnBody?.toString(),
                     list.isUserPresenceRequired?.toString(),
@@ -157,10 +164,10 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.creationDateTime?.let { AuthorizationList.formatDate(it) },
                     list.origin?.let { AuthorizationList.originToString(it) },
                     list.rollbackResistant?.toString(),
-                    list.rootOfTrustDisplay,
+                    list.rootOfTrust?.toString(),
                     list.osVersion?.toString(),
                     list.osPatchLevel?.toString(),
-                    list.attestationApplicationIdDisplay,
+                    list.attestationApplicationId?.toString()?.trim(),
                     list.brand,
                     list.device,
                     list.product,

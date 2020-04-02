@@ -495,7 +495,7 @@ public class AuthorizationList {
         return ecCurve;
     }
 
-    public String ecCurveAsString() {
+    public static String ecCurveAsString(Integer ecCurve) {
         if (ecCurve == null)
             return "NULL";
 
@@ -698,7 +698,7 @@ public class AuthorizationList {
         }
 
         if (ecCurve != null) {
-            s.append("\nEC Curve: ").append(ecCurveAsString());
+            s.append("\nEC Curve: ").append(ecCurveAsString(ecCurve));
         }
 
         String label = "\nRSA exponent: ";
@@ -718,14 +718,14 @@ public class AuthorizationList {
             s.append("\nUsage expire: ").append(formatDate(usageExpireDateTime));
         }
 
-        if (noAuthRequired) s.append("\nNo Auth Required: true");
+        if (noAuthRequired != null) s.append("\nNo Auth Required: true");
         else if (userAuthType != null) {
             s.append("\nAuth types: ").append(userAuthTypeToString(userAuthType));
             if (authTimeout != null) s.append("\nAuth timeout: ").append(authTimeout);
-            if (allowWhileOnBody) s.append("\nAllow While On Body: true");
+            if (allowWhileOnBody != null) s.append("\nAllow While On Body: true");
         }
 
-        if (allApplications) {
+        if (allApplications != null) {
             s.append("\nAll Applications: true");
         }
 
@@ -741,11 +741,11 @@ public class AuthorizationList {
             s.append("\nOrigin: ").append(originToString(origin));
         }
 
-        if (rollbackResistant) {
+        if (rollbackResistant != null) {
             s.append("\nRollback resistant: true");
         }
 
-        if (rollbackResistance) {
+        if (rollbackResistance != null) {
             s.append("\nRollback resistance: true");
         }
 
@@ -771,18 +771,18 @@ public class AuthorizationList {
         }
 
         if (attestationApplicationId != null) {
-            s.append("\nAttestation Application Id:").append(attestationApplicationId);
+            s.append("\nAttestation Application Id:\n").append(attestationApplicationId);
         }
 
-        if (userPresenceRequired) {
+        if (userPresenceRequired != null) {
             s.append("\nUser presence required");
         }
 
-        if (confirmationRequired) {
+        if (confirmationRequired != null) {
             s.append("\nConfirmation required");
         }
 
-        if (unlockedDeviceRequired) {
+        if (unlockedDeviceRequired != null) {
             s.append("\nUnlocked Device Required");
         }
 

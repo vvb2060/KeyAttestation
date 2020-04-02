@@ -91,13 +91,13 @@ public class RootOfTrust {
     public String toString() {
         StringBuilder sb = new StringBuilder()
                 .append("Verified boot Key: ")
-                .append(BaseEncoding.base64().encode(verifiedBootKey))
-                .append("\nDevice locked: ")
-                .append(deviceLocked)
-                .append("\nVerified boot state: ")
-                .append(verifiedBootStateToString(verifiedBootState));
-        if (verifiedBootHash != null) sb.append("\nVerified Boot Hash: ")
-                .append(BaseEncoding.base64().encode(verifiedBootHash));
+                .append(BaseEncoding.base64().encode(verifiedBootKey)).append(" (base64)").append('\n')
+                .append("Device locked: ")
+                .append(deviceLocked).append('\n')
+                .append("Verified boot state: ")
+                .append(verifiedBootStateToString(verifiedBootState)).append('\n');
+        if (verifiedBootHash != null) sb.append("Verified Boot Hash: ")
+                .append(BaseEncoding.base64().encode(verifiedBootHash)).append(" (base64)");
         return sb.toString();
     }
 }

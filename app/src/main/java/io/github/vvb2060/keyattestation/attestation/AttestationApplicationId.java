@@ -97,16 +97,18 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
         int noOfInfos = packageInfos.size();
         int i = 1;
         for (AttestationPackageInfo info : packageInfos) {
-            sb.append("\n### Package info " + i++ + "/" + noOfInfos + " ###\n");
+            sb.append("Package info " + i++ + "/" + noOfInfos + ":\n");
             sb.append(info);
         }
+        sb.append('\n');
         i = 1;
         int noOfSigs = signatureDigests.size();
         for (byte[] sig : signatureDigests) {
-            sb.append("\nSignature digest " + i++ + "/" + noOfSigs + ":");
+            sb.append("Signature digest " + i++ + "/" + noOfSigs + ":\n");
             for (byte b : sig) {
-                sb.append(String.format(" %02X", b));
+                sb.append(String.format("%02X ", b));
             }
+            sb.append('\n');
         }
         return sb.toString();
     }
