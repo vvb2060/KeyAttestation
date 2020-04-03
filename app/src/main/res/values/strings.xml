@@ -6,15 +6,15 @@
     <string name="bootloader_locked">Bootloader is locked</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
-    <string name="bootloader_unknown_summary_software_attestation">Your device does not support hardware-level key attestation.</string>
+    <string name="bootloader_unknown_summary_software_attestation">This device does not support hardware-level key attestation.</string>
     <string name="not_google_cert">No Google Hardware Attestation Root certificate</string>
-    <string name="not_google_cert_summary">Devices released before Android 7.0 (August, 2016) or without pre-installed Google Play do not have the certificate.</string>
+    <string name="not_google_cert_summary">Devices that ship with Android 7.0 or without pre-installed Google Play do not have the certificate.</string>
 
-    <string name="error_message_subtitle">Error messages:</string>
+    <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="error_not_support">Not supported by your device</string>
+    <string name="error_not_support">Not supported by this device</string>
     <string name="error_not_support_summary"><![CDATA[
-    Your device does not support key attestation or the trusted environment on your device is broken. <br> Solution: Consult the manufacturer of the device, whether it supports the key attestation and the conditions of the trusted environment self-destruction, such as unlocking the bootloader.
+    This device does not support key attestation or the trusted environment on this device is broken.<br>Solution: Consult the device manufacturer whether the device supports key attestation function and the self-destruction conditions of the trusted environment, such as unlocking the bootloader.
     ]]></string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
@@ -23,7 +23,7 @@
     <string name="error_cant_parse_record">Unable to parse attestation record</string>
     <string name="error_strongbox_unavailable">StrongBox not available</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
-    Your device is declared to have StrongBox support but it is actually unavailable.
+    This device is declared to have StrongBox support but it is actually unavailable.
     ]]></string>
 
     <string name="attestation" translatable="false">Attestation</string>
