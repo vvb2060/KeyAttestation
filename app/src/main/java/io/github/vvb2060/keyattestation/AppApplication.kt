@@ -3,9 +3,7 @@ package io.github.vvb2060.keyattestation
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import android.provider.Settings
-import com.google.common.io.BaseEncoding
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import rikka.html.text.HtmlCompat
@@ -22,12 +20,16 @@ class AppApplication : Application() {
     @SuppressLint("HardwareIds")
     private fun getUserId(context: Context): String? {
         val ssaid = try {
-            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID).trim()
         } catch (e: Throwable) {
-            null
-        } ?: return null
-
-        return BaseEncoding.base64().encode((Build.BRAND + Build.MODEL + ssaid).toByteArray())
+            return null
+        }
+        try {
+            if (ssaid == "9774d56d682e549c") return null
+            if (Integer.parseInt(ssaid, 16) == 0) return null
+        } catch (e: Throwable) {
+        }
+        return ssaid
     }
 
     override fun onCreate() {
