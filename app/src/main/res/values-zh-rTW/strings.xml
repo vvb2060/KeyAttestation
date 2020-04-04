@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">金鑰認證</string>
+    <string name="use_strongbox">使用 StrongBox</string>
+
+    <string name="bootloader_locked">Bootloader 已鎖定</string>
+    <string name="bootloader_unlocked">Bootloader 已解鎖</string>
+    <string name="bootloader_unknown">Bootloader 狀態未知</string>
+    <string name="bootloader_unknown_summary_software_attestation">該裝置不支援硬體等級的金鑰認證。</string>
+    <string name="not_google_cert">沒有 Google 硬體認證根證書</string>
+    <string name="not_google_cert_summary">出廠版本在 Android 7.0 之前或沒有內建 Google Play 的裝置不會有該證書。</string>
+
+    <string name="error_message_subtitle">細節訊息：</string>
+    <string name="error_unknown">未知錯誤</string>
+    <string name="error_not_support">該裝置不支援金鑰認證</string>
+    <string name="error_not_support_summary"><![CDATA[
+    該裝置未實現金鑰認證功能，或裝置的安全環境已損壞。<br>處理方法：咨詢該裝置的製造商，是否支援金鑰認證功能以及安全環境自毀的條件，例如：解鎖 Bootloader。
+    ]]></string>
+    <string name="error_cert_not_trusted">證書不受信任</string>
+    <string name="error_cert_not_trusted_summary"><![CDATA[
+    證書鏈中有證書被吊銷或產生的證書無效。
+    ]]></string>
+    <string name="error_cant_parse_record">無法剖析證明記錄</string>
+    <string name="error_strongbox_unavailable">無法使用 StrongBox</string>
+    <string name="error_strongbox_unavailable_summary"><![CDATA[
+    該裝置宣告具有 StrongBox 的支援，但實際上無法使用。
+    ]]></string>
+
+    <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>金鑰認證功能的版本。]]></string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬體抽像層 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等級：</font><br>表示功能受保護的程度是以在裝置中的位置為基準。<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>在 Android 系統中實現。此位置沒有 TEE 安全，但比應用程式的程序空間安全，能抵禦針對應用程式的攻擊。</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>在安全硬體中實現，例如：TEE（Trusted Execution Environment，受信任的執行環境），能抵禦遠端攻擊。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在專用的硬體安全模組中實現，能抵禦遠端攻擊和針對模組的硬體攻擊。</li></ul>]]></string>
+    <string name="attestation_summary_format">版本：%1$d\n安全等級：%2$s</string>
+    <string name="attestation_challenge_description"><![CDATA[質詢值的目的是使依賴方能夠驗證是否已回應特定要求建立了金鑰。<p>在生產環境中，質詢值應每次都隨機產生。]]></string>
+    <string name="unique_id_description"><![CDATA[此值用於標識裝置，但只能在限定時間段內使用。此值透過計算得出，而且只能由系統應用程式使用。在所有其他應用程式中，uniqueId 為空。]]></string>
+
+    <string name="empty">（空）</string>
+
+    <string name="sw_enforced" translatable="false">SW</string>
+    <string name="sw_enforced_description"><![CDATA[此項目由 Android 系統（而非裝置的 TEE）強制執行。]]></string>
+    <string name="tee_enforced" translatable="false">TEE</string>
+    <string name="tee_enforced_description"><![CDATA[此項目由裝置的 TEE 強制執行。]]></string>
+
+    <string name="authorization_list_description"><![CDATA[
+    此資料結構包含金鑰對的屬性本身，如 Keymaster 硬體抽像層 (HAL) 中所定義。<p>應用程式開發者將這些值與裝置的目前狀態或一組預期值進行比較，以驗證金鑰對是否仍適用。
+    ]]></string>
+    <string name="authorization_list_purpose_description"><![CDATA[
+    用於指定對應金鑰可用於哪些目的。
+    ]]></string>
+    <string name="authorization_list_algorithm_description"><![CDATA[
+    用於指定與對應金鑰配合使用的加密算法。在認證 AuthorizationList 對象當中，算法值始終為 RSA 或 EC。
+    ]]></string>
+    <string name="authorization_list_keySize_description"><![CDATA[
+    用於指定對應金鑰的大小（以位元為單位，按適用於對應金鑰算法的一般方式衡量）。
+    ]]></string>
+    <string name="authorization_list_digest_description"><![CDATA[
+    用於指定可與對應金鑰配合使用以執行簽名和驗證操作的概觀算法。此標記與 RSA 金鑰、ECDSA 金鑰和 HMAC 金鑰有關。
+    ]]></string>
+    <string name="authorization_list_padding_description"><![CDATA[
+    用於指定可與對應金鑰配合使用的填充模式。此標記與 RSA 金鑰和 AES 金鑰有關。
+    ]]></string>
+    <string name="authorization_list_ecCurve_description"><![CDATA[
+    用於產生橢圓曲線 (EC) 金鑰對的參數集，該參數集在 Android 系統金鑰庫中使用 ECDSA 進行簽名和驗證。
+    ]]></string>
+    <string name="authorization_list_rsaPublicExponent_description"><![CDATA[
+    用於為 RSA 金鑰對指定公開指數的值。此標記僅與 RSA 金鑰有關，而且是所有 RSA 金鑰都必需的標記。
+    ]]></string>
+    <string name="authorization_list_rollbackResistance_description"><![CDATA[
+    用於表明金鑰不可復原。也就是說，當透過 deleteKey 或 deleteAllKeys 刪除金鑰後，可保證該金鑰已被永久刪除且無法再使用。如果金鑰不帶此標記，那麼在被刪除後，可能能夠從備份中恢復。
+    ]]></string>
+    <string name="authorization_list_activeDateTime_description"><![CDATA[
+    用於指定對應金鑰變為有效狀態的日期和時間。
+    ]]></string>
+    <string name="authorization_list_originationExpireDateTime_description"><![CDATA[
+    用於指定對應金鑰無法再用於簽名和加密目的的過期日期和時間。
+    ]]></string>
+    <string name="authorization_list_usageExpireDateTime_description"><![CDATA[
+    用於指定對應金鑰無法再用於驗證和解密目的的過期日期和時間。
+    ]]></string>
+    <string name="authorization_list_noAuthRequired_description"><![CDATA[
+    用於指定無需進行身份驗證即可使用對應金鑰。
+    ]]></string>
+    <string name="authorization_list_userAuthType_description"><![CDATA[
+    用於指定可以使用哪些類型的使用者身份驗證程式來授權使用對應金鑰。
+    ]]></string>
+    <string name="authorization_list_authTimeout_description"><![CDATA[
+    用於指定授權在多長時間內使用對應金鑰（以秒為單位，從透過身份驗證開始算起）。
+    ]]></string>
+    <string name="authorization_list_allowWhileOnBody_description"><![CDATA[
+    此標記僅適用於配備貼身傳感器的 Android Wear 裝置。目前，TEE 並不能提供對貼身傳感器的安全存取，貼身傳感器也不是非常安全，因此這應該是一項完全由軟體強制執行的功能。
+    ]]></string>
+    <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
+    指定只有在使用者提供了物理存在證明時，此金鑰才可用。
+    ]]></string>
+    <string name="authorization_list_trustedConfirmationRequired_description"><![CDATA[
+    指定只有在使用者確認使用審核權杖簽署資料時，此金鑰才可用。
+    ]]></string>
+    <string name="authorization_list_unlockedDeviceRequired_description"><![CDATA[
+    要求解鎖裝置螢幕後才能使用該金鑰。
+    ]]></string>
+    <string name="authorization_list_allApplications_description"><![CDATA[
+    指示裝置上的所有應用程式是否都可以存取金鑰對。
+    ]]></string>
+    <string name="authorization_list_applicationId_description"><![CDATA[
+    當提供 generateKey 或 importKey 後，此標記用於指定使用對應金鑰時均須提供的資料。
+    ]]></string>
+    <string name="authorization_list_creationDateTime_description"><![CDATA[
+    用於從 1970 年 1 月 1 日以毫秒為單位計算指定對應金鑰的建立日期和時間。此標記為可選標記，僅供參考。
+    ]]></string>
+    <string name="authorization_list_origin_description"><![CDATA[
+    如果知道金鑰是從哪裡建立的，在產生或匯入金鑰期間可以不指定此標記，但此標記必須要由 Trustlet 新增到金鑰特性中。
+    ]]></string>
+    <string name="authorization_list_rollbackResistant_description"><![CDATA[
+    用於表明金鑰可抗回復，也就是說，當透過 deleteKey 或 deleteAllKeys 刪除金鑰後，可保證該金鑰已被永久刪除且無法再使用。如果金鑰不帶此標記，那麼在被刪除後，可能能夠從備份中恢復。
+    ]]></string>
+    <string name="authorization_list_rootOfTrust_description"><![CDATA[
+    這個值集合可以定義與裝置狀態有關的金鑰訊息。
+    ]]></string>
+    <string name="authorization_list_osVersion_description"><![CDATA[
+    與 Keymaster 關聯的 Android 作業系統的版本，使用一個 6 位整數表示。例如：版本 8.1.0 表示為 080100。
+    ]]></string>
+    <string name="authorization_list_osPatchLevel_description"><![CDATA[
+    與 Keymaster 中使用的安全性更新程式關聯的月份和年度，使用一個 6 位整數表示。例如：2018 年 8 月的安全性更新程式表示為 201808。
+    ]]></string>
+    <string name="authorization_list_attestationApplicationId_description"><![CDATA[
+    此資料結構反映了 Android 平台對於允許哪些應用程式使用認證中的金鑰材料的觀點。當且僅當多個軟體包共用同一 UID 時，此 ID 才可以包含多個軟體包。
+    ]]></string>
+    <string name="authorization_list_attestationIdBrand_description"><![CDATA[
+    提供裝置的品牌名稱（由 Android 中的 Build.BRAND 回傳值）。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdDevice_description"><![CDATA[
+    提供裝置的裝置名稱（由 Android 中的 Build.DEVICE 回傳值）。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdProduct_description"><![CDATA[
+    提供裝置的產品名稱（由 Android 中的 Build.PRODUCT 回傳值）。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdSerial_description"><![CDATA[
+    提供裝置的序號。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdImei_description"><![CDATA[
+    為裝置上的所有無線裝置提供 IMEI。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdMeid_description"><![CDATA[
+    為裝置上的所有無線裝置提供 MEID。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
+    提供裝置的製造商名稱（由 Android 中的 Build.MANUFACTURER 回傳值）。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_attestationIdModel_description"><![CDATA[
+    提供裝置的型號名稱（由 Android 中的 Build.MODEL 回傳值）。僅在要求認證該裝置的識別碼時才會設定此欄位。
+    ]]></string>
+    <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
+    指定要使用此金鑰必須在裝置上安裝的供應商映像安全性更新程式等級。此值以 YYYYMMDD 的形式顯示，表示供應商安全性更新程式的日期。例如：如果金鑰在 Android 裝置上產生，且對應裝置安裝了供應商於 2018 年 8 月 1 日提供的安全性更新程式，其值將表示為 20180801。
+    ]]></string>
+    <string name="authorization_list_bootPatchLevel_description"><![CDATA[
+    指定要使用此金鑰必須在裝置上安裝的內核映像安全性更新程式等級。此值以 YYYYMMDD 的形式顯示，表示系統安全性更新程式的日期。例如：如果金鑰在 Android 裝置上產生，且對應裝置安裝了系統於 2018 年 8 月 5 日提供的安全性更新程式，其值將表示為 20180805。
+    ]]></string>
+</resources>
