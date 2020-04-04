@@ -18,8 +18,8 @@ android {
         minSdkVersion 24
         targetSdkVersion 29
         versionCode gitCommitCount
-        versionName '1.0.0'
-        resConfigs "en", "zh-rCN"
+        versionName '1.1.1'
+        resConfigs "en", "zh-rCN", "zh-rTW"
     }
 
     buildTypes {

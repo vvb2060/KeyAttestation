@@ -107,7 +107,7 @@
     用於從 1970 年 1 月 1 日以毫秒為單位計算指定對應金鑰的建立日期和時間。此標記為可選標記，僅供參考。
     ]]></string>
     <string name="authorization_list_origin_description"><![CDATA[
-    如果知道金鑰是從哪裡建立的，在產生或匯入金鑰期間可以不指定此標記，但此標記必須要由 Trustlet 新增到金鑰特性中。
+    用於指定相對應的金鑰是在哪裡建立的。在產生或匯入金鑰期間可以不指定此標記，但此標記必須要由 Trustlet 新增到金鑰特性中。
     ]]></string>
     <string name="authorization_list_rollbackResistant_description"><![CDATA[
     用於表明金鑰可抗回復，也就是說，當透過 deleteKey 或 deleteAllKeys 刪除金鑰後，可保證該金鑰已被永久刪除且無法再使用。如果金鑰不帶此標記，那麼在被刪除後，可能能夠從備份中恢復。

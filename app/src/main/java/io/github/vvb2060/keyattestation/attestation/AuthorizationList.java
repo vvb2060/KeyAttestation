@@ -359,7 +359,7 @@ public class AuthorizationList {
             case KM_ALGORITHM_HMAC:
                 return "HMAC";
             default:
-                return "Unknown";
+                return "Unknown (" + algorithm + ")";
         }
     }
 
@@ -403,16 +403,12 @@ public class AuthorizationList {
             case KM_ORIGIN_SECURELY_IMPORTED:
                 return "Securely Imported";
             default:
-                return "Unknown";
+                return "Unknown (" + origin + ")";
         }
     }
 
     private static String joinStrings(Collection<String> collection) {
-        return new StringBuilder()
-                .append("[")
-                .append(Joiner.on(", ").join(collection))
-                .append("]")
-                .toString();
+        return "[" + Joiner.on(", ").join(collection) + "]";
     }
 
     public static String formatDate(Date date) {
@@ -509,7 +505,7 @@ public class AuthorizationList {
             case KM_EC_CURVE_P521:
                 return "secp521r1";
             default:
-                return "unknown";
+                return "unknown (" + ecCurve + ")";
         }
     }
 

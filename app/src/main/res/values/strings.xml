@@ -8,7 +8,7 @@
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_unknown_summary_software_attestation">This device does not support hardware-level key attestation.</string>
     <string name="not_google_cert">No Google Hardware Attestation Root certificate</string>
-    <string name="not_google_cert_summary">Devices that ship with Android 7.0 or without pre-installed Google Play do not have the certificate.</string>
+    <string name="not_google_cert_summary">Devices initial version is Android 7.0 or without pre-installed Google Play do not have the certificate.</string>
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
@@ -31,7 +31,7 @@
     <string name="keymaster" translatable="false">Keymaster</string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster hardware abstraction layer (HAL). Use 0 to represent version 0.2 or 0.3, 1 to represent version 1.0, and 2 to represent version 2.0.]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>The security of the implementation.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>Implemented by the Android system. This location is less secure than the TEE but is more secure than app\'s process space.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>Implemented in secure hardware, such as a TEE (Trusted Execution Environment). This location is more secure because secure hardware is highly resistant to remote compromise.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>Implemented in a dedicated hardware security module. This location is more secure because it is highly resistant to remote compromise and hardware attacks against the module.</li></ul>]]></string>
-    <string name="attestation_summary_format">version: %1$d\nsecurity level: %2$s</string>
+    <string name="attestation_summary_format">Version: %1$d\nSecurity level: %2$s</string>
     <string name="attestation_challenge" translatable="false">Attestation challenge</string>
     <string name="attestation_challenge_description"><![CDATA[The purpose of the challenge value is to enable relying parties to verify that the key was created in response to a specific request.<p>In production environment, the challenge value should be randomly generated every time.]]></string>
     <string name="unique_id" translatable="false">Unique ID</string>
@@ -67,22 +67,22 @@
     <string name="authorization_list_trustedConfirmationRequired">Trusted Confirmation required</string>
     <string name="authorization_list_unlockedDeviceRequired">Unlocked device required</string>
     <string name="authorization_list_allApplications">All applications</string>
-    <string name="authorization_list_applicationId">Application Id</string>
+    <string name="authorization_list_applicationId">Application ID</string>
     <string name="authorization_list_creationDateTime">Creation date time</string>
     <string name="authorization_list_origin">Origin</string>
-    <string name="authorization_list_rollbackResistant">Rollback Resistant</string>
-    <string name="authorization_list_rootOfTrust">Root Of Trust</string>
+    <string name="authorization_list_rollbackResistant">Rollback resistant</string>
+    <string name="authorization_list_rootOfTrust">Root of trust</string>
     <string name="authorization_list_osVersion">OS version</string>
     <string name="authorization_list_osPatchLevel">OS patch level</string>
-    <string name="authorization_list_attestationApplicationId">Attestation application Id</string>
-    <string name="authorization_list_attestationIdBrand">Attestation Id brand</string>
-    <string name="authorization_list_attestationIdDevice">Attestation Id device</string>
-    <string name="authorization_list_attestationIdProduct">Attestation Id product</string>
-    <string name="authorization_list_attestationIdSerial">Attestation Id serial</string>
-    <string name="authorization_list_attestationIdImei">Attestation Id IMEI</string>
-    <string name="authorization_list_attestationIdMeid">Attestation Id MEID</string>
-    <string name="authorization_list_attestationIdManufacturer">Attestation Id manufacturer</string>
-    <string name="authorization_list_attestationIdModel">Attestation Id model</string>
+    <string name="authorization_list_attestationApplicationId">Attestation application ID</string>
+    <string name="authorization_list_attestationIdBrand">Attestation ID brand</string>
+    <string name="authorization_list_attestationIdDevice">Attestation ID device</string>
+    <string name="authorization_list_attestationIdProduct">Attestation ID product</string>
+    <string name="authorization_list_attestationIdSerial">Attestation ID serial</string>
+    <string name="authorization_list_attestationIdImei">Attestation ID IMEI</string>
+    <string name="authorization_list_attestationIdMeid">Attestation ID MEID</string>
+    <string name="authorization_list_attestationIdManufacturer">Attestation ID manufacturer</string>
+    <string name="authorization_list_attestationIdModel">Attestation ID model</string>
     <string name="authorization_list_vendorPatchLevel">Vendor patch level</string>
     <string name="authorization_list_bootPatchLevel">Boot patch level</string>
 

@@ -67,7 +67,7 @@ public class RootOfTrust {
             case KM_VERIFIED_BOOT_FAILED:
                 return "Failed";
             default:
-                return "Unknown";
+                return "Unknown (" + verifiedBootState + ")";
         }
     }
 
@@ -96,7 +96,7 @@ public class RootOfTrust {
                 .append(deviceLocked).append('\n')
                 .append("Verified boot state: ")
                 .append(verifiedBootStateToString(verifiedBootState)).append('\n');
-        if (verifiedBootHash != null) sb.append("Verified Boot Hash: ")
+        if (verifiedBootHash != null) sb.append("Verified boot hash: ")
                 .append(BaseEncoding.base64().encode(verifiedBootHash)).append(" (base64)");
         return sb.toString();
     }
