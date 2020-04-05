@@ -69,6 +69,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         val context = requireContext()
 
         viewModel.hasStrongBox.observe(viewLifecycleOwner) {
+            if (!it) {
+                viewModel.preferStrongBox = false
+            }
             activity?.invalidateOptionsMenu()
         }
 

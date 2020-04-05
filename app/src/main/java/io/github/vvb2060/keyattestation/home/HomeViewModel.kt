@@ -176,10 +176,6 @@ class HomeViewModel : ViewModel() {
         }
 
         val hasStrongBox = hasStrongBox.value == true
-        if (!hasStrongBox) {
-            preferStrongBox = false
-        }
-
         try {
             withContext(Dispatchers.IO) {
                 val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
