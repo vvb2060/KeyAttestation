@@ -50,6 +50,9 @@ class HomeItemDecoration(context: Context) : ItemDecoration() {
         if (hasBottomPadding(adapter, position)) {
             outRect.bottom += cardPadding
         }
+
+        outRect.left = cardMargin
+        outRect.right = cardMargin
     }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {

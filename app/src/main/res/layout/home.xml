@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="@dimen/rd_activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/rd_activity_horizontal_margin"
+    android:paddingStart="@dimen/home_padding"
+    android:paddingEnd="@dimen/home_padding"
     android:animateLayoutChanges="true">
 
     <rikka.material.widget.BorderRecyclerView
@@ -20,6 +24,7 @@
         app:borderTopStyle="whenTop"
         app:fitSystemWindowsInsets="top|bottom"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/home_header"
         tools:visibility="visible" />
 
     <ProgressBar
