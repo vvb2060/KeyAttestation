@@ -6,7 +6,8 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -19,7 +20,6 @@ import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
 import io.github.vvb2060.keyattestation.util.Status
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,7 +32,7 @@ import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import java.util.*
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(context: Context) : ViewModel() {
 
     companion object {
 
@@ -41,11 +41,19 @@ class HomeViewModel : ViewModel() {
         private val ALIAS = arrayOf("Key1", "Key2")
     }
 
-    val attestationResults = MediatorLiveData<Array<Resource<AttestationResult>>>()
+    private val _attestationResults = MutableLiveData<Array<Resource<AttestationResult>>>()
 
-    val hasStrongBox = MediatorLiveData<Boolean>()
+    val attestationResults = _attestationResults as LiveData<Array<Resource<AttestationResult>>>
+
+    private val _hasStrongBox = MutableLiveData<Boolean>()
+
+    val hasStrongBox = _hasStrongBox as LiveData<Boolean>
 
     var preferStrongBox = true
+
+    init {
+        load(context)
+    }
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean) {
@@ -111,14 +119,9 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun loadHasStrongBox(context: Context): Boolean {
         try {
-            withContext(Dispatchers.IO) {
-                hasStrongBox.postValue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE))
-            }
-        } catch (e: CancellationException) {
-            return false
+
         } catch (e: Throwable) {
-            hasStrongBox.postValue(false)
+            _hasStrongBox.postValue(false)
         }
         return true
     }
@@ -164,71 +167,70 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun invalidateAttestations(context: Context) = viewModelScope.launch {
+    private fun load(context: Context) = viewModelScope.launch {
         val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
 
-        attestationResults.postValue(results)
+        _attestationResults.postValue(results)
 
-        if (hasStrongBox.value == null) {
-            if (!loadHasStrongBox(context)) {
-                return@launch
+        val hasStrongBox = withContext(Dispatchers.IO) {
+            try {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+                        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
+            } catch (e: Throwable) {
+                false
             }
         }
 
-        val hasStrongBox = hasStrongBox.value == true
-        try {
-            withContext(Dispatchers.IO) {
-                val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-                val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+        _hasStrongBox.value = hasStrongBox
 
-                for (i in 0..1) {
-                    val useStrongBox = i == 1
-                    if (useStrongBox && !hasStrongBox) continue
-                    results[i] = try {
-                        val attestationResult = doAttestation(context, ALIAS[i], useStrongBox)
-                        Resource.success(attestationResult)
-                    } catch (e: Throwable) {
-                        val cause = if (e is AttestationException) e.cause!! else e
-                        cause.also {
-                            firebaseCrashlytics.apply {
-                                setCustomKey("useStrongBox", useStrongBox)
-                                recordException(it)
-                            }
-                        }
+        withContext(Dispatchers.IO) {
+            val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
-                        if (useStrongBox) {
-                            preferStrongBox = false
-                        }
-
-                        if (e is AttestationException) {
-                            Resource.error(e, null)
-                        } else {
-                            Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+            for (i in 0..1) {
+                val useStrongBox = i == 1
+                if (useStrongBox && !hasStrongBox) continue
+                results[i] = try {
+                    val attestationResult = doAttestation(context, ALIAS[i], useStrongBox)
+                    Resource.success(attestationResult)
+                } catch (e: Throwable) {
+                    val cause = if (e is AttestationException) e.cause!! else e
+                    cause.also {
+                        firebaseCrashlytics.apply {
+                            setCustomKey("useStrongBox", useStrongBox)
+                            recordException(it)
                         }
                     }
-                }
-                attestationResults.postValue(results)
 
-                val strongBoxResult = results[1]
-                val result = results[0]
-                when {
-                    strongBoxResult.status == Status.SUCCESS -> {
-                        // StrongBox succeed
-                        logSuccess(firebaseAnalytics, strongBoxResult.data!!, hasStrongBox)
+                    if (useStrongBox) {
+                        preferStrongBox = false
                     }
-                    result.status == Status.SUCCESS -> {
-                        // normal succeed
-                        logSuccess(firebaseAnalytics, result.data!!, hasStrongBox)
-                    }
-                    else -> {
-                        // all failed
-                        logFailure(firebaseAnalytics, result.error as AttestationException)
+
+                    if (e is AttestationException) {
+                        Resource.error(e, null)
+                    } else {
+                        Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
                     }
                 }
             }
-        } catch (e: CancellationException) {
-            return@launch
-        }
+            _attestationResults.postValue(results)
 
+            val strongBoxResult = results[1]
+            val result = results[0]
+            when {
+                strongBoxResult.status == Status.SUCCESS -> {
+                    // StrongBox succeed
+                    logSuccess(firebaseAnalytics, strongBoxResult.data!!, hasStrongBox)
+                }
+                result.status == Status.SUCCESS -> {
+                    // normal succeed
+                    logSuccess(firebaseAnalytics, result.data!!, hasStrongBox)
+                }
+                else -> {
+                    // all failed
+                    logFailure(firebaseAnalytics, result.error as AttestationException)
+                }
+            }
+        }
     }
 }

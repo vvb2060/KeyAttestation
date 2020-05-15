@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.edit
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.app.AppFragment
 import io.github.vvb2060.keyattestation.databinding.HomeBinding
+import io.github.vvb2060.keyattestation.ktx.activityViewModels
 import io.github.vvb2060.keyattestation.ktx.toHtml
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Status
@@ -24,7 +24,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
     private val binding: HomeBinding get() = _binding!!
 
-    private val viewModel by viewModels<HomeViewModel>({ requireActivity() })
+    private val viewModel by activityViewModels { HomeViewModel(requireActivity()) }
 
     private val adapter by lazy {
         HomeAdapter(this)
@@ -93,10 +93,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                     binding.list.isVisible = false
                 }
             }
-        }
-
-        if (viewModel.attestationResults.value == null) {
-            viewModel.invalidateAttestations(context)
         }
     }
 
