@@ -31,6 +31,16 @@
         <meta-data
             android:name="google_analytics_default_allow_ad_personalization_signals"
             android:value="false" />
+
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Make key attestation fail" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="82" />
     </application>
 
 </manifest>

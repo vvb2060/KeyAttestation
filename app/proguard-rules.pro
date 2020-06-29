@@ -11,3 +11,5 @@
 
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+-keep,allowoptimization class io.github.vvb2060.keyattestation.Xposed
