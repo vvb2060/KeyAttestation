@@ -14,7 +14,7 @@
     <string name="error_unknown">未知錯誤</string>
     <string name="error_not_support">該裝置不支援金鑰認證</string>
     <string name="error_not_support_summary"><![CDATA[
-    該裝置未實現金鑰認證功能，或裝置的安全環境已損壞。<br>處理方法：咨詢該裝置的製造商，是否支援金鑰認證功能以及安全環境自毀的條件，例如：解鎖 Bootloader。
+    該裝置未實現金鑰認證功能，或裝置的安全環境已損壞。<br>處理方法：咨詢該裝置的製造商，是否支援金鑰認證功能以及安全環境損壞的條件，例如：解鎖 Bootloader。
     ]]></string>
     <string name="error_cert_not_trusted">證書不受信任</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[

@@ -14,7 +14,7 @@
     <string name="error_unknown">未知错误</string>
     <string name="error_not_support">该设备不支持密钥认证</string>
     <string name="error_not_support_summary"><![CDATA[
-    该设备未实现密钥认证功能，或设备的安全环境已损坏。<br>处理方法：咨询该设备的制造商，是否支持密钥认证功能以及安全环境自毁条件，例如解锁 Bootloader。
+    该设备未实现密钥认证功能，或设备的安全环境已损坏。<br>处理方法：咨询该设备的制造商，是否支持密钥认证功能以及安全环境损坏条件，例如解锁 Bootloader。
     ]]></string>
     <string name="error_cert_not_trusted">证书不受信任</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[

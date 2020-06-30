@@ -6,6 +6,7 @@ import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -117,15 +118,6 @@ class HomeViewModel(context: Context) : ViewModel() {
         return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
 
-    private suspend fun loadHasStrongBox(context: Context): Boolean {
-        try {
-
-        } catch (e: Throwable) {
-            _hasStrongBox.postValue(false)
-        }
-        return true
-    }
-
     private fun logSuccess(firebaseAnalytics: FirebaseAnalytics, attestationResult: AttestationResult, hasStrongBox: Boolean) {
         try {
             firebaseAnalytics.apply {
@@ -199,6 +191,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                         firebaseCrashlytics.apply {
                             setCustomKey("useStrongBox", useStrongBox)
                             recordException(it)
+                            Log.d("KeyAttestation", "Do attestation error.",it)
                         }
                     }
 

@@ -17,7 +17,7 @@ class HomeItemDecoration(context: Context) : ItemDecoration() {
     private val cardMargin: Int = (context.resources.displayMetrics.density * 8).roundToInt()
     private val cardPadding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
 
-    private fun hasTopMargin(adapter: HomeAdapter, position: Int): Boolean {
+    private fun hasTopMargin(@Suppress("UNUSED_PARAMETER") adapter: HomeAdapter, position: Int): Boolean {
         return position == 0
     }
 

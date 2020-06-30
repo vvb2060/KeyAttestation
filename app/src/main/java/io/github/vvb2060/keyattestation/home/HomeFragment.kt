@@ -66,7 +66,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val context = requireContext()
 
         viewModel.hasStrongBox.observe(viewLifecycleOwner) {
             if (!it) {

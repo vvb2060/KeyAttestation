@@ -67,7 +67,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.unique_id,
                 R.string.unique_id_description,
-                attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id++)
+                attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id)
 
         id = ID_AUTHORIZATION_LIST_START
         addItem(SubtitleViewHolder.CREATOR, SubtitleData(

@@ -14,7 +14,7 @@
     <string name="error_unknown">Unknown error</string>
     <string name="error_not_support">Not supported by this device</string>
     <string name="error_not_support_summary"><![CDATA[
-    This device does not support key attestation or the trusted environment on this device is broken.<br>Solution: Consult the device manufacturer whether the device supports key attestation function and the self-destruction conditions of the trusted environment, such as unlocking the bootloader.
+    This device does not support key attestation or the trusted environment on this device is broken.<br>Solution: Consult the device manufacturer whether the device supports key attestation function and the destruction conditions of the trusted environment, such as unlocking the bootloader.
     ]]></string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
