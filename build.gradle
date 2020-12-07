@@ -16,7 +16,12 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.2.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+
+        // for org.bouncycastle:bcprov-jdk15on (https://issuetracker.google.com/issues/159151549)
+        classpath 'org.ow2.asm:asm:8.0.1'
+        classpath 'org.ow2.asm:asm-util:8.0.1'
+        classpath 'org.ow2.asm:asm-commons:8.0.1'
     }
 }
 
