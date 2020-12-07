@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.content.edit
 import androidx.core.view.isVisible
-import androidx.lifecycle.observe
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppActivity
