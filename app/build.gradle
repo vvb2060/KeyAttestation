@@ -31,6 +31,9 @@ android {
             signingConfig signingConfigs.debug
             proguardFiles 'proguard-rules.pro'
         }
+        xposed {
+            initWith debug
+        }
     }
 
     compileOptions {
@@ -38,16 +41,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
     }
-
     buildFeatures {
         buildConfig = false
         viewBinding = true
     }
-
     packagingOptions {
         exclude 'META-INF/**'
         exclude 'kotlin/**'
@@ -56,7 +56,6 @@ android {
         exclude '**.properties'
         exclude '**.bin'
     }
-
     lintOptions.checkReleaseBuilds false
     dependenciesInfo.includeInApk false
 }
