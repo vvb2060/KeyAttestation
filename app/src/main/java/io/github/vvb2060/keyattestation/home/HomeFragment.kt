@@ -1,8 +1,14 @@
 package io.github.vvb2060.keyattestation.home
 
+import android.app.Dialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.*
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
@@ -144,23 +150,52 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.use_strongbox).isVisible = viewModel.hasStrongBox.value == true
-        menu.findItem(R.id.use_strongbox).isChecked = viewModel.preferStrongBox
+        menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox.value == true
+        menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.use_strongbox) {
-            item.isChecked = !item.isChecked
-            viewModel.preferStrongBox = item.isChecked
-            val index = if (viewModel.preferStrongBox) 1 else 0
-            val res = viewModel.attestationResults.value?.get(index)
-            if (res?.status == Status.SUCCESS) {
-                adapter.updateData(res.data!!)
-            } else if (res?.status == Status.ERROR) {
-                adapter.updateData(res.error as AttestationException)
+        return when (item.itemId) {
+            R.id.menu_use_strongbox -> {
+                item.isChecked = !item.isChecked
+                viewModel.preferStrongBox = item.isChecked
+                val index = if (viewModel.preferStrongBox) 1 else 0
+                val res = viewModel.attestationResults.value?.get(index)
+                if (res?.status == Status.SUCCESS) {
+                    adapter.updateData(res.data!!)
+                } else if (res?.status == Status.ERROR) {
+                    adapter.updateData(res.error as AttestationException)
+                }
+                preference.edit { putBoolean("prefer_strongbox", item.isChecked) }
+                true
             }
-            preference.edit { putBoolean("prefer_strongbox", item.isChecked) }
-            true
-        } else super.onOptionsItemSelected(item)
+            R.id.menu_about -> {
+                val context = requireContext()
+                val versionName: String
+                try {
+                    versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+                } catch (ignored: PackageManager.NameNotFoundException) {
+                    return true
+                }
+                val text = StringBuilder()
+                text.append(versionName)
+                        .append("<p>")
+                        .append(getString(R.string.open_source_info, "<b><a href=\"${context.getString(R.string.github_url)}\">GitHub</a></b>", context.getString(R.string.license)))
+                text.append("<p>").append(context.getString(R.string.copyright))
+
+                val dialog: Dialog = AlertDialog.Builder(context)
+                        .setView(R.layout.dialog_about)
+                        .show()
+                (dialog.findViewById<View>(R.id.design_about_icon) as ImageView).setImageDrawable(context.getDrawable(R.drawable.ic_launcher))
+                (dialog.findViewById<View>(R.id.design_about_title) as TextView).text = getString(R.string.app_name)
+                (dialog.findViewById<View>(R.id.design_about_version) as TextView).apply {
+                    movementMethod = LinkMovementMethod.getInstance()
+                    this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
+                }
+                (dialog.findViewById<View>(R.id.design_about_info) as TextView).isVisible = false
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

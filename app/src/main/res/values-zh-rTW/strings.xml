@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">金鑰認證</string>
     <string name="use_strongbox">使用 StrongBox</string>
+    <string name="about">關於</string>
+    <string name="open_source_info"><![CDATA[
+此軟體是 %2$s 下的開源軟體（%1$s）。
+    ]]></string>
 
     <string name="bootloader_locked">Bootloader 已鎖定</string>
     <string name="bootloader_unlocked">Bootloader 已解鎖</string>
