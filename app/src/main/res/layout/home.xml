@@ -10,7 +10,7 @@
     android:paddingEnd="@dimen/home_padding"
     android:animateLayoutChanges="true">
 
-    <rikka.material.widget.BorderRecyclerView
+    <rikka.widget.borderview.BorderRecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,9 +19,9 @@
         android:scrollbarStyle="insideOverlay"
         android:scrollbars="vertical"
         android:visibility="gone"
-        app:borderBottomStyle="never"
+        app:borderBottomVisibility="never"
         app:borderTopDrawable="@null"
-        app:borderTopStyle="whenTop"
+        app:borderTopVisibility="whenTop"
         app:fitSystemWindowsInsets="top|bottom"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_header"

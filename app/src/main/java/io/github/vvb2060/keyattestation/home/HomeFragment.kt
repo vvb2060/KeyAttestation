@@ -21,7 +21,7 @@ import io.github.vvb2060.keyattestation.ktx.toHtml
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
-import rikka.material.widget.BorderView.OnBorderVisibilityChangedListener
+import rikka.widget.borderview.BorderView
 
 class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
@@ -64,7 +64,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
         val context = view.context
 
-        binding.list.borderVisibilityChangedListener = OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
+        binding.list.borderVisibilityChangedListener = BorderView.OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
     }
