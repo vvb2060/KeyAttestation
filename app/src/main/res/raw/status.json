@@ -28,7 +28,35 @@
       "status": "REVOKED",
       "reason": "SOFTWARE_FLAW"
     },
-    "e80fcf7b85d652aa": {
+    "1545991490585406285": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "16799496319142405818": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "2621004353020741590": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "1051246719628187981": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c35747a084470c3135aeefe2b8d40cd6": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "ee3ac673107ddf0831027a84c532bee4": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "1f4363f4acefdf83ae59202b934cead9": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "633d72164968d2b7ec1a927a14c8efbe": {
       "status": "REVOKED",
       "reason": "KEY_COMPROMISE"
     }
