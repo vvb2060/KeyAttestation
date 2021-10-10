@@ -91,17 +91,17 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT -> {
                             securityLevel = R.string.security_level_trusted_environment
                             iconRes = R.drawable.ic_trustworthy_24
-                            colorAttr = R.attr.colorSafe
+                            colorAttr = rikka.material.R.attr.colorSafe
                         }
                         KM_SECURITY_LEVEL_STRONG_BOX -> {
                             securityLevel = R.string.security_level_strongbox
                             iconRes = R.drawable.ic_trustworthy_24
-                            colorAttr = R.attr.colorSafe
+                            colorAttr = rikka.material.R.attr.colorSafe
                         }
                         else -> {
                             securityLevel = R.string.security_level_software
                             iconRes = R.drawable.ic_untrustworthy_24
-                            colorAttr = R.attr.colorWarning
+                            colorAttr = rikka.material.R.attr.colorWarning
                         }
                     }
 

@@ -24,12 +24,10 @@ class ErrorViewHolder(itemView: View, binding: HomeErrorBinding) : HomeViewHolde
             val sb = StringBuilder()
             sb.append(context.getString(data.descriptionResId)).append("<p>")
 
-            //sb.append("<font face=\"sans-serif-medium\">")
             sb.append(context.getString(R.string.error_message_subtitle)).append("<br>")
-            //sb.append("</font>")
             sb.append("<font face=\"monospace\">")
             var tr = data.cause
-            while (tr?.cause != null && tr.cause != tr) {
+            while (tr != null) {
                 sb.append("${tr::class.java.name}: ${tr.message}").append("<br>")
                 tr = tr.cause
             }

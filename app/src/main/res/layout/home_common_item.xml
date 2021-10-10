@@ -15,14 +15,14 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@android:id/title"
+            android:id="@+id/title"
             style="@style/HomeItemTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="title" />
 
         <TextView
-            android:id="@android:id/summary"
+            android:id="@+id/summary"
             style="@style/HomeItemSummaryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@android:id/icon"
+        android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-4dp"
@@ -43,7 +43,7 @@
         tools:tint="?colorSafe" />
 
     <TextView
-        android:id="@android:id/text1"
+        android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"

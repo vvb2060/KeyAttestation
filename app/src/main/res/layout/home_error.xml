@@ -10,7 +10,7 @@
         android:src="@drawable/ic_help_outline_24" />
 
     <TextView
-        android:id="@android:id/text1"
+        android:id="@+id/text1"
         style="@style/HomeItemSummaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

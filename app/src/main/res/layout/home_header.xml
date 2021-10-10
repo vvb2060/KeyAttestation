@@ -9,7 +9,7 @@
     tools:backgroundTint="?colorAlert">
 
     <ImageView
-        android:id="@android:id/icon"
+        android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:importantForAccessibility="no"
@@ -24,7 +24,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@android:id/title"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -34,7 +34,7 @@
             tools:text="@string/error_strongbox_unavailable" />
 
         <TextView
-            android:id="@android:id/summary"
+            android:id="@+id/summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"

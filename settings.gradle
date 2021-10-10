@@ -1,1 +1,28 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+    plugins {
+        id 'com.android.application' version '7.1.0-alpha13'
+        id 'com.android.library' version '7.1.0-alpha13'
+        id 'org.jetbrains.kotlin.android' version '1.5.31'
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'com.google.firebase.crashlytics') {
+                useModule('com.google.firebase:firebase-crashlytics-gradle:2.7.1')
+            }
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "KeyAttestation"
 include ':app'

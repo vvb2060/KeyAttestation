@@ -11,7 +11,7 @@
     android:animateLayoutChanges="true">
 
     <rikka.widget.borderview.BorderRecyclerView
-        android:id="@android:id/list"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -22,17 +22,16 @@
         app:borderBottomVisibility="never"
         app:borderTopDrawable="@null"
         app:borderTopVisibility="whenTop"
-        app:fitSystemWindowsInsets="top|bottom"
+        app:fitsSystemWindowsInsets="top|bottom"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_header"
         tools:visibility="visible" />
 
     <ProgressBar
-        android:id="@android:id/progress"
+        android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:layout_fitSystemWindowsInsets="top|bottom" />
+        app:layout_fitsSystemWindowsInsets="top|bottom" />
 
 </FrameLayout>
-

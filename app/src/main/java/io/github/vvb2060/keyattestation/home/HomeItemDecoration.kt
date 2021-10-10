@@ -7,13 +7,12 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import io.github.vvb2060.keyattestation.R
 import rikka.core.res.resolveDrawable
 import kotlin.math.roundToInt
 
 class HomeItemDecoration(context: Context) : ItemDecoration() {
 
-    private val drawable: Drawable = context.theme.resolveDrawable(R.attr.outlineButtonBackground)!!
+    private val drawable: Drawable = context.theme.resolveDrawable(rikka.material.R.attr.outlineButtonBackground)!!
     private val cardMargin: Int = (context.resources.displayMetrics.density * 8).roundToInt()
     private val cardPadding: Int = (context.resources.displayMetrics.density * 8).roundToInt()
 

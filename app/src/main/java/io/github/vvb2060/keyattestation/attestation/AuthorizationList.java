@@ -16,6 +16,9 @@
 
 package io.github.vvb2060.keyattestation.attestation;
 
+import static com.google.common.base.Functions.forMap;
+import static com.google.common.collect.Collections2.transform;
+
 import android.security.keystore.KeyProperties;
 import android.util.Log;
 
@@ -38,9 +41,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import static com.google.common.base.Functions.forMap;
-import static com.google.common.collect.Collections2.transform;
 
 public class AuthorizationList {
     // Algorithm values.
@@ -296,7 +296,12 @@ public class AuthorizationList {
                     userAuthType = Asn1Utils.getIntegerFromAsn1(value);
                     break;
                 case KM_TAG_ROOT_OF_TRUST & KEYMASTER_TAG_TYPE_MASK:
-                    rootOfTrust = new RootOfTrust(value);
+                    try {
+                        rootOfTrust = new RootOfTrust(value);
+                    } catch (CertificateParsingException e) {
+                        Log.e("Attestation", "Root of trust parsing failure" + e);
+                        rootOfTrust = null;
+                    }
                     break;
                 case KM_TAG_ATTESTATION_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
                     attestationApplicationId = new AttestationApplicationId(Asn1Utils

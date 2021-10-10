@@ -1,8 +1,6 @@
 Android Key Attestation Sample App
 ==============================
 
-[中文介绍](README_ZH.md)
-
 This sample illustrates how to use the [Bouncy Castle ASN.1][1] parser to extract information
 from an Android attestation data structure to verify that a key pair has been
 generated in an Android device. This sample demonstrates how to generate and verify a certificate on a device.
@@ -18,7 +16,7 @@ Getting Started
 ---------------
 
 This sample uses the Gradle build system. To build this project, use the
-`gradlew aR` command or use "Import Project" in Android Studio.
+`gradlew aR` command or use "Open Project" in Android Studio.
 
 
 License

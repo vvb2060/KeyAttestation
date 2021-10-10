@@ -52,12 +52,18 @@ class HomeViewModel(context: Context) : ViewModel() {
 
     var preferStrongBox = true
 
+    private val _hasDeviceIds = MutableLiveData<Boolean>()
+
+    val hasDeviceIds = _hasDeviceIds as LiveData<Boolean>
+
+    var preferIncloudProps = true
+
     init {
         load(context)
     }
 
     @Throws(GeneralSecurityException::class)
-    private fun generateKey(alias: String, useStrongBox: Boolean) {
+    private fun generateKey(alias: String, useStrongBox: Boolean, incloudProps: Boolean) {
         val keyPairGenerator = KeyPairGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         val now = Date()
@@ -68,7 +74,10 @@ class HomeViewModel(context: Context) : ViewModel() {
                 .setKeyValidityStart(now)
                 .setKeyValidityForOriginationEnd(originationEnd)
                 .setKeyValidityForConsumptionEnd(consumptionEnd)
-                .setAttestationChallenge("key attestation test".toByteArray())
+                .setAttestationChallenge(now.toString().toByteArray())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && incloudProps) {
+            builder.setDevicePropertiesAttestationIncluded(true)
+        }
         if (Build.VERSION.SDK_INT >= 28 && useStrongBox) {
             builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256)
             builder.setIsStrongBoxBacked(true)
@@ -79,20 +88,23 @@ class HomeViewModel(context: Context) : ViewModel() {
         keyPairGenerator.generateKeyPair()
     }
 
-    private fun doAttestation(context: Context, alias: String, useStrongBox: Boolean): AttestationResult {
+    private fun doAttestation(context: Context, alias: String, useStrongBox: Boolean, incloudProps: Boolean): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
         val isGoogleRootCertificate: Boolean
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            generateKey(alias, useStrongBox)
+            generateKey(alias, useStrongBox, incloudProps)
             val certificates = keyStore.getCertificateChain(alias)
             certs = arrayOfNulls(certificates.size)
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
                 throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
+            } else if (e.cause?.message?.contains("device ids") == true) {
+                // The device does not support device ids attestation
+                throw AttestationException(AttestationException.CODE_DEVICEIDS_UNAVAILABLE, e)
             } else {
                 // The device does not support key attestation
                 throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
@@ -143,7 +155,8 @@ class HomeViewModel(context: Context) : ViewModel() {
                         AttestationException.CODE_NOT_SUPPORT -> "Not support"
                         AttestationException.CODE_CERT_NOT_TRUSTED -> "Unable get cert"
                         AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD -> "Parse error"
-                        AttestationException.CODE_STRONGBOX_UNAVAILABLE -> "Fallback"
+                        AttestationException.CODE_STRONGBOX_UNAVAILABLE -> "Fallback strong box"
+                        AttestationException.CODE_DEVICEIDS_UNAVAILABLE -> "Fallback devic ids"
                         else -> "Unknown"
                     })
                 } else {
@@ -175,6 +188,17 @@ class HomeViewModel(context: Context) : ViewModel() {
 
         _hasStrongBox.value = hasStrongBox
 
+        val hasDeviceIds = withContext(Dispatchers.IO) {
+            try {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                        context.packageManager.hasSystemFeature("android.software.device_id_attestation")
+            } catch (e: Throwable) {
+                false
+            }
+        }
+
+        _hasDeviceIds.value = hasDeviceIds
+
         withContext(Dispatchers.IO) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
@@ -183,7 +207,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 val useStrongBox = i == 1
                 if (useStrongBox && !hasStrongBox) continue
                 results[i] = try {
-                    val attestationResult = doAttestation(context, ALIAS[i], useStrongBox)
+                    val attestationResult = doAttestation(context, ALIAS[i], useStrongBox, true)
                     Resource.success(attestationResult)
                 } catch (e: Throwable) {
                     val cause = if (e is AttestationException) e.cause!! else e
@@ -191,7 +215,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                         firebaseCrashlytics.apply {
                             setCustomKey("useStrongBox", useStrongBox)
                             recordException(it)
-                            Log.d("KeyAttestation", "Do attestation error.",it)
+                            Log.d("KeyAttestation", "Do attestation error.", it)
                         }
                     }
 

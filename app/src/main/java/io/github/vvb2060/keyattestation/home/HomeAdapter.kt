@@ -36,7 +36,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     R.string.not_google_cert,
                     R.string.not_google_cert_summary,
                     R.drawable.ic_error_outline_24,
-                    R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+                    rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
         }
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 
@@ -105,7 +105,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 e.titleResId,
                 0,
                 R.drawable.ic_error_outline_24,
-                R.attr.colorInactive), ID_ERROR)
+                rikka.material.R.attr.colorInactive), ID_ERROR)
 
         addItem(ErrorViewHolder.CREATOR, e, ID_ERROR_MESSAGE)
         notifyDataSetChanged()

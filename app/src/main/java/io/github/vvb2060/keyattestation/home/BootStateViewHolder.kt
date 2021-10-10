@@ -35,17 +35,17 @@ class BootStateViewHolder(itemView: View, binding: HomeHeaderBinding) : HomeView
             titleRes = R.string.bootloader_unknown
             summaryRes = if (attestation.attestationSecurityLevel == Attestation.KM_SECURITY_LEVEL_SOFTWARE) R.string.bootloader_unknown_summary_software_attestation else 0
             iconRes = R.drawable.ic_boot_unknown_24
-            colorAttrRes = R.attr.colorInactive
+            colorAttrRes = rikka.material.R.attr.colorInactive
         } else if (!locked) {
             titleRes = R.string.bootloader_unlocked
             summaryRes = 0
             iconRes = R.drawable.ic_boot_unlocked_24
-            colorAttrRes = R.attr.colorWarning
+            colorAttrRes = rikka.material.R.attr.colorWarning
         } else {
             titleRes = R.string.bootloader_locked
             summaryRes = 0
             iconRes = R.drawable.ic_boot_locked_24
-            colorAttrRes = R.attr.colorSafe
+            colorAttrRes = rikka.material.R.attr.colorSafe
         }
 
         val color = context.theme.resolveColor(colorAttrRes)

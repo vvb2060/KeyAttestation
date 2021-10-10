@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Key Attestation</string>
     <string name="use_strongbox">Use StrongBox</string>
+    <string name="attest_device_props">Attest device props</string>
     <string name="about">About</string>
     <string name="open_source_info"><![CDATA[
 This software is open source under %2$s (%1$s).
@@ -28,6 +29,10 @@ This software is open source under %2$s (%1$s).
     <string name="error_strongbox_unavailable">StrongBox not available</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     This device is declared to have StrongBox support but it is actually unavailable.
+    ]]></string>
+    <string name="error_unable_attest_deviceids">Unable to attest device ids</string>
+    <string name="error_unable_attest_deviceids_summary"><![CDATA[
+    This device does not support ID attestation, or destroyAttestationIds() was previously called and the device can no longer attest its IDs.
     ]]></string>
 
     <string name="attestation" translatable="false">Attestation</string>

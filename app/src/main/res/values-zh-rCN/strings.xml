@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">密钥认证</string>
     <string name="use_strongbox">使用 StrongBox</string>
+    <string name="attest_device_props">认证设备属性</string>
     <string name="about">关于</string>
     <string name="open_source_info"><![CDATA[
 此软件是 %2$s 下的开源软件（%1$s）。
@@ -28,6 +29,10 @@
     <string name="error_strongbox_unavailable">StrongBox 不可用</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     该设备声明具有 StrongBox 支持，但实际上不可用。
+    ]]></string>
+    <string name="error_unable_attest_deviceids">无法认证设备 ID</string>
+    <string name="error_unable_attest_deviceids_summary"><![CDATA[
+    该设备声明支持 ID 认证，但之前已调用 destroyAttestationIds() 且该设备无法再证明其 ID。
     ]]></string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>

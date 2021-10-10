@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">金鑰認證</string>
     <string name="use_strongbox">使用 StrongBox</string>
+    <string name="attest_device_props">認證設備屬性</string>
     <string name="about">關於</string>
     <string name="open_source_info"><![CDATA[
 此軟體是 %2$s 下的開源軟體（%1$s）。
@@ -28,6 +29,10 @@
     <string name="error_strongbox_unavailable">無法使用 StrongBox</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     該裝置宣告具有 StrongBox 的支援，但實際上無法使用。
+    ]]></string>
+    <string name="error_unable_attest_deviceids">無法認證設備 ID</string>
+    <string name="error_unable_attest_deviceids_summary"><![CDATA[
+    該設備宣告支援 ID 認證，但之前已調用 destroyAttestationIds() 且該設備無法再證明其 ID。
     ]]></string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>金鑰認證功能的版本。]]></string>

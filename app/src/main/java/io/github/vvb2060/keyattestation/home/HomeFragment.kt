@@ -47,6 +47,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         super.onCreate(savedInstanceState)
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
+        viewModel.preferIncloudProps = preference.getBoolean("prefer_incloudprops", true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -152,6 +153,8 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
     override fun onPrepareOptionsMenu(menu: Menu) {
         menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox.value == true
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
+        menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds.value == true
+        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncloudProps
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -184,15 +187,15 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 text.append("<p>").append(context.getString(R.string.copyright))
 
                 val dialog: Dialog = AlertDialog.Builder(context)
-                        .setView(R.layout.dialog_about)
+                        .setView(rikka.material.R.layout.dialog_about)
                         .show()
-                (dialog.findViewById<View>(R.id.design_about_icon) as ImageView).setImageDrawable(context.getDrawable(R.drawable.ic_launcher))
-                (dialog.findViewById<View>(R.id.design_about_title) as TextView).text = getString(R.string.app_name)
-                (dialog.findViewById<View>(R.id.design_about_version) as TextView).apply {
+                (dialog.findViewById<View>(rikka.material.R.id.design_about_icon) as ImageView).setImageDrawable(context.getDrawable(R.drawable.ic_launcher))
+                (dialog.findViewById<View>(rikka.material.R.id.design_about_title) as TextView).text = getString(R.string.app_name)
+                (dialog.findViewById<View>(rikka.material.R.id.design_about_version) as TextView).apply {
                     movementMethod = LinkMovementMethod.getInstance()
                     this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
                 }
-                (dialog.findViewById<View>(R.id.design_about_info) as TextView).isVisible = false
+                (dialog.findViewById<View>(rikka.material.R.id.design_about_info) as TextView).isVisible = false
                 true
             }
             else -> super.onOptionsItemSelected(item)
