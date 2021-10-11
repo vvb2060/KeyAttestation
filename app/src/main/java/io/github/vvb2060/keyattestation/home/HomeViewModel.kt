@@ -11,8 +11,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
@@ -137,60 +135,6 @@ class HomeViewModel(context: Context) : ViewModel() {
         return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
 
-    private fun logSuccess(
-        firebaseAnalytics: FirebaseAnalytics,
-        attestationResult: AttestationResult,
-        hasStrongBox: Boolean
-    ) {
-        try {
-            firebaseAnalytics.apply {
-                setUserProperty(
-                    "doAttestation",
-                    if (hasStrongBox && !attestationResult.isStrongBox) "Fallback" else "Done"
-                )
-                setUserProperty("isGoogleRootCertificate", attestationResult.isGoogleRootCertificate.toString())
-                setUserProperty("attestationVersion", attestationResult.attestation.attestationVersion.toString())
-                setUserProperty("attestationSecurityLevel", attestationResult.attestation.attestationSecurityLevel
-                    .let { Attestation.securityLevelToString(it) })
-                setUserProperty(
-                    "isDeviceLocked", attestationResult.attestation.teeEnforced?.rootOfTrust?.isDeviceLocked
-                        ?.toString() ?: "NULL"
-                )
-                setUserProperty("verifiedBootState",
-                    attestationResult.attestation.teeEnforced?.rootOfTrust?.verifiedBootState
-                        ?.let { RootOfTrust.verifiedBootStateToString(it) } ?: "NULL")
-            }
-        } catch (e: Throwable) {
-        }
-    }
-
-    private fun logFailure(firebaseAnalytics: FirebaseAnalytics, e: Throwable) {
-        try {
-            firebaseAnalytics.apply {
-                if (e is AttestationException) {
-                    setUserProperty(
-                        "doAttestation", when (e.code) {
-                            AttestationException.CODE_NOT_SUPPORT -> "Not support"
-                            AttestationException.CODE_CERT_NOT_TRUSTED -> "Unable get cert"
-                            AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD -> "Parse error"
-                            AttestationException.CODE_STRONGBOX_UNAVAILABLE -> "Fallback strong box"
-                            AttestationException.CODE_DEVICEIDS_UNAVAILABLE -> "Fallback device ids"
-                            else -> "Unknown"
-                        }
-                    )
-                } else {
-                    setUserProperty("doAttestation", "Unknown")
-                }
-                setUserProperty("isGoogleRootCertificate", "NULL")
-                setUserProperty("attestationVersion", "NULL")
-                setUserProperty("attestationSecurityLevel", "NULL")
-                setUserProperty("isDeviceLocked", "NULL")
-                setUserProperty("verifiedBootState", "NULL")
-            }
-        } catch (e: Throwable) {
-        }
-    }
-
     private fun load(context: Context) = viewModelScope.launch {
         val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
 
@@ -215,9 +159,6 @@ class HomeViewModel(context: Context) : ViewModel() {
 
             _hasDeviceIds.postValue(hasDeviceIds)
 
-            val firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
-
             for (i in 0..1) {
                 val useStrongBox = i == 1
                 if (useStrongBox && !hasStrongBox) continue
@@ -227,13 +168,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                     Resource.success(attestationResult)
                 } catch (e: Throwable) {
                     val cause = if (e is AttestationException) e.cause!! else e
-                    cause.also {
-                        firebaseCrashlytics.apply {
-                            setCustomKey("useStrongBox", useStrongBox)
-                            recordException(it)
-                            Log.d("KeyAttestation", "Do attestation error.", it)
-                        }
-                    }
+                            Log.d("KeyAttestation", "Do attestation error.", cause)
 
                     if (useStrongBox) {
                         preferStrongBox = false
@@ -247,23 +182,6 @@ class HomeViewModel(context: Context) : ViewModel() {
                 }
             }
             _attestationResults.postValue(results)
-
-            val strongBoxResult = results[1]
-            val result = results[0]
-            when {
-                strongBoxResult.status == Status.SUCCESS -> {
-                    // StrongBox succeed
-                    logSuccess(firebaseAnalytics, strongBoxResult.data!!, hasStrongBox)
-                }
-                result.status == Status.SUCCESS -> {
-                    // normal succeed
-                    logSuccess(firebaseAnalytics, result.data!!, hasStrongBox)
-                }
-                else -> {
-                    // all failed
-                    logFailure(firebaseAnalytics, result.error as AttestationException)
-                }
-            }
         }
     }
 }

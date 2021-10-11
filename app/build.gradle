@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.firebase.crashlytics'
 }
 
 def gitCommitCount
@@ -25,11 +24,7 @@ android {
     }
 
     buildTypes {
-        debug {
-            manifestPlaceholders = [crashReportingEnabled: "false"]
-        }
         release {
-            manifestPlaceholders = [crashReportingEnabled: "true"]
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.debug
@@ -50,12 +45,7 @@ android {
         viewBinding = true
     }
     packagingOptions {
-        exclude 'META-INF/**'
-        exclude 'kotlin/**'
-        exclude 'okhttp3/**'
-        exclude 'org/**'
-        exclude '**.properties'
-        exclude '**.bin'
+        exclude '**'
     }
     lintOptions.checkReleaseBuilds false
     dependenciesInfo.includeInApk false
@@ -92,21 +82,4 @@ dependencies {
     def lifecycleVersion = "2.3.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-
-    implementation platform('com.google.firebase:firebase-bom:28.4.2')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-}
-
-android.applicationVariants.all { variant ->
-    if (variant.buildType.minifyEnabled) {
-        copy {
-            from 'src/main/res/values'
-            into "build/generated/res/google-services/${variant.getName()}/values"
-            include 'google-services.xml'
-            rename { String s ->
-                s.replace("google-services.xml", "values.xml")
-            }
-        }
-    }
 }
