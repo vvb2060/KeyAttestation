@@ -47,10 +47,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         super.onCreate(savedInstanceState)
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
-        viewModel.preferIncloudProps = preference.getBoolean("prefer_incloudprops", true)
+        viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = HomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,10 +68,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         binding.list.borderVisibilityChangedListener = BorderView.OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         viewModel.hasStrongBox.observe(viewLifecycleOwner) {
             if (!it) {
@@ -154,7 +150,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox.value == true
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
         menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds.value == true
-        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncloudProps
+        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncludeProps
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
