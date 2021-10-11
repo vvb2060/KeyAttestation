@@ -5,6 +5,9 @@ import rikka.html.text.HtmlCompat
 import rikka.material.app.DayNightDelegate
 
 class AppApplication : Application() {
+    companion object {
+        const val TAG = "KeyAttestation"
+    }
 
     init {
         DayNightDelegate.setApplicationContext(this)

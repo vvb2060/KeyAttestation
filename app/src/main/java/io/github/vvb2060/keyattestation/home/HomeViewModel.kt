@@ -11,14 +11,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
-import io.github.vvb2060.keyattestation.attestation.RootOfTrust
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
-import io.github.vvb2060.keyattestation.util.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -115,7 +114,6 @@ class HomeViewModel(context: Context) : ViewModel() {
             }
         } catch (e: Exception) {
             // Unable to get certificate
-            // throw AttestationException(AttestationException.CODE_CANT_GET_CERT, e)
             throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
         try {
@@ -168,7 +166,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                     Resource.success(attestationResult)
                 } catch (e: Throwable) {
                     val cause = if (e is AttestationException) e.cause!! else e
-                            Log.d("KeyAttestation", "Do attestation error.", cause)
+                    Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
                     if (useStrongBox) {
                         preferStrongBox = false
