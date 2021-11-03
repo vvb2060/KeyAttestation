@@ -62,7 +62,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
     implementation 'com.google.guava:guava:31.0.1-android'
     implementation 'com.google.code.gson:gson:2.8.8'
 
