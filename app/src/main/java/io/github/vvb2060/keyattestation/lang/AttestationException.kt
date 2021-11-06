@@ -2,7 +2,7 @@ package io.github.vvb2060.keyattestation.lang
 
 import io.github.vvb2060.keyattestation.R
 
-class AttestationException(val code: Int, cause: Throwable?) : RuntimeException(cause) {
+class AttestationException(private val code: Int, cause: Throwable?) : RuntimeException(cause) {
 
     companion object {
         const val CODE_UNKNOWN = -1
@@ -44,7 +44,7 @@ class AttestationException(val code: Int, cause: Throwable?) : RuntimeException(
                     R.string.error_not_support_summary
                 }
                 CODE_CERT_NOT_TRUSTED -> {
-                    R.string.error_cert_not_trusted
+                    R.string.error_cert_not_trusted_summary
                 }
                 CODE_STRONGBOX_UNAVAILABLE -> {
                     R.string.error_strongbox_unavailable_summary
