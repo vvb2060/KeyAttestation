@@ -99,7 +99,7 @@ open class AlertDialogFragment : DialogFragment() {
         var neutralButtonIntent: Intent? = null
             private set
 
-        protected constructor(`in`: Parcel) : this(null) {
+        private constructor(`in`: Parcel) : this(null) {
             title = `in`.readString()
             message = `in`.readString()
             positiveButtonText = `in`.readString()
@@ -164,6 +164,7 @@ open class AlertDialogFragment : DialogFragment() {
 
         companion object {
 
+            @JvmField
             val CREATOR: Parcelable.Creator<Builder> = object : Parcelable.Creator<Builder> {
                 override fun createFromParcel(`in`: Parcel): Builder {
                     return Builder(`in`)
