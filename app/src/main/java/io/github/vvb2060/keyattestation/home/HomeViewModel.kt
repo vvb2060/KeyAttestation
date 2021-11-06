@@ -41,7 +41,7 @@ class HomeViewModel(context: Context) : ViewModel() {
     var preferIncludeProps = true
 
     @Throws(GeneralSecurityException::class)
-    private fun generateKey(alias: String, useStrongBox: Boolean, incloudProps: Boolean) {
+    private fun generateKey(alias: String, useStrongBox: Boolean, includeProps: Boolean) {
         val keyPairGenerator = KeyPairGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         val now = Date()
@@ -53,7 +53,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 .setKeyValidityForOriginationEnd(originationEnd)
                 .setKeyValidityForConsumptionEnd(consumptionEnd)
                 .setAttestationChallenge(now.toString().toByteArray())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && incloudProps) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && includeProps) {
             builder.setDevicePropertiesAttestationIncluded(true)
         }
         if (Build.VERSION.SDK_INT >= 28 && useStrongBox) {
@@ -65,7 +65,7 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     @Throws(AttestationException::class)
-    private fun doAttestation(alias: String, useStrongBox: Boolean, incloudProps: Boolean
+    private fun doAttestation(alias: String, useStrongBox: Boolean, includeProps: Boolean
     ): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
@@ -73,7 +73,7 @@ class HomeViewModel(context: Context) : ViewModel() {
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            generateKey(alias, useStrongBox, incloudProps)
+            generateKey(alias, useStrongBox, includeProps)
             val certificates = keyStore.getCertificateChain(alias)
             certs = arrayOfNulls(certificates.size)
             for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
@@ -112,10 +112,10 @@ class HomeViewModel(context: Context) : ViewModel() {
 
         withContext(Dispatchers.IO) {
             val useStrongBox = hasStrongBox && preferStrongBox
-            val incloudProps = hasDeviceIds && preferIncludeProps
+            val includeProps = hasDeviceIds && preferIncludeProps
             val result = try {
-                val alias = "Key_${useStrongBox}_$incloudProps"
-                val attestationResult = doAttestation(alias, useStrongBox, incloudProps)
+                val alias = "Key_${useStrongBox}_$includeProps"
+                val attestationResult = doAttestation(alias, useStrongBox, includeProps)
                 Resource.success(attestationResult)
             } catch (e: Throwable) {
                 val cause = if (e is AttestationException) e.cause!! else e
