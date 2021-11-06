@@ -7,9 +7,11 @@ import rikka.material.app.DayNightDelegate
 class AppApplication : Application() {
     companion object {
         const val TAG = "KeyAttestation"
+        lateinit var App: Application
     }
 
     init {
+        App = this
         DayNightDelegate.setApplicationContext(this)
         DayNightDelegate.setDefaultNightMode(DayNightDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         HtmlCompat.setContext(this)

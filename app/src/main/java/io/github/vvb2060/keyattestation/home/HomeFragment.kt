@@ -48,6 +48,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
         viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
+        viewModel.load()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -69,15 +70,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
 
-        viewModel.hasStrongBox.observe(viewLifecycleOwner) {
-            if (!it) {
-                viewModel.preferStrongBox = false
-            }
-            activity?.invalidateOptionsMenu()
-        }
-
-        viewModel.attestationResults.observe(viewLifecycleOwner) {
-            val res = it[if (viewModel.preferStrongBox) 1 else 0]
+        viewModel.attestationResult.observe(viewLifecycleOwner) { res ->
             when (res.status) {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
@@ -147,25 +140,28 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox.value == true
+        menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
-        menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds.value == true
+        menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds
         menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncludeProps
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_use_strongbox -> {
-                item.isChecked = !item.isChecked
-                viewModel.preferStrongBox = item.isChecked
-                val index = if (viewModel.preferStrongBox) 1 else 0
-                val res = viewModel.attestationResults.value?.get(index)
-                if (res?.status == Status.SUCCESS) {
-                    adapter.updateData(res.data!!)
-                } else if (res?.status == Status.ERROR) {
-                    adapter.updateData(res.error as AttestationException)
-                }
-                preference.edit { putBoolean("prefer_strongbox", item.isChecked) }
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferStrongBox = status
+                viewModel.load()
+                preference.edit { putBoolean("prefer_strongbox", status) }
+                true
+            }
+            R.id.menu_incluid_props -> {
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferIncludeProps = status
+                viewModel.load()
+                preference.edit { putBoolean("prefer_including_props", status) }
                 true
             }
             R.id.menu_about -> {

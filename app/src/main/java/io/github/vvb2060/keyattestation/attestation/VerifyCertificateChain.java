@@ -1,19 +1,18 @@
 package io.github.vvb2060.keyattestation.attestation;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gson.JsonObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SignatureException;
+import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import io.github.vvb2060.keyattestation.AppApplication;
+import io.github.vvb2060.keyattestation.R;
 
 public class VerifyCertificateChain {
     static final String[] GOOGLE_ROOT_CERTIFICATES = {"-----BEGIN CERTIFICATE-----\n"
@@ -77,25 +76,28 @@ public class VerifyCertificateChain {
             "ex0SdDrx+tWUDqG8At2JHA==\n" +
             "-----END CERTIFICATE-----"};
 
-    public static boolean verifyCertificateChain(X509Certificate[] certs, InputStream stream)
-            throws CertificateException, NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException {
+    public static boolean verifyCertificateChain(X509Certificate[] certs)
+            throws GeneralSecurityException {
         X509Certificate parent = certs[certs.length - 1];
+        var context = AppApplication.App.getApplicationContext();
+        var stream = context.getResources().openRawResource(R.raw.status);
         JsonObject entries = CertificateRevocationStatus.parseStatus(stream);
         for (int i = certs.length - 1; i >= 0; i--) {
             X509Certificate cert = certs[i];
             cert.checkValidity();
             cert.verify(parent.getPublicKey());
             parent = cert;
-            CertificateRevocationStatus certStatus = CertificateRevocationStatus.decodeStatus(cert.getSerialNumber(), entries);
+            var certStatus = CertificateRevocationStatus.decodeStatus(cert.getSerialNumber(), entries);
             if (certStatus != null) {
-                throw new CertificateException("Certificate revocation status is " + certStatus.status.name());
+                throw new CertificateException("Certificate revocation status is " + certStatus.status);
             }
         }
+        var X509Factory = CertificateFactory.getInstance("X.509");
+        var root = certs[certs.length - 1].getTBSCertificate();
         for (String certificate : GOOGLE_ROOT_CERTIFICATES) {
-            X509Certificate secureRoot = (X509Certificate) CertificateFactory.getInstance("X.509")
-                    .generateCertificate(new ByteArrayInputStream(certificate.getBytes(UTF_8)));
-            if (Arrays.equals(secureRoot.getTBSCertificate(), certs[certs.length - 1].getTBSCertificate())) {
+            var inStream = new ByteArrayInputStream(certificate.getBytes(UTF_8));
+            var secureRoot = (X509Certificate) X509Factory.generateCertificate(inStream);
+            if (Arrays.equals(secureRoot.getTBSCertificate(), root)) {
                 return true;
             }
         }

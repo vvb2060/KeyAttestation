@@ -7,20 +7,16 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vvb2060.keyattestation.AppApplication
-import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.security.GeneralSecurityException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
@@ -32,65 +28,42 @@ import java.util.*
 
 class HomeViewModel(context: Context) : ViewModel() {
 
-    companion object {
+    val attestationResult = MutableLiveData<Resource<AttestationResult>>()
 
-        private const val ORIGINATION_TIME_OFFSET = 1000000
-        private const val CONSUMPTION_TIME_OFFSET = 2000000
-        private val ALIAS = arrayOf("Key1", "Key2")
-    }
-
-    private val _attestationResults = MutableLiveData<Array<Resource<AttestationResult>>>()
-
-    val attestationResults = _attestationResults as LiveData<Array<Resource<AttestationResult>>>
-
-    private val _hasStrongBox = MutableLiveData<Boolean>()
-
-    val hasStrongBox = _hasStrongBox as LiveData<Boolean>
-
+    val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+            context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
     var preferStrongBox = true
 
-    private val _hasDeviceIds = MutableLiveData<Boolean>()
-
-    val hasDeviceIds = _hasDeviceIds as LiveData<Boolean>
-
+    val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            context.packageManager.hasSystemFeature("android.software.device_id_attestation")
     var preferIncludeProps = true
-
-    init {
-        load(context)
-    }
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean, incloudProps: Boolean) {
         val keyPairGenerator = KeyPairGenerator.getInstance(
-            KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore"
-        )
+                KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         val now = Date()
-        val originationEnd = Date(now.time + ORIGINATION_TIME_OFFSET)
-        val consumptionEnd = Date(now.time + CONSUMPTION_TIME_OFFSET)
+        val originationEnd = Date(now.time + 1000000)
+        val consumptionEnd = Date(now.time + 2000000)
         val builder = KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN)
-            .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
-            .setKeyValidityStart(now)
-            .setKeyValidityForOriginationEnd(originationEnd)
-            .setKeyValidityForConsumptionEnd(consumptionEnd)
-            .setAttestationChallenge(now.toString().toByteArray())
+                .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
+                .setKeyValidityStart(now)
+                .setKeyValidityForOriginationEnd(originationEnd)
+                .setKeyValidityForConsumptionEnd(consumptionEnd)
+                .setAttestationChallenge(now.toString().toByteArray())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && incloudProps) {
             builder.setDevicePropertiesAttestationIncluded(true)
         }
         if (Build.VERSION.SDK_INT >= 28 && useStrongBox) {
-            builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256)
             builder.setIsStrongBoxBacked(true)
-        } else {
-            builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
         }
+        builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256)
         keyPairGenerator.initialize(builder.build())
         keyPairGenerator.generateKeyPair()
     }
 
-    private fun doAttestation(
-        context: Context,
-        alias: String,
-        useStrongBox: Boolean,
-        incloudProps: Boolean
+    @Throws(AttestationException::class)
+    private fun doAttestation(alias: String, useStrongBox: Boolean, incloudProps: Boolean
     ): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
@@ -117,9 +90,8 @@ class HomeViewModel(context: Context) : ViewModel() {
             throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
         try {
-            isGoogleRootCertificate =
-                VerifyCertificateChain.verifyCertificateChain(certs, context.resources.openRawResource(R.raw.status))
-        } catch (e: Exception) {
+            isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
+        } catch (e: GeneralSecurityException) {
             // Certificate is not trusted
             throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
         }
@@ -133,53 +105,26 @@ class HomeViewModel(context: Context) : ViewModel() {
         return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
     }
 
-    private fun load(context: Context) = viewModelScope.launch {
-        val results = arrayOf<Resource<AttestationResult>>(Resource.loading(null), Resource.loading(null))
+    fun load() = viewModelScope.launch {
+        attestationResult.postValue(Resource.loading(null))
 
-        _attestationResults.postValue(results)
+        val useStrongBox = hasStrongBox && preferStrongBox
+        val incloudProps = hasDeviceIds && preferIncludeProps
+        val result = try {
+            val alias = "Key_${useStrongBox}_$incloudProps"
+            val attestationResult = doAttestation(alias, useStrongBox, incloudProps)
+            Resource.success(attestationResult)
+        } catch (e: Throwable) {
+            val cause = if (e is AttestationException) e.cause!! else e
+            Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
-        withContext(Dispatchers.IO) {
-            val hasStrongBox = try {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                        context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-            } catch (e: Throwable) {
-                false
+            if (e is AttestationException) {
+                Resource.error(e, null)
+            } else {
+                Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
             }
-
-            _hasStrongBox.postValue(hasStrongBox)
-
-            val hasDeviceIds = try {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                        context.packageManager.hasSystemFeature("android.software.device_id_attestation")
-            } catch (e: Throwable) {
-                false
-            }
-
-            _hasDeviceIds.postValue(hasDeviceIds)
-
-            for (i in 0..1) {
-                val useStrongBox = i == 1
-                if (useStrongBox && !hasStrongBox) continue
-                results[i] = try {
-                    val alias = "Key_$useStrongBox"
-                    val attestationResult = doAttestation(context, alias, useStrongBox, true)
-                    Resource.success(attestationResult)
-                } catch (e: Throwable) {
-                    val cause = if (e is AttestationException) e.cause!! else e
-                    Log.w(AppApplication.TAG, "Do attestation error.", cause)
-
-                    if (useStrongBox) {
-                        preferStrongBox = false
-                    }
-
-                    if (e is AttestationException) {
-                        Resource.error(e, null)
-                    } else {
-                        Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
-                    }
-                }
-            }
-            _attestationResults.postValue(results)
         }
+
+        attestationResult.postValue(result)
     }
 }
