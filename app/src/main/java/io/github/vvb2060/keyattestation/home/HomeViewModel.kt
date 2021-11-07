@@ -38,7 +38,7 @@ class HomeViewModel(context: Context) : ViewModel() {
 
     val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             context.packageManager.hasSystemFeature("android.software.device_id_attestation")
-    var preferIncludeProps = true
+    var includeProps = true
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean, includeProps: Boolean) {
@@ -112,7 +112,7 @@ class HomeViewModel(context: Context) : ViewModel() {
 
         withContext(Dispatchers.IO) {
             val useStrongBox = hasStrongBox && preferStrongBox
-            val includeProps = hasDeviceIds && preferIncludeProps
+            val incloudProps = hasDeviceIds && includeProps
             val result = try {
                 val alias = "Key_${useStrongBox}_$includeProps"
                 val attestationResult = doAttestation(alias, useStrongBox, includeProps)

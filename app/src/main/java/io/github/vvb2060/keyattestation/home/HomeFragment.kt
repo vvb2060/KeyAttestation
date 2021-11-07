@@ -47,7 +47,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         super.onCreate(savedInstanceState)
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
-        viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
+        viewModel.includeProps = preference.getBoolean("prefer_including_props", true)
         viewModel.load()
     }
 
@@ -143,7 +143,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
         menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds
-        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncludeProps
+        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.includeProps
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -159,7 +159,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
             R.id.menu_incluid_props -> {
                 val status = !item.isChecked
                 item.isChecked = status
-                viewModel.preferIncludeProps = status
+                viewModel.includeProps = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_including_props", status) }
                 true
