@@ -79,7 +79,7 @@ public class VerifyCertificateChain {
     public static boolean verifyCertificateChain(X509Certificate[] certs)
             throws GeneralSecurityException {
         X509Certificate parent = certs[certs.length - 1];
-        var context = AppApplication.App.getApplicationContext();
+        var context = AppApplication.getApp().getApplicationContext();
         var stream = context.getResources().openRawResource(R.raw.status);
         JsonObject entries = CertificateRevocationStatus.parseStatus(stream);
         for (int i = certs.length - 1; i >= 0; i--) {

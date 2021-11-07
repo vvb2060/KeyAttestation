@@ -7,6 +7,8 @@ import rikka.material.app.DayNightDelegate
 class AppApplication : Application() {
     companion object {
         const val TAG = "KeyAttestation"
+
+        @JvmStatic
         lateinit var App: Application private set
     }
 
