@@ -16,7 +16,9 @@ import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.GeneralSecurityException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
@@ -106,25 +108,27 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     fun load() = viewModelScope.launch {
-        attestationResult.postValue(Resource.loading(null))
+        attestationResult.value = Resource.loading(null)
 
-        val useStrongBox = hasStrongBox && preferStrongBox
-        val incloudProps = hasDeviceIds && preferIncludeProps
-        val result = try {
-            val alias = "Key_${useStrongBox}_$incloudProps"
-            val attestationResult = doAttestation(alias, useStrongBox, incloudProps)
-            Resource.success(attestationResult)
-        } catch (e: Throwable) {
-            val cause = if (e is AttestationException) e.cause!! else e
-            Log.w(AppApplication.TAG, "Do attestation error.", cause)
+        withContext(Dispatchers.IO) {
+            val useStrongBox = hasStrongBox && preferStrongBox
+            val incloudProps = hasDeviceIds && preferIncludeProps
+            val result = try {
+                val alias = "Key_${useStrongBox}_$incloudProps"
+                val attestationResult = doAttestation(alias, useStrongBox, incloudProps)
+                Resource.success(attestationResult)
+            } catch (e: Throwable) {
+                val cause = if (e is AttestationException) e.cause!! else e
+                Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
-            if (e is AttestationException) {
-                Resource.error(e, null)
-            } else {
-                Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                if (e is AttestationException) {
+                    Resource.error(e, null)
+                } else {
+                    Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                }
             }
-        }
 
-        attestationResult.postValue(result)
+            attestationResult.postValue(result)
+        }
     }
 }
