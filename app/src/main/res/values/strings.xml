@@ -9,11 +9,12 @@ This software is open source under %2$s (%1$s).
     ]]></string>
 
     <string name="bootloader_locked">Bootloader is locked</string>
+    <string name="root_of_trust_set_by_user">Root of trust set by user</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_unknown_summary_software_attestation">This device does not support hardware-level key attestation.</string>
-    <string name="not_google_cert">No Google Hardware Attestation Root certificate</string>
-    <string name="not_google_cert_summary">Devices initial version is Android 7.0 or without pre-installed Google Play do not have the certificate.</string>
+    <string name="not_trust_root_cert">Unknown Root certificate</string>
+    <string name="not_trust_root_cert_summary">Root certificate is not trusted and the attestation result can be tampered with.</string>
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>

@@ -28,13 +28,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
     fun updateData(attestationResult: AttestationResult) {
         val attestation = attestationResult.attestation
-        val isGoogleRootCertificate = attestationResult.isGoogleRootCertificate
+        val trustRootCertificate = attestationResult.isGoogleRootCertificate
 
         clear()
-        if (!isGoogleRootCertificate) {
+        if (!trustRootCertificate) {
             addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.not_google_cert,
-                    R.string.not_google_cert_summary,
+                    R.string.not_trust_root_cert,
+                    R.string.not_trust_root_cert_summary,
                     R.drawable.ic_error_outline_24,
                     rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
         }

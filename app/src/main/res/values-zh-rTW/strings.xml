@@ -9,11 +9,12 @@
     ]]></string>
 
     <string name="bootloader_locked">Bootloader 已鎖定</string>
+    <string name="root_of_trust_set_by_user">信任根由使用者設定</string>
     <string name="bootloader_unlocked">Bootloader 已解鎖</string>
     <string name="bootloader_unknown">Bootloader 狀態未知</string>
     <string name="bootloader_unknown_summary_software_attestation">該裝置不支援硬體等級的金鑰認證。</string>
-    <string name="not_google_cert">沒有 Google 硬體認證根證書</string>
-    <string name="not_google_cert_summary">出廠版本在 Android 7.0 之前或沒有內建 Google Play 的裝置不會有該證書。</string>
+    <string name="not_trust_root_cert">未知的根證書</string>
+    <string name="not_trust_root_cert_summary">根證書不受信任，認證結果可以被篡改。</string>
 
     <string name="error_message_subtitle">細節訊息：</string>
     <string name="error_unknown">未知錯誤</string>
