@@ -9,3 +9,7 @@
 	public static void check*(...);
 	public static void throw*(...);
 }
+
+-assumenosideeffects class java.util.Objects{
+    ** requireNonNull(...);
+}
