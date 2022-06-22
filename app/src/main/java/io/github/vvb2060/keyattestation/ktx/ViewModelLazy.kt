@@ -42,7 +42,7 @@ class ViewModelLazy<VM : ViewModel>(
             return (if (viewModel == null) {
                 val store = storeProducer()
                 ViewModelProvider(store, object : ViewModelProvider.Factory {
-                    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
                         return viewModelProducer() as T
                     }
 
