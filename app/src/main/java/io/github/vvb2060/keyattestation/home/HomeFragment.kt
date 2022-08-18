@@ -2,7 +2,6 @@ package io.github.vvb2060.keyattestation.home
 
 import android.app.Dialog
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.*
@@ -11,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.isVisible
+import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppActivity
@@ -166,12 +166,8 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
             }
             R.id.menu_about -> {
                 val context = requireContext()
-                val versionName: String
-                try {
-                    versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-                } catch (ignored: PackageManager.NameNotFoundException) {
-                    return true
-                }
+                val versionName = BuildConfig.VERSION_NAME
+
                 val text = StringBuilder()
                 text.append(versionName)
                         .append("<p>")
