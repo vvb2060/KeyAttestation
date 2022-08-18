@@ -85,13 +85,14 @@ configurations.all {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
     implementation 'org.bouncycastle:bcprov-jdk18on:1.71'
     implementation 'com.google.guava:guava:31.1-android'
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'co.nstant.in:cbor:0.9'
 
-    implementation 'dev.rikka.rikkax.appcompat:appcompat:1.4.1'
-    implementation 'dev.rikka.rikkax.core:core-ktx:1.4.0'
+    implementation 'dev.rikka.rikkax.appcompat:appcompat:1.5.0'
+    implementation 'dev.rikka.rikkax.core:core-ktx:1.4.1'
     //noinspection GradleDependency
     implementation 'dev.rikka.rikkax.material:material:1.6.6'
     implementation 'dev.rikka.rikkax.html:html-ktx:1.1.2'
@@ -101,10 +102,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
 
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.fragment:fragment-ktx:1.4.1'
+    implementation 'androidx.fragment:fragment-ktx:1.5.2'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    def lifecycleVersion = "2.4.1"
+    def lifecycleVersion = "2.5.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
 }
