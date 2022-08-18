@@ -160,7 +160,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.confirmationRequired?.toString(),
                     list.unlockedDeviceRequired?.toString(),
                     list.allApplications?.toString(),
-                    if (list.applicationId != null) String(list.applicationId) else null,
+                    list.applicationId,
                     list.creationDateTime?.let { AuthorizationList.formatDate(it) },
                     list.origin?.let { AuthorizationList.originToString(it) },
                     list.rollbackResistant?.toString(),

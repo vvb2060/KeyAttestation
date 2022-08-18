@@ -26,7 +26,7 @@ class BootStateViewHolder(itemView: View, binding: HomeHeaderBinding) :
         val context = itemView.context
 
         val attestation = data.attestation
-        val rootOfTrust = attestation.teeEnforced?.rootOfTrust
+        val rootOfTrust = attestation.rootOfTrust
         val locked = rootOfTrust?.isDeviceLocked
         val bootUnverified = rootOfTrust?.verifiedBootState != RootOfTrust.KM_VERIFIED_BOOT_VERIFIED
 

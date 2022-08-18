@@ -98,7 +98,7 @@ class HomeViewModel(context: Context) : ViewModel() {
             throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
         }
         try {
-            attestation = Attestation(certs[0])
+            attestation = Attestation.loadFromCertificate(certs[0])
         } catch (e: CertificateParsingException) {
             // Unable to parse attestation record
             throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)

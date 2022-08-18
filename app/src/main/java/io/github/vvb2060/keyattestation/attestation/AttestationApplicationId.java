@@ -169,7 +169,7 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
         return result;
     }
 
-    private class ByteArrayComparator implements java.util.Comparator<byte[]> {
+    private static class ByteArrayComparator implements java.util.Comparator<byte[]> {
         @Override
         public int compare(byte[] a, byte[] b) {
             int res = Integer.compare(a.length, b.length);
