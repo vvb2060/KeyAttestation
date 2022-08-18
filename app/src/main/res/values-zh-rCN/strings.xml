@@ -33,13 +33,13 @@
     ]]></string>
     <string name="error_unable_attest_deviceids">无法认证设备 ID</string>
     <string name="error_unable_attest_deviceids_summary"><![CDATA[
-    该设备声明支持 ID 认证，但之前已调用 destroyAttestationIds() 且该设备无法再证明其 ID。
+    该设备声明支持 ID 认证，但 ID 不匹配或设备已无法再证明其 ID。
     ]]></string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬件抽象层 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>在 Android 系统中实现。此位置没有 TEE 安全，但比应用的进程空间安全，能抵御针对应用的攻击。</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>在安全硬件中实现，例如 TEE（Trusted Execution Environment，受信任的执行环境），能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在专用的硬件安全模块中实现，能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
-    <string name="attestation_summary_format">版本：%1$d\n安全等级：%2$s</string>
+    <string name="attestation_summary_format">版本：%1$s\n安全等级：%2$s</string>
     <string name="attestation_challenge_description"><![CDATA[质询值的目的是使依赖方能够验证是否已响应特定请求创建了密钥。<p>在生产环境中，质询值应每次都随机生成。]]></string>
     <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过计算得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
 

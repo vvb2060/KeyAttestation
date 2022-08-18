@@ -696,10 +696,6 @@ public class AuthorizationList {
         return usageExpireDateTime;
     }
 
-    public Boolean isNoAuthRequired() {
-        return noAuthRequired;
-    }
-
     public Boolean getNoAuthRequired() {
         return noAuthRequired;
     }
@@ -712,16 +708,8 @@ public class AuthorizationList {
         return authTimeout;
     }
 
-    public Boolean isAllowWhileOnBody() {
-        return allowWhileOnBody;
-    }
-
     public Boolean getAllowWhileOnBody() {
         return allowWhileOnBody;
-    }
-
-    public Boolean isAllApplications() {
-        return allApplications;
     }
 
     public Boolean getAllApplications() {
@@ -740,16 +728,8 @@ public class AuthorizationList {
         return origin;
     }
 
-    public Boolean isRollbackResistant() {
-        return rollbackResistant;
-    }
-
     public Boolean getRollbackResistant() {
         return rollbackResistant;
-    }
-
-    public Boolean isRollbackResistance() {
-        return rollbackResistance;
     }
 
     public Boolean getRollbackResistance() {
@@ -816,20 +796,28 @@ public class AuthorizationList {
         return model;
     }
 
-    public Boolean isUserPresenceRequired() {
-        return userPresenceRequired;
-    }
-
     public Boolean getUserPresenceRequired() {
         return userPresenceRequired;
     }
 
-    public Boolean isConfirmationRequired() {
+    public Boolean getConfirmationRequired() {
         return confirmationRequired;
     }
 
-    public Boolean getConfirmationRequired() {
-        return confirmationRequired;
+    public Set<Integer> getMgfDigest() {
+        return mgfDigest;
+    }
+
+    public Boolean getEarlyBootOnly() {
+        return earlyBootOnly;
+    }
+
+    public Integer getUsageCountLimit() {
+        return usageCountLimit;
+    }
+
+    public Boolean getDeviceUniqueAttestation() {
+        return deviceUniqueAttestation;
     }
 
     private String getStringFromAsn1Value(ASN1Primitive value) throws CertificateParsingException {
@@ -868,9 +856,16 @@ public class AuthorizationList {
             s.append("\nEC Curve: ").append(ecCurveAsString(ecCurve));
         }
 
-        String label = "\nRSA exponent: ";
         if (rsaPublicExponent != null) {
-            s.append(label).append(rsaPublicExponent);
+            s.append("\nRSA exponent: ").append(rsaPublicExponent);
+        }
+
+        if (mgfDigest != null && !mgfDigest.isEmpty()) {
+            s.append("\nRsa Oaep Mgf Digest: ").append(digestsToString(mgfDigest));
+        }
+
+        if (earlyBootOnly != null) {
+            s.append("\nEarly boot only");
         }
 
         if (activeDateTime != null) {
@@ -885,15 +880,28 @@ public class AuthorizationList {
             s.append("\nUsage expire: ").append(formatDate(usageExpireDateTime));
         }
 
-        if (noAuthRequired != null) s.append("\nNo Auth Required: true");
-        else if (userAuthType != null) {
+        if (usageCountLimit != null) {
+            s.append("\nUsage count limit: ").append(usageCountLimit);
+        }
+
+        if (noAuthRequired != null) {
+            s.append("\nNo Auth Required");
+        }
+
+        if (userAuthType != null) {
             s.append("\nAuth types: ").append(userAuthTypeToString(userAuthType));
-            if (authTimeout != null) s.append("\nAuth timeout: ").append(authTimeout);
-            if (allowWhileOnBody != null) s.append("\nAllow While On Body: true");
+        }
+
+        if (authTimeout != null) {
+            s.append("\nAuth timeout: ").append(authTimeout);
+        }
+
+        if (allowWhileOnBody != null) {
+            s.append("\nAllow While On Body");
         }
 
         if (allApplications != null) {
-            s.append("\nAll Applications: true");
+            s.append("\nAll Applications");
         }
 
         if (applicationId != null) {
@@ -909,11 +917,11 @@ public class AuthorizationList {
         }
 
         if (rollbackResistant != null) {
-            s.append("\nRollback resistant: true");
+            s.append("\nRollback resistant");
         }
 
         if (rollbackResistance != null) {
-            s.append("\nRollback resistance: true");
+            s.append("\nRollback resistance");
         }
 
         if (rootOfTrust != null) {
@@ -951,6 +959,10 @@ public class AuthorizationList {
 
         if (unlockedDeviceRequired != null) {
             s.append("\nUnlocked Device Required");
+        }
+
+        if (deviceUniqueAttestation != null) {
+            s.append("\nDevice unique attestation");
         }
 
         if (brand != null) {

@@ -33,7 +33,7 @@ This software is open source under %2$s (%1$s).
     ]]></string>
     <string name="error_unable_attest_deviceids">Unable to attest device ids</string>
     <string name="error_unable_attest_deviceids_summary"><![CDATA[
-    This device does not support ID attestation, or destroyAttestationIds() was previously called and the device can no longer attest its IDs.
+    This device is declared to have ID attestation support, but IDs do not match or the device can no longer attest its IDs.
     ]]></string>
 
     <string name="attestation" translatable="false">Attestation</string>
@@ -41,7 +41,7 @@ This software is open source under %2$s (%1$s).
     <string name="keymaster" translatable="false">Keymaster</string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster hardware abstraction layer (HAL). Use 0 to represent version 0.2 or 0.3, 1 to represent version 1.0, and 2 to represent version 2.0.]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>The security of the implementation.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>Implemented by the Android system. This location is less secure than the TEE but is more secure than app\'s process space.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>Implemented in secure hardware, such as a TEE (Trusted Execution Environment). This location is more secure because secure hardware is highly resistant to remote compromise.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>Implemented in a dedicated hardware security module. This location is more secure because it is highly resistant to remote compromise and hardware attacks against the module.</li></ul>]]></string>
-    <string name="attestation_summary_format">Version: %1$d\nSecurity level: %2$s</string>
+    <string name="attestation_summary_format">Version: %1$s\nSecurity level: %2$s</string>
     <string name="attestation_challenge" translatable="false">Attestation challenge</string>
     <string name="attestation_challenge_description"><![CDATA[The purpose of the challenge value is to enable relying parties to verify that the key was created in response to a specific request.<p>In production environment, the challenge value should be randomly generated every time.]]></string>
     <string name="unique_id" translatable="false">Unique ID</string>
@@ -95,6 +95,10 @@ This software is open source under %2$s (%1$s).
     <string name="authorization_list_attestationIdModel">Attestation ID model</string>
     <string name="authorization_list_vendorPatchLevel">Vendor patch level</string>
     <string name="authorization_list_bootPatchLevel">Boot patch level</string>
+    <string name="authorization_list_mgfDigest">Rsa Oaep Mgf Digest</string>
+    <string name="authorization_list_earlyBootOnly">Early boot only</string>
+    <string name="authorization_list_usageCountLimit">Usage count limit</string>
+    <string name="authorization_list_deviceUniqueAttestation">Device unique attestation</string>
 
     <string name="authorization_list_description"><![CDATA[
     This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.
@@ -209,5 +213,17 @@ This software is open source under %2$s (%1$s).
     ]]></string>
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
     Specifies the kernel image security patch level that must be installed on the device for this key to be used. The value appears in the form YYYYMMDD, representing the date of the system security patch. For example, if a key were generated on an Android device with the system\'s August 5, 2018 security patch installed, this value would be 20180805.
+    ]]></string>
+    <string name="authorization_list_mgfDigest_description"><![CDATA[
+    Specifies the MGF1 digest algorithms that may be used with RSA encryption/decryption with OAEP padding. Possible values are defined by the Digest enum.
+    ]]></string>
+    <string name="authorization_list_earlyBootOnly_description"><![CDATA[
+    Keys tagged with EARLY_BOOT_ONLY may only be used during early boot, until IKeyMintDevice::earlyBootEnded() is called.
+    ]]></string>
+    <string name="authorization_list_usageCountLimit_description"><![CDATA[
+    Specifies the number of times that a key may be used. This can be used to limit the use of a key. The value is a 32-bit integer representing the current number of attempts left.
+    ]]></string>
+    <string name="authorization_list_deviceUniqueAttestation_description"><![CDATA[
+    It indicates that attestation using a device-unique key is requested, rather than a batch key. When a device-unique key is used, the returned chain should contain two or three certificates.
     ]]></string>
 </resources>

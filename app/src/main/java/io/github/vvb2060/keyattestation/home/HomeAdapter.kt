@@ -3,6 +3,7 @@ package io.github.vvb2060.keyattestation.home
 import com.google.common.base.CharMatcher
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
+import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList
 import io.github.vvb2060.keyattestation.lang.AttestationException
@@ -45,14 +46,14 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.attestation,
                 R.string.attestation_version_description,
                 R.string.security_level_description,
-                attestation.attestationVersion,
+                Attestation.attestationVersionToString(attestation.attestationVersion),
                 attestation.attestationSecurityLevel), id++)
 
         addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, SecurityLevelData(
                 R.string.keymaster,
                 R.string.keymaster_version_description,
                 R.string.security_level_description,
-                attestation.keymasterVersion,
+                Attestation.keymasterVersionToString(attestation.keymasterVersion),
                 attestation.keymasterSecurityLevel), id++)
 
         addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
@@ -156,7 +157,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.userAuthType?.let { AuthorizationList.userAuthTypeToString(it) },
                     list.authTimeout?.toString(),
                     list.allowWhileOnBody?.toString(),
-                    list.isUserPresenceRequired?.toString(),
+                    list.userPresenceRequired?.toString(),
                     list.confirmationRequired?.toString(),
                     list.unlockedDeviceRequired?.toString(),
                     list.allApplications?.toString(),
@@ -177,7 +178,11 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.manufacturer,
                     list.model,
                     list.vendorPatchLevel?.toString(),
-                    list.bootPatchLevel?.toString()
+                    list.bootPatchLevel?.toString(),
+                    list.mgfDigest?.let { AuthorizationList.digestsToString(it) },
+                    list.earlyBootOnly?.toString(),
+                    list.usageCountLimit?.toString(),
+                    list.deviceUniqueAttestation?.toString(),
             )
         }
 
@@ -218,7 +223,11 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdManufacturer,
                 R.string.authorization_list_attestationIdModel,
                 R.string.authorization_list_vendorPatchLevel,
-                R.string.authorization_list_bootPatchLevel
+                R.string.authorization_list_bootPatchLevel,
+                R.string.authorization_list_mgfDigest,
+                R.string.authorization_list_earlyBootOnly,
+                R.string.authorization_list_usageCountLimit,
+                R.string.authorization_list_deviceUniqueAttestation,
         )
 
         private val authorizationItemDescriptions = arrayOf(
@@ -258,7 +267,11 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdManufacturer_description,
                 R.string.authorization_list_attestationIdModel_description,
                 R.string.authorization_list_vendorPatchLevel_description,
-                R.string.authorization_list_bootPatchLevel_description
+                R.string.authorization_list_bootPatchLevel_description,
+                R.string.authorization_list_mgfDigest_description,
+                R.string.authorization_list_earlyBootOnly_description,
+                R.string.authorization_list_usageCountLimit_description,
+                R.string.authorization_list_deviceUniqueAttestation_description,
         )
     }
 }
