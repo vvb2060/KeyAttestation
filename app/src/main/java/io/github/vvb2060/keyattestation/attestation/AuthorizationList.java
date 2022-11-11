@@ -400,7 +400,7 @@ public class AuthorizationList {
                     break;
                 case EatClaim.KEY_SIZE:
                     keySize = CborUtils.getInt(submodMap, key);
-                    Log.i("Attestation", "Found KEY SIZE, value: " + keySize);
+                    Log.i(AppApplication.TAG, "Found KEY SIZE, value: " + keySize);
                     break;
                 case EatClaim.DIGEST:
                     digests = CborUtils.getIntSet(submodMap, key);

@@ -1,6 +1,7 @@
 package io.github.vvb2060.keyattestation.attestation;
 
 import android.util.Base64;
+import android.util.Log;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
@@ -57,6 +58,8 @@ public class VerifyCertificateChain {
         if (Arrays.equals(rootPublicKey, Base64.decode(AOSP_ROOT_PUBLIC_KEY, 0))) {
             return AOSP;
         }
+        Log.w(AppApplication.TAG, certs[certs.length - 1].toString());
+        Log.w(AppApplication.TAG, Base64.encodeToString(rootPublicKey, Base64.NO_WRAP));
         return UNKNOWN;
     }
 }
