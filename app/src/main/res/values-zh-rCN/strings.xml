@@ -13,8 +13,10 @@
     <string name="bootloader_unlocked">Bootloader 已解锁</string>
     <string name="bootloader_unknown">Bootloader 状态未知</string>
     <string name="bootloader_unknown_summary_software_attestation">该设备不支持硬件级别的密钥认证。</string>
-    <string name="not_trust_root_cert">未知的根证书</string>
-    <string name="not_trust_root_cert_summary">根证书不受信任，认证结果可以被篡改。</string>
+    <string name="unknown_root_cert">未知的根证书</string>
+    <string name="unknown_root_cert_summary">根证书不受信任，可能由厂商自签名。</string>
+    <string name="aosp_root_cert">来自AOSP的根证书</string>
+    <string name="aosp_root_cert_summary">根证书的私钥众所周知，认证结果可以被篡改。</string>
 
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>

@@ -6,6 +6,7 @@ import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList
+import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
@@ -32,10 +33,16 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         val trustRootCertificate = attestationResult.isGoogleRootCertificate
 
         clear()
-        if (!trustRootCertificate) {
+        if (trustRootCertificate == VerifyCertificateChain.UNKNOWN) {
             addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.not_trust_root_cert,
-                    R.string.not_trust_root_cert_summary,
+                    R.string.unknown_root_cert,
+                    R.string.unknown_root_cert_summary,
+                    R.drawable.ic_error_outline_24,
+                    rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+        } else if (trustRootCertificate == VerifyCertificateChain.AOSP) {
+            addItem(HeaderViewHolder.CREATOR, HeaderData(
+                    R.string.aosp_root_cert,
+                    R.string.aosp_root_cert_summary,
                     R.drawable.ic_error_outline_24,
                     rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
         }

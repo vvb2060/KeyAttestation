@@ -69,7 +69,7 @@ class HomeViewModel(context: Context) : ViewModel() {
     ): AttestationResult {
         val certs: Array<X509Certificate?>?
         val attestation: Attestation
-        val isGoogleRootCertificate: Boolean
+        val isGoogleRootCertificate: Int
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)

@@ -11,7 +11,11 @@ import io.github.vvb2060.keyattestation.AppApplication;
 import io.github.vvb2060.keyattestation.R;
 
 public class VerifyCertificateChain {
-    static final String GOOGLE_ROOT_PUBLIC_KEY = "" +
+    public static final int UNKNOWN = 0;
+    public static final int AOSP = 1;
+    public static final int GOOGLE = 2;
+
+    private static final String GOOGLE_ROOT_PUBLIC_KEY = "" +
             "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAr7bHgiuxpwHsK7Qui8xU" +
             "FmOr75gvMsd/dTEDDJdSSxtf6An7xyqpRR90PL2abxM1dEqlXnf2tqw1Ne4Xwl5j" +
             "lRfdnJLmN0pTy/4lj4/7tv0Sk3iiKkypnEUtR6WfMgH0QZfKHM1+di+y9TFRtv6y" +
@@ -25,7 +29,11 @@ public class VerifyCertificateChain {
             "ixPvZtXQpUpuL12ab+9EaDK8Z4RHJYYfCT3Q5vNAXaiWQ+8PTWm2QgBR/bkwSWc+" +
             "NpUFgNPN9PvQi8WEg5UmAGMCAwEAAQ==";
 
-    public static boolean verifyCertificateChain(X509Certificate[] certs)
+    private static final String AOSP_ROOT_PUBLIC_KEY = "" +
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7l1ex+HA220Dpn7mthvsTWpdamgu" +
+            "D/9/SQ59dx9EIm29sa/6FsvHrcV30lacqrewLVQBXT5DKyqO107sSHVBpA==";
+
+    public static int verifyCertificateChain(X509Certificate[] certs)
             throws GeneralSecurityException {
         var parent = certs[certs.length - 1];
         var context = AppApplication.getApp().getApplicationContext();
@@ -42,7 +50,13 @@ public class VerifyCertificateChain {
             }
         }
 
-        var rootPublicKey = certs[certs.length - 1].getPublicKey();
-        return Arrays.equals(rootPublicKey.getEncoded(), Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0));
+        var rootPublicKey = certs[certs.length - 1].getPublicKey().getEncoded();
+        if (Arrays.equals(rootPublicKey, Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0))) {
+            return GOOGLE;
+        }
+        if (Arrays.equals(rootPublicKey, Base64.decode(AOSP_ROOT_PUBLIC_KEY, 0))) {
+            return AOSP;
+        }
+        return UNKNOWN;
     }
 }

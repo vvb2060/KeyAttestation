@@ -13,8 +13,10 @@ This software is open source under %2$s (%1$s).
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_unknown_summary_software_attestation">This device does not support hardware-level key attestation.</string>
-    <string name="not_trust_root_cert">Unknown Root certificate</string>
-    <string name="not_trust_root_cert_summary">Root certificate is not trusted and the attestation result can be tampered with.</string>
+    <string name="unknown_root_cert">Unknown Root certificate</string>
+    <string name="unknown_root_cert_summary">Root certificate is not trusted, may self-signed by OEM.</string>
+    <string name="aosp_root_cert">AOSP Root certificate</string>
+    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the attestation result can be tampered with.</string>
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
