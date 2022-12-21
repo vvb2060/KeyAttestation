@@ -17,13 +17,13 @@ if (project.rootProject.file("local.properties").exists()) {
 
 android {
     compileSdk 33
-    buildToolsVersion '33.0.0'
+    buildToolsVersion '33.0.1'
     namespace 'io.github.vvb2060.keyattestation'
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 33
         versionCode gitCommitCount
-        versionName '1.3.3'
+        versionName '1.3.4'
         resConfigs "en", "zh-rCN", "zh-rTW"
     }
 
@@ -85,12 +85,12 @@ configurations.all {
 
 dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.71'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.72'
     implementation 'com.google.guava:guava:31.1-android'
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'co.nstant.in:cbor:0.9'
 
-    implementation 'dev.rikka.rikkax.appcompat:appcompat:1.5.0'
+    implementation 'dev.rikka.rikkax.appcompat:appcompat:1.5.0.1'
     implementation 'dev.rikka.rikkax.core:core-ktx:1.4.1'
     //noinspection GradleDependency
     implementation 'dev.rikka.rikkax.material:material:1.6.6'
@@ -101,7 +101,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.7.0'
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.fragment:fragment-ktx:1.5.4'
+    implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
     def lifecycleVersion = "2.5.1"
