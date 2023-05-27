@@ -47,6 +47,9 @@ import co.nstant.in.cbor.model.Number;
 import io.github.vvb2060.keyattestation.AppApplication;
 
 public class AuthorizationList {
+    // https://cs.android.com/android/platform/superproject/+/master:hardware/libhardware/include/hardware/keymaster_defs.h
+    // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/security/keymaster/KeymasterDefs.java
+
     // Algorithm values.
     public static final int KM_ALGORITHM_RSA = 1;
     public static final int KM_ALGORITHM_EC = 3;
@@ -157,6 +160,7 @@ public class AuthorizationList {
     public static final int KM_TAG_BOOT_PATCHLEVEL = KM_UINT | 719;
     public static final int KM_TAG_DEVICE_UNIQUE_ATTESTATION = KM_BOOL | 720;
     public static final int KM_TAG_IDENTITY_CREDENTIAL_KEY = KM_BOOL | 721;
+    public static final int KM_TAG_ATTESTATION_ID_SECOND_IMEI = KM_BYTES | 723;
 
     // Map for converting padding values to strings
     private static final ImmutableMap<Integer, String> paddingMap = ImmutableMap
@@ -225,6 +229,7 @@ public class AuthorizationList {
     private String device;
     private String serialNumber;
     private String imei;
+    private String secondImei;
     private String meid;
     private String product;
     private String manufacturer;
@@ -233,6 +238,7 @@ public class AuthorizationList {
     private Boolean confirmationRequired;
     private Boolean unlockedDeviceRequired;
     private Boolean deviceUniqueAttestation;
+    private Boolean identityCredentialKey;
 
     public AuthorizationList(ASN1Encodable sequence) throws CertificateParsingException {
         if (!(sequence instanceof ASN1Sequence)) {
@@ -375,6 +381,12 @@ public class AuthorizationList {
                 case KM_TAG_DEVICE_UNIQUE_ATTESTATION & KEYMASTER_TAG_TYPE_MASK:
                     deviceUniqueAttestation = true;
                     break;
+                case KM_TAG_IDENTITY_CREDENTIAL_KEY & KEYMASTER_TAG_TYPE_MASK:
+                    identityCredentialKey = true;
+                    break;
+                case KM_TAG_ATTESTATION_ID_SECOND_IMEI & KEYMASTER_TAG_TYPE_MASK:
+                    secondImei = getStringFromAsn1Value(value);
+                    break;
             }
         }
 
@@ -410,6 +422,9 @@ public class AuthorizationList {
                     break;
                 case EatClaim.RSA_PUBLIC_EXPONENT:
                     rsaPublicExponent = CborUtils.getLong(submodMap, key);
+                    break;
+                case EatClaim.RSA_OAEP_MGF_DIGEST:
+                    mgfDigest = CborUtils.getIntSet(submodMap, key);
                     break;
                 case EatClaim.NO_AUTH_REQUIRED:
                     noAuthRequired = true;
@@ -675,6 +690,8 @@ public class AuthorizationList {
                 return "secp384r1";
             case KM_EC_CURVE_P521:
                 return "secp521r1";
+            case KM_EC_CURVE_CURVE_25519:
+                return "CURVE_25519";
             default:
                 return "unknown (" + ecCurve + ")";
         }
@@ -780,6 +797,10 @@ public class AuthorizationList {
         return imei;
     }
 
+    public String getSecondImei() {
+        return secondImei;
+    }
+
     public String getMeid() {
         return meid;
     }
@@ -818,6 +839,10 @@ public class AuthorizationList {
 
     public Boolean getDeviceUniqueAttestation() {
         return deviceUniqueAttestation;
+    }
+
+    public Boolean getIdentityCredentialKey() {
+        return identityCredentialKey;
     }
 
     private String getStringFromAsn1Value(ASN1Primitive value) throws CertificateParsingException {
@@ -965,6 +990,10 @@ public class AuthorizationList {
             s.append("\nDevice unique attestation");
         }
 
+        if (identityCredentialKey != null) {
+            s.append("\nIdentity Credential Key");
+        }
+
         if (brand != null) {
             s.append("\nBrand: ").append(brand);
         }
@@ -979,6 +1008,9 @@ public class AuthorizationList {
         }
         if (imei != null) {
             s.append("\nIMEI: ").append(imei);
+        }
+        if (secondImei != null) {
+            s.append("\nSecond IMEI:").append(secondImei);
         }
         if (meid != null) {
             s.append("\nMEID: ").append(meid);

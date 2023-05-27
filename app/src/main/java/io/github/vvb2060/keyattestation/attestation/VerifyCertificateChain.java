@@ -47,7 +47,8 @@ public class VerifyCertificateChain {
             parent = cert;
             var certStatus = CertificateRevocationStatus.decodeStatus(cert.getSerialNumber(), entries);
             if (certStatus != null) {
-                throw new CertificateException("Certificate revocation status is " + certStatus.status);
+                throw new CertificateException("Certificate revocation status is " + certStatus.status
+                        + ", reason " + certStatus.reason);
             }
         }
 

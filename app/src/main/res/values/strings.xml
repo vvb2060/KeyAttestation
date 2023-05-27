@@ -92,6 +92,7 @@ This software is open source under %2$s (%1$s).
     <string name="authorization_list_attestationIdProduct">Attestation ID product</string>
     <string name="authorization_list_attestationIdSerial">Attestation ID serial</string>
     <string name="authorization_list_attestationIdImei">Attestation ID IMEI</string>
+    <string name="authorization_list_attestationIdSecondImei">Attestation ID second IMEI</string>
     <string name="authorization_list_attestationIdMeid">Attestation ID MEID</string>
     <string name="authorization_list_attestationIdManufacturer">Attestation ID manufacturer</string>
     <string name="authorization_list_attestationIdModel">Attestation ID model</string>
@@ -101,7 +102,9 @@ This software is open source under %2$s (%1$s).
     <string name="authorization_list_earlyBootOnly">Early boot only</string>
     <string name="authorization_list_usageCountLimit">Usage count limit</string>
     <string name="authorization_list_deviceUniqueAttestation">Device unique attestation</string>
+    <string name="authorization_list_identityCredentialKey">Identity credential key</string>
 
+    <!-- https://cs.android.com/android/platform/superproject/+/master:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl -->
     <string name="authorization_list_description"><![CDATA[
     This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.
     ]]></string>
@@ -199,7 +202,10 @@ This software is open source under %2$s (%1$s).
     Provides the device\'s serial number. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    Provides the IMEIs for all radios on the device. This field is set only when requesting attestation of the device\'s identifiers.
+    Provides the IMEI one of the radios on the device to attested key generation/import operations.  This field must be set only when requesting attestation of the device\'s identifiers.
+    ]]></string>
+    <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
+    Provides an additional IMEI of one of the radios on the device to attested key generation/import operations.
     ]]></string>
     <string name="authorization_list_attestationIdMeid_description"><![CDATA[
     Provides the MEIDs for all radios on the device. This field will only be set when requesting attestation of the device\'s identifiers.
@@ -227,5 +233,8 @@ This software is open source under %2$s (%1$s).
     ]]></string>
     <string name="authorization_list_deviceUniqueAttestation_description"><![CDATA[
     It indicates that attestation using a device-unique key is requested, rather than a batch key. When a device-unique key is used, the returned chain should contain two or three certificates.
+    ]]></string>
+    <string name="authorization_list_identityCredentialKey_description"><![CDATA[
+    It is used in attestations produced by the IIdentityCredential HAL when that HAL attests to Credential Keys. IIdentityCredential produces KeyMint-style attestations.
     ]]></string>
 </resources>

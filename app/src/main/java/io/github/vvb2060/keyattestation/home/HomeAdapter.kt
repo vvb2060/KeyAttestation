@@ -181,6 +181,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.product,
                     list.serialNumber,
                     list.imei,
+                    list.secondImei,
                     list.meid,
                     list.manufacturer,
                     list.model,
@@ -190,6 +191,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.earlyBootOnly?.toString(),
                     list.usageCountLimit?.toString(),
                     list.deviceUniqueAttestation?.toString(),
+                    list.identityCredentialKey?.toString(),
             )
         }
 
@@ -226,6 +228,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdProduct,
                 R.string.authorization_list_attestationIdSerial,
                 R.string.authorization_list_attestationIdImei,
+                R.string.authorization_list_attestationIdSecondImei,
                 R.string.authorization_list_attestationIdMeid,
                 R.string.authorization_list_attestationIdManufacturer,
                 R.string.authorization_list_attestationIdModel,
@@ -235,6 +238,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_earlyBootOnly,
                 R.string.authorization_list_usageCountLimit,
                 R.string.authorization_list_deviceUniqueAttestation,
+                R.string.authorization_list_identityCredentialKey,
         )
 
         private val authorizationItemDescriptions = arrayOf(
@@ -270,6 +274,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdProduct_description,
                 R.string.authorization_list_attestationIdSerial_description,
                 R.string.authorization_list_attestationIdImei_description,
+                R.string.authorization_list_attestationIdSecondImei_description,
                 R.string.authorization_list_attestationIdMeid_description,
                 R.string.authorization_list_attestationIdManufacturer_description,
                 R.string.authorization_list_attestationIdModel_description,
@@ -279,6 +284,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_earlyBootOnly_description,
                 R.string.authorization_list_usageCountLimit_description,
                 R.string.authorization_list_deviceUniqueAttestation_description,
+                R.string.authorization_list_identityCredentialKey_description,
         )
     }
 }
