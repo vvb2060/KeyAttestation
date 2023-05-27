@@ -59,6 +59,146 @@
     "633d72164968d2b7ec1a927a14c8efbe": {
       "status": "REVOKED",
       "reason": "KEY_COMPROMISE"
+    },
+    "f3a6cc97099ae7311ca7d1c55625a9e2": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c360da616de6583ae816cdefdda66221": {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "1476c32be5b4788386062ca1d6a3ec01" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c9b95f08cb46c66e778a996bb04eb063" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "1f4363f4acefdf83ae59202b934cead9" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "ee3ac673107ddf0831027a84c532bee4" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "633d72164968d2b7ec1a927a14c8efbe" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c35747a084470c3135aeefe2b8d40cd6" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "2775678662643671941" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "10478051501886118140" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "15304424745846567057" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "2540354691047989632" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "9605027729693255932" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "7266970422002561562" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "2121480040206509646" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "4722071905782261079" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "13791718860221210775" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "5318853256439367328" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "16619986970074733637" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "8090691296252605665" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "9422579570321443809" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "14441488828221950432" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "cfd09f492467a8d78f3c87f8ae82b0ed" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "843184b4161e8dfbb711061d3483ad81" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "f2e14b3039c35d54fb9661b60b17ec94" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "836d1498921ff86a22fe3768042849a2" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c95180267ba53a50b636e36d32976065" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "9414602a0ce3f77d9ac05af532785ef" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "c21b00ddf8c5a26106a03e8c11b37998" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "d9e9fa3c6021bcca273b524f551feab9" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "6a0c9ef31f814ebb8d8301eb443f7940" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "78d6b0810af9e6897b62ef2e26a853d2" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "e8063fd19d678b46998c5d25bf6bcd2" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "a23891b8cf1e06bea42599aecd9bc9cf" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "fc609574570c3e0a1d347e02a2ad6d4d" : {
+      "status": "REVOKED",
+      "reason": "SOFTWARE_FLAW"
     }
   }
 }
