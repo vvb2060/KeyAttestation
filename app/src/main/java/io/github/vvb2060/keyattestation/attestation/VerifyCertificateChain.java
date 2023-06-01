@@ -7,6 +7,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.List;
 
 import io.github.vvb2060.keyattestation.AppApplication;
 import io.github.vvb2060.keyattestation.R;
@@ -34,14 +35,15 @@ public class VerifyCertificateChain {
             "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7l1ex+HA220Dpn7mthvsTWpdamgu" +
             "D/9/SQ59dx9EIm29sa/6FsvHrcV30lacqrewLVQBXT5DKyqO107sSHVBpA==";
 
-    public static int verifyCertificateChain(X509Certificate[] certs)
+    public static int verifyCertificateChain(List<X509Certificate> certs)
             throws GeneralSecurityException {
-        var parent = certs[certs.length - 1];
         var context = AppApplication.getApp().getApplicationContext();
         var stream = context.getResources().openRawResource(R.raw.status);
         var entries = CertificateRevocationStatus.parseStatus(stream);
-        for (int i = certs.length - 1; i >= 0; i--) {
-            var cert = certs[i];
+        var root = certs.get(certs.size() - 1);
+        var parent = root;
+        for (int i = certs.size() - 1; i >= 0; i--) {
+            var cert = certs.get(i);
             cert.checkValidity();
             cert.verify(parent.getPublicKey());
             parent = cert;
@@ -52,14 +54,14 @@ public class VerifyCertificateChain {
             }
         }
 
-        var rootPublicKey = certs[certs.length - 1].getPublicKey().getEncoded();
+        var rootPublicKey = root.getPublicKey().getEncoded();
         if (Arrays.equals(rootPublicKey, Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0))) {
             return GOOGLE;
         }
         if (Arrays.equals(rootPublicKey, Base64.decode(AOSP_ROOT_PUBLIC_KEY, 0))) {
             return AOSP;
         }
-        Log.w(AppApplication.TAG, certs[certs.length - 1].toString());
+        Log.w(AppApplication.TAG, root.toString());
         Log.w(AppApplication.TAG, Base64.encodeToString(rootPublicKey, Base64.NO_WRAP));
         return UNKNOWN;
     }

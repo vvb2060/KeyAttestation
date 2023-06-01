@@ -26,7 +26,7 @@ import java.security.ProviderException
 import java.security.cert.CertificateParsingException
 import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
-import java.util.*
+import java.util.Date
 
 class HomeViewModel(context: Context) : ViewModel() {
 
@@ -56,7 +56,7 @@ class HomeViewModel(context: Context) : ViewModel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && includeProps) {
             builder.setDevicePropertiesAttestationIncluded(true)
         }
-        if (Build.VERSION.SDK_INT >= 28 && useStrongBox) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && useStrongBox) {
             builder.setIsStrongBoxBacked(true)
         }
         builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256)
@@ -65,18 +65,46 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     @Throws(AttestationException::class)
-    private fun doAttestation(alias: String, useStrongBox: Boolean, includeProps: Boolean
-    ): AttestationResult {
-        val certs: Array<X509Certificate?>?
-        val attestation: Attestation
+    private fun parseCertificateChain(certs: List<X509Certificate>): AttestationResult {
+        var attestation: Attestation? = null
+        var exception: AttestationException? = null
         val isGoogleRootCertificate: Int
         try {
+            isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
+        } catch (e: GeneralSecurityException) {
+            // Certificate is not trusted
+            throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
+        }
+        // Find first attestation record
+        // Never use certs[0], as certificate chain can have arbitrary certificates appended
+        for (i in certs.indices.reversed()) {
+            try {
+                attestation = Attestation.loadFromCertificate(certs[i])
+                break
+            } catch (e: CertificateParsingException) {
+                // Unable to parse attestation record
+                exception = AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
+            }
+        }
+        if (attestation == null) {
+            throw exception!!
+        }
+        return AttestationResult(attestation, isGoogleRootCertificate)
+    }
+
+    @Throws(AttestationException::class)
+    private fun doAttestation(alias: String, useStrongBox: Boolean, includeProps: Boolean
+    ): AttestationResult {
+        val certs: List<X509Certificate>
+        try {
+            generateKey(alias, useStrongBox, includeProps)
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            generateKey(alias, useStrongBox, includeProps)
             val certificates = keyStore.getCertificateChain(alias)
-            certs = arrayOfNulls(certificates.size)
-            for (i in certs.indices) certs[i] = certificates[i] as X509Certificate
+            certs = ArrayList(certificates.size)
+            for (i in certificates.indices) {
+                certs.add(certificates[i] as X509Certificate)
+            }
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
                 throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
@@ -88,23 +116,10 @@ class HomeViewModel(context: Context) : ViewModel() {
                 throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
             }
         } catch (e: Exception) {
-            // Unable to get certificate
+            // Unable to get certificate chain
             throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
         }
-        try {
-            isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
-        } catch (e: GeneralSecurityException) {
-            // Certificate is not trusted
-            throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
-        }
-        try {
-            attestation = Attestation.loadFromCertificate(certs[0])
-        } catch (e: CertificateParsingException) {
-            // Unable to parse attestation record
-            throw AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
-        }
-
-        return AttestationResult(useStrongBox, attestation, isGoogleRootCertificate)
+        return parseCertificateChain(certs)
     }
 
     fun load() = viewModelScope.launch {
