@@ -3,6 +3,8 @@
     <string name="app_name">密钥认证</string>
     <string name="use_strongbox">使用 StrongBox</string>
     <string name="attest_device_props">认证设备属性</string>
+    <string name="load_certs">从文件加载</string>
+    <string name="save_certs">保存到文件</string>
     <string name="about">关于</string>
     <string name="open_source_info"><![CDATA[
 此软件是 %2$s 下的开源软件（%1$s）。

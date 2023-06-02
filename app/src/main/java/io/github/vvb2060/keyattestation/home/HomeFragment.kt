@@ -2,14 +2,18 @@ package io.github.vvb2060.keyattestation.home
 
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
+import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.isVisible
+import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
@@ -30,6 +34,14 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
     private val binding: HomeBinding get() = _binding!!
 
     private val viewModel by activityViewModels { HomeViewModel(requireActivity()) }
+
+    private val save = registerForActivityResult(CreateDocument("application/pkix-pkipath")) {
+        viewModel.save(requireContext().contentResolver, it)
+    }
+
+    private val load = registerForActivityResult(OpenDocument()) {
+        viewModel.load(requireContext().contentResolver, it)
+    }
 
     private val adapter by lazy {
         HomeAdapter(this)
@@ -144,6 +156,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
         menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds
         menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncludeProps
+        menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -164,6 +177,14 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 preference.edit { putBoolean("prefer_including_props", status) }
                 true
             }
+            R.id.menu_save -> {
+                save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")
+                true
+            }
+            R.id.menu_load -> {
+                load.launch(arrayOf("application/pkix-pkipath"))
+                true
+            }
             R.id.menu_about -> {
                 val context = requireContext()
                 val versionName = BuildConfig.VERSION_NAME
@@ -177,13 +198,13 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 val dialog: Dialog = AlertDialog.Builder(context)
                         .setView(rikka.material.R.layout.dialog_about)
                         .show()
-                (dialog.findViewById<View>(rikka.material.R.id.design_about_icon) as ImageView).setImageDrawable(context.getDrawable(R.drawable.ic_launcher))
-                (dialog.findViewById<View>(rikka.material.R.id.design_about_title) as TextView).text = getString(R.string.app_name)
-                (dialog.findViewById<View>(rikka.material.R.id.design_about_version) as TextView).apply {
+                dialog.findViewById<ImageView>(rikka.material.R.id.design_about_icon).setImageDrawable(context.getDrawable(R.drawable.ic_launcher))
+                dialog.findViewById<TextView>(rikka.material.R.id.design_about_title).text = getString(R.string.app_name)
+                dialog.findViewById<TextView>(rikka.material.R.id.design_about_version).apply {
                     movementMethod = LinkMovementMethod.getInstance()
                     this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
                 }
-                (dialog.findViewById<View>(rikka.material.R.id.design_about_info) as TextView).isVisible = false
+                dialog.findViewById<TextView>(rikka.material.R.id.design_about_info).isVisible = false
                 true
             }
             else -> super.onOptionsItemSelected(item)
