@@ -15,6 +15,12 @@ import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CANT_PARSE_CERT
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CERT_NOT_TRUSTED
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_DEVICEIDS_UNAVAILABLE
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_NOT_SUPPORT
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_STRONGBOX_UNAVAILABLE
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,8 +78,7 @@ class HomeViewModel(context: Context) : ViewModel() {
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
         } catch (e: GeneralSecurityException) {
-            // Certificate is not trusted
-            throw AttestationException(AttestationException.CODE_CERT_NOT_TRUSTED, e)
+            throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
         }
         // Find first attestation record
         // Never use certs[0], as certificate chain can have arbitrary certificates appended
@@ -82,8 +87,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 attestation = Attestation.loadFromCertificate(certs[i])
                 break
             } catch (e: CertificateParsingException) {
-                // Unable to parse attestation record
-                exception = AttestationException(AttestationException.CODE_CANT_PARSE_ATTESTATION_RECORD, e)
+                exception = AttestationException(CODE_CANT_PARSE_CERT, e)
             }
         }
         if (attestation == null) {
@@ -107,17 +111,17 @@ class HomeViewModel(context: Context) : ViewModel() {
             }
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
-                throw AttestationException(AttestationException.CODE_STRONGBOX_UNAVAILABLE, e)
+                throw AttestationException(CODE_STRONGBOX_UNAVAILABLE, e)
             } else if (e.cause?.message?.contains("device ids") == true) {
                 // The device does not support device ids attestation
-                throw AttestationException(AttestationException.CODE_DEVICEIDS_UNAVAILABLE, e)
+                throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
             } else {
                 // The device does not support key attestation
-                throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
+                throw AttestationException(CODE_NOT_SUPPORT, e)
             }
         } catch (e: Exception) {
             // Unable to get certificate chain
-            throw AttestationException(AttestationException.CODE_NOT_SUPPORT, e)
+            throw AttestationException(CODE_NOT_SUPPORT, e)
         }
         return parseCertificateChain(certs)
     }
@@ -136,10 +140,9 @@ class HomeViewModel(context: Context) : ViewModel() {
                 val cause = if (e is AttestationException) e.cause!! else e
                 Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
-                if (e is AttestationException) {
-                    Resource.error(e, null)
-                } else {
-                    Resource.error(AttestationException(AttestationException.CODE_UNKNOWN, e), null)
+                when (e) {
+                    is AttestationException -> Resource.error(e, null)
+                    else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
                 }
             }
 

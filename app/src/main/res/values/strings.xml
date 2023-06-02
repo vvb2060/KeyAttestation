@@ -26,9 +26,12 @@ This software is open source under %2$s (%1$s).
     ]]></string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
-    A certificate in the certificate chain was revoked or the generated certificate is invalid.
+    A certificate in the certificate chain has expired, been revoked, or not verified by signature.
     ]]></string>
-    <string name="error_cant_parse_record">Unable to parse attestation record</string>
+    <string name="error_cant_parse_cert">Unable to parse certificate</string>
+    <string name="error_cant_parse_cert_summary"><![CDATA[
+    The certificate is in the wrong format or there is a feature that is not yet supported.
+    ]]></string>
     <string name="error_strongbox_unavailable">StrongBox not available</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     This device is declared to have StrongBox support but it is actually unavailable.

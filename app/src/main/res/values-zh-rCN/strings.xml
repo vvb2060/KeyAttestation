@@ -26,9 +26,12 @@
     ]]></string>
     <string name="error_cert_not_trusted">证书不受信任</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
-    证书链中有证书被吊销或生成的证书无效。
+    证书链中有证书已过期、被吊销或无法通过签名验证。
     ]]></string>
-    <string name="error_cant_parse_record">无法解析证明记录</string>
+    <string name="error_cant_parse_cert">无法解析证书</string>
+    <string name="error_cant_parse_cert_summary"><![CDATA[
+    证书格式错误或存在尚未支持的功能。
+    ]]></string>
     <string name="error_strongbox_unavailable">StrongBox 不可用</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     该设备声明具有 StrongBox 支持，但实际上不可用。

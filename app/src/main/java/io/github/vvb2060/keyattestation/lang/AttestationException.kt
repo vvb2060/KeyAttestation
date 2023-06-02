@@ -8,7 +8,7 @@ class AttestationException(private val code: Int, cause: Throwable?) : RuntimeEx
         const val CODE_UNKNOWN = -1
         const val CODE_NOT_SUPPORT = 0
         const val CODE_CERT_NOT_TRUSTED = 1
-        const val CODE_CANT_PARSE_ATTESTATION_RECORD = 2
+        const val CODE_CANT_PARSE_CERT = 2
         const val CODE_STRONGBOX_UNAVAILABLE = 3
         const val CODE_DEVICEIDS_UNAVAILABLE = 4
     }
@@ -22,8 +22,8 @@ class AttestationException(private val code: Int, cause: Throwable?) : RuntimeEx
                 CODE_CERT_NOT_TRUSTED -> {
                     R.string.error_cert_not_trusted
                 }
-                CODE_CANT_PARSE_ATTESTATION_RECORD -> {
-                    R.string.error_cant_parse_record
+                CODE_CANT_PARSE_CERT -> {
+                    R.string.error_cant_parse_cert
                 }
                 CODE_STRONGBOX_UNAVAILABLE -> {
                     R.string.error_strongbox_unavailable
@@ -45,6 +45,9 @@ class AttestationException(private val code: Int, cause: Throwable?) : RuntimeEx
                 }
                 CODE_CERT_NOT_TRUSTED -> {
                     R.string.error_cert_not_trusted_summary
+                }
+                CODE_CANT_PARSE_CERT -> {
+                    R.string.error_cant_parse_cert_summary
                 }
                 CODE_STRONGBOX_UNAVAILABLE -> {
                     R.string.error_strongbox_unavailable_summary

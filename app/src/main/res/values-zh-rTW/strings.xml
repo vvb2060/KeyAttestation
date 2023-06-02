@@ -26,7 +26,7 @@
     <string name="error_cert_not_trusted_summary"><![CDATA[
     證書鏈中有證書被吊銷或產生的證書無效。
     ]]></string>
-    <string name="error_cant_parse_record">無法剖析證明記錄</string>
+    <string name="error_cant_parse_cert">無法剖析證書</string>
     <string name="error_strongbox_unavailable">無法使用 StrongBox</string>
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     該裝置宣告具有 StrongBox 的支援，但實際上無法使用。
