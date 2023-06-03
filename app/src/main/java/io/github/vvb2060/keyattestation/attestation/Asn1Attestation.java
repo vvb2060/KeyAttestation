@@ -76,6 +76,8 @@ public class Asn1Attestation extends Attestation {
     }
 
     public RootOfTrust getRootOfTrust() {
-        return teeEnforced.getRootOfTrust();
+        RootOfTrust tee = teeEnforced.getRootOfTrust();
+        if (tee != null) return tee;
+        return softwareEnforced.getRootOfTrust();
     }
 }

@@ -11,10 +11,10 @@ This software is open source under %2$s (%1$s).
     ]]></string>
 
     <string name="bootloader_locked">Bootloader is locked</string>
-    <string name="root_of_trust_set_by_user">Root of trust set by user</string>
+    <string name="bootloader_user">Root of trust set by user</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
-    <string name="bootloader_unknown_summary_software_attestation">This device does not support hardware-level key attestation.</string>
+    <string name="bootloader_summary_sw_level">This device does not support hardware-level key attestation.</string>
     <string name="unknown_root_cert">Unknown Root certificate</string>
     <string name="unknown_root_cert_summary">Root certificate is not trusted, may self-signed by OEM.</string>
     <string name="aosp_root_cert">AOSP Root certificate</string>
