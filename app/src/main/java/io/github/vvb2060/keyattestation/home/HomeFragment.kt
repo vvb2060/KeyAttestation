@@ -60,6 +60,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
         viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
+        viewModel.install(requireContext())
         viewModel.load()
     }
 

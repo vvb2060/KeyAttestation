@@ -29,11 +29,13 @@ import io.github.vvb2060.keyattestation.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.ProviderException
+import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.CertificateParsingException
@@ -108,15 +110,17 @@ class HomeViewModel(context: Context) : ViewModel() {
     @Throws(AttestationException::class)
     private fun doAttestation(alias: String, useStrongBox: Boolean, includeProps: Boolean
     ): AttestationResult {
-        val certs: List<X509Certificate>
+        val certs: List<Certificate>
         try {
             generateKey(alias, useStrongBox, includeProps)
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             val certificates = keyStore.getCertificateChain(alias)
             certs = ArrayList(certificates.size)
+            val cf = CertificateFactory.getInstance("X.509")
             for (i in certificates.indices) {
-                certs.add(certificates[i] as X509Certificate)
+                val buf = ByteArrayInputStream(certificates[i].encoded)
+                certs.add(cf.generateCertificate(buf))
             }
         } catch (e: ProviderException) {
             if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
@@ -132,7 +136,8 @@ class HomeViewModel(context: Context) : ViewModel() {
             // Unable to get certificate chain
             throw AttestationException(CODE_NOT_SUPPORT, e)
         }
-        this.currentCerts = certs
+        @Suppress("UNCHECKED_CAST")
+        this.currentCerts = certs as List<X509Certificate>
         return parseCertificateChain(certs)
     }
 
@@ -160,57 +165,64 @@ class HomeViewModel(context: Context) : ViewModel() {
         }
     }
 
-    fun load(cr: ContentResolver, uri: Uri?) = viewModelScope.launch {
+    fun load(cr: ContentResolver, uri: Uri?) = viewModelScope.launch(Dispatchers.IO) {
         if (uri == null) return@launch
         this@HomeViewModel.currentCerts = null
-        attestationResult.value = Resource.loading(null)
+        attestationResult.postValue(Resource.loading(null))
 
-        withContext(Dispatchers.IO) {
-            val result = try {
-                val cf = CertificateFactory.getInstance("X.509")
-                cr.openInputStream(uri).use {
-                    @Suppress("UNCHECKED_CAST")
-                    val certs = cf.generateCertPath(it).certificates as List<X509Certificate>
-                    if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
-                    val attestationResult = parseCertificateChain(certs)
-                    Resource.success(attestationResult)
-                }
-            } catch (e: Throwable) {
-                val cause = if (e is AttestationException) e.cause!! else e
-                Log.w(AppApplication.TAG, "Load attestation error.", cause)
-
-                when (e) {
-                    is AttestationException -> Resource.error(e, null)
-                    is CertificateException -> Resource.error(AttestationException(CODE_CANT_PARSE_CERT, e), null)
-                    else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
-                }
+        val result = try {
+            val cf = CertificateFactory.getInstance("X.509")
+            cr.openInputStream(uri).use {
+                @Suppress("UNCHECKED_CAST")
+                val certs = cf.generateCertPath(it).certificates as List<X509Certificate>
+                if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
+                val attestationResult = parseCertificateChain(certs)
+                Resource.success(attestationResult)
             }
+        } catch (e: Throwable) {
+            val cause = if (e is AttestationException) e.cause!! else e
+            Log.w(AppApplication.TAG, "Load attestation error.", cause)
 
-            attestationResult.postValue(result)
+            when (e) {
+                is AttestationException -> Resource.error(e, null)
+                is CertificateException -> Resource.error(AttestationException(CODE_CANT_PARSE_CERT, e), null)
+                else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
+            }
         }
+
+        attestationResult.postValue(result)
     }
 
-    fun load() = viewModelScope.launch {
-        attestationResult.value = Resource.loading(null)
+    fun load() = viewModelScope.launch(Dispatchers.IO) {
+        attestationResult.postValue(Resource.loading(null))
 
-        withContext(Dispatchers.IO) {
-            val useStrongBox = hasStrongBox && preferStrongBox
-            val includeProps = hasDeviceIds && preferIncludeProps
-            val result = try {
-                val alias = "Key_${useStrongBox}_$includeProps"
-                val attestationResult = doAttestation(alias, useStrongBox, includeProps)
-                Resource.success(attestationResult)
-            } catch (e: Throwable) {
-                val cause = if (e is AttestationException) e.cause!! else e
-                Log.w(AppApplication.TAG, "Do attestation error.", cause)
+        val useStrongBox = hasStrongBox && preferStrongBox
+        val includeProps = hasDeviceIds && preferIncludeProps
+        val result = try {
+            val alias = "Key_${useStrongBox}_$includeProps"
+            val attestationResult = doAttestation(alias, useStrongBox, includeProps)
+            Resource.success(attestationResult)
+        } catch (e: Throwable) {
+            val cause = if (e is AttestationException) e.cause!! else e
+            Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
-                when (e) {
-                    is AttestationException -> Resource.error(e, null)
-                    else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
-                }
+            when (e) {
+                is AttestationException -> Resource.error(e, null)
+                else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
             }
+        }
 
-            attestationResult.postValue(result)
+        attestationResult.postValue(result)
+    }
+
+    fun install(context: Context) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching {
+            val gms = context.createPackageContext("com.google.android.gms",
+                    Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY)
+            gms.classLoader
+                    .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
+                    .getMethod("insertProvider", Context::class.java)
+                    .invoke(null, gms)
         }
     }
 }
