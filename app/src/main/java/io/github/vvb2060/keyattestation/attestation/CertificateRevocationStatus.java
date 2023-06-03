@@ -15,7 +15,6 @@
 
 package io.github.vvb2060.keyattestation.attestation;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -32,16 +31,16 @@ import java.net.URL;
 public class CertificateRevocationStatus {
 
     private static final String STATUS_URL = "https://android.googleapis.com/attestation/status";
-    public final Status status;
-    public final Reason reason;
+    public final String status;
+    public final String reason;
     public final String comment;
     public final String expires;
 
-    public CertificateRevocationStatus() {
-        status = Status.REVOKED;
-        reason = Reason.UNSPECIFIED;
-        comment = null;
-        expires = null;
+    public CertificateRevocationStatus(String status, String reason, String comment, String expires) {
+        this.status = status;
+        this.reason = reason;
+        this.comment = comment;
+        this.expires = expires;
     }
 
     public static JsonObject parseStatus(InputStream stream) {
@@ -61,10 +60,15 @@ public class CertificateRevocationStatus {
             throw new IllegalArgumentException("serialNumber cannot be null");
         }
         String serialNumberString = serialNumber.toString(16).toLowerCase();
-        if (!entries.has(serialNumberString)) {
+        var entry = entries.getAsJsonObject(serialNumberString);
+        if (entry == null) {
             return null;
         }
-        return new Gson().fromJson(entries.get(serialNumberString), CertificateRevocationStatus.class);
+
+        return new CertificateRevocationStatus(
+                entry.getAsJsonPrimitive("status").getAsString(),
+                entry.getAsJsonPrimitive("reason").getAsString(),
+                null, null);
     }
 
     public enum Status {
