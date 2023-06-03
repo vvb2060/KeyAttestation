@@ -182,7 +182,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 true
             }
             R.id.menu_load -> {
-                load.launch(arrayOf("application/pkix-pkipath"))
+                load.launch(arrayOf("application/*"))
                 true
             }
             R.id.menu_about -> {
