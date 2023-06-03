@@ -34,6 +34,11 @@
             android:exported="false"
             tools:ignore="MissingClass"
             tools:node="remove" />
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            android:exported="false"
+            tools:ignore="MissingClass"
+            tools:node="remove" />
     </application>
 
 </manifest>
