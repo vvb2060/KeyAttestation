@@ -121,6 +121,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             val certificates = keyStore.getCertificateChain(alias)
+                    ?: throw CertificateException("Unable to get certificate chain")
             certs = ArrayList(certificates.size)
             val cf = CertificateFactory.getInstance("X.509")
             for (i in certificates.indices) {
