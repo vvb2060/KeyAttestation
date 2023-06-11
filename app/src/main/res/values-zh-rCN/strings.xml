@@ -3,6 +3,7 @@
     <string name="app_name">密钥认证</string>
     <string name="use_strongbox">使用 StrongBox</string>
     <string name="attest_device_props">认证设备属性</string>
+    <string name="skip_verify">跳过验证证书链</string>
     <string name="load_certs">从文件加载</string>
     <string name="save_certs">保存到文件</string>
     <string name="about">关于</string>

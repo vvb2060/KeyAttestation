@@ -152,10 +152,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onPrepareMenu(menu: Menu) {
-        menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox
-        menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
-        menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds
-        menu.findItem(R.id.menu_incluid_props).isChecked = viewModel.preferIncludeProps
+        menu.findItem(R.id.menu_use_strongbox).apply {
+            isVisible = viewModel.hasStrongBox
+            isChecked = viewModel.preferStrongBox
+        }
+        menu.findItem(R.id.menu_incluid_props).apply {
+            isVisible = viewModel.hasDeviceIds
+            isChecked = viewModel.preferIncludeProps
+        }
+        menu.findItem(R.id.menu_skip_verify).apply {
+            isVisible = viewModel.showSkipVerify
+            isChecked = viewModel.preferSkipVerify
+        }
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
     }
 
@@ -178,6 +186,11 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 viewModel.preferIncludeProps = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_including_props", status) }
+            }
+            R.id.menu_skip_verify -> {
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferSkipVerify = status
             }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")
@@ -203,6 +216,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 dialog.findViewById<TextView>(rikka.material.R.id.design_about_version).apply {
                     movementMethod = LinkMovementMethod.getInstance()
                     this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
+                    setOnLongClickListener {
+                        viewModel.showSkipVerify = true
+                        return@setOnLongClickListener true
+                    }
                 }
                 dialog.findViewById<TextView>(rikka.material.R.id.design_about_info).isVisible = false
             }

@@ -13,6 +13,7 @@ import io.github.vvb2060.keyattestation.AppApplication;
 import io.github.vvb2060.keyattestation.R;
 
 public class VerifyCertificateChain {
+    public static final int FAILED = -1;
     public static final int UNKNOWN = 0;
     public static final int AOSP = 1;
     public static final int GOOGLE = 2;

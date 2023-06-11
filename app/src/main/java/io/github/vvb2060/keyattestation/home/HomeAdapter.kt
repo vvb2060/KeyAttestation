@@ -33,18 +33,28 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         val trustRootCertificate = attestationResult.isGoogleRootCertificate
 
         clear()
-        if (trustRootCertificate == VerifyCertificateChain.UNKNOWN) {
-            addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.unknown_root_cert,
-                    R.string.unknown_root_cert_summary,
-                    R.drawable.ic_error_outline_24,
-                    rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
-        } else if (trustRootCertificate == VerifyCertificateChain.AOSP) {
-            addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.aosp_root_cert,
-                    R.string.aosp_root_cert_summary,
-                    R.drawable.ic_error_outline_24,
-                    rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+        when (trustRootCertificate) {
+            VerifyCertificateChain.FAILED -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.error_cert_not_trusted,
+                        R.string.error_cert_not_trusted_summary,
+                        R.drawable.ic_error_outline_24,
+                        rikka.material.R.attr.colorAlert), ID_NOT_GOOGLE_CERT)
+            }
+            VerifyCertificateChain.UNKNOWN -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.unknown_root_cert,
+                        R.string.unknown_root_cert_summary,
+                        R.drawable.ic_error_outline_24,
+                        rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+            }
+            VerifyCertificateChain.AOSP -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.aosp_root_cert,
+                        R.string.aosp_root_cert_summary,
+                        R.drawable.ic_error_outline_24,
+                        rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+            }
         }
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
 

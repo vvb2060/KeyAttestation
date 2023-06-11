@@ -49,6 +49,7 @@ import java.util.Date
 class HomeViewModel(pm: PackageManager) : ViewModel() {
 
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
+    var currentCerts: List<X509Certificate>? = null
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
@@ -58,7 +59,8 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             pm.hasSystemFeature("android.software.device_id_attestation")
     var preferIncludeProps = true
 
-    var currentCerts: List<X509Certificate>? = null
+    var showSkipVerify = false
+    var preferSkipVerify = false
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String, useStrongBox: Boolean, includeProps: Boolean) {
@@ -88,11 +90,11 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
     private fun parseCertificateChain(certs: List<X509Certificate>): AttestationResult {
         var attestation: Attestation? = null
         var exception: AttestationException? = null
-        val isGoogleRootCertificate: Int
+        var isGoogleRootCertificate = VerifyCertificateChain.FAILED
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
         } catch (e: GeneralSecurityException) {
-            throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
+            if (!preferSkipVerify) throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
         }
         // Find first attestation record
         // Never use certs[0], as certificate chain can have arbitrary certificates appended
