@@ -12,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.BuildConfig
@@ -27,13 +29,13 @@ import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
 import rikka.widget.borderview.BorderView
 
-class HomeFragment : AppFragment(), HomeAdapter.Listener {
+class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     private var _binding: HomeBinding? = null
 
     private val binding: HomeBinding get() = _binding!!
 
-    private val viewModel by activityViewModels { HomeViewModel(requireActivity()) }
+    private val viewModel by activityViewModels { HomeViewModel(requireContext().packageManager) }
 
     private val save = registerForActivityResult(CreateDocument("application/pkix-pkipath")) {
         viewModel.save(requireContext().contentResolver, it)
@@ -49,10 +51,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
     private val preference by lazy {
         requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-    }
-
-    init {
-        setHasOptionsMenu(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +74,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as MenuHost).addMenuProvider(this, viewLifecycleOwner)
 
         val context = view.context
 
@@ -152,7 +151,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 .show(requireActivity().supportFragmentManager)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
+    override fun onPrepareMenu(menu: Menu) {
         menu.findItem(R.id.menu_use_strongbox).isVisible = viewModel.hasStrongBox
         menu.findItem(R.id.menu_use_strongbox).isChecked = viewModel.preferStrongBox
         menu.findItem(R.id.menu_incluid_props).isVisible = viewModel.hasDeviceIds
@@ -160,15 +159,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.home, menu)
+    }
+
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.menu_use_strongbox -> {
                 val status = !item.isChecked
                 item.isChecked = status
                 viewModel.preferStrongBox = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_strongbox", status) }
-                true
             }
             R.id.menu_incluid_props -> {
                 val status = !item.isChecked
@@ -176,15 +178,12 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                 viewModel.preferIncludeProps = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_including_props", status) }
-                true
             }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")
-                true
             }
             R.id.menu_load -> {
                 load.launch(arrayOf("application/*"))
-                true
             }
             R.id.menu_about -> {
                 val context = requireContext()
@@ -206,9 +205,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener {
                     this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
                 }
                 dialog.findViewById<TextView>(rikka.material.R.id.design_about_info).isVisible = false
-                true
             }
-            else -> super.onOptionsItemSelected(item)
+            else -> return false
         }
+        return true
     }
 }

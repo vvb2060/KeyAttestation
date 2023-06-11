@@ -46,16 +46,16 @@ import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import java.util.Date
 
-class HomeViewModel(context: Context) : ViewModel() {
+class HomeViewModel(pm: PackageManager) : ViewModel() {
 
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-            context.packageManager.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
+            pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
     var preferStrongBox = true
 
     val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            context.packageManager.hasSystemFeature("android.software.device_id_attestation")
+            pm.hasSystemFeature("android.software.device_id_attestation")
     var preferIncludeProps = true
 
     var currentCerts: List<X509Certificate>? = null
