@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vvb2060.keyattestation.AppApplication
+import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
@@ -29,12 +30,14 @@ import io.github.vvb2060.keyattestation.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.ProviderException
+import java.security.Security
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
@@ -216,6 +219,11 @@ class HomeViewModel(context: Context) : ViewModel() {
     }
 
     fun install(context: Context) = viewModelScope.launch(Dispatchers.IO) {
+        if (BuildConfig.DEBUG) {
+            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
+            Security.insertProviderAt(BouncyCastleProvider(), 1)
+            return@launch
+        }
         runCatching {
             val gms = context.createPackageContext("com.google.android.gms",
                     Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY)
