@@ -59,6 +59,8 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             pm.hasSystemFeature("android.software.device_id_attestation")
     var preferIncludeProps = true
 
+    var preferShowAll = false
+
     var showSkipVerify = false
     var preferSkipVerify = false
 

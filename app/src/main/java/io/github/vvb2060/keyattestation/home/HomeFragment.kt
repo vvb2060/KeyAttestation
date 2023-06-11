@@ -58,6 +58,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
         viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
+        viewModel.preferShowAll = preference.getBoolean("prefer_show_all", false)
         viewModel.install(requireContext())
         viewModel.load()
     }
@@ -87,7 +88,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
                     binding.list.isVisible = true
-                    adapter.updateData(res.data!!)
+                    adapter.updateData(res.data!!, viewModel.preferShowAll)
                 }
                 Status.ERROR -> {
                     binding.progress.isVisible = false
@@ -164,6 +165,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isVisible = viewModel.showSkipVerify
             isChecked = viewModel.preferSkipVerify
         }
+        menu.findItem(R.id.menu_show_all).isChecked = viewModel.preferShowAll
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
     }
 
@@ -186,6 +188,13 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 viewModel.preferIncludeProps = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_including_props", status) }
+            }
+            R.id.menu_show_all -> {
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferShowAll = status
+                viewModel.load()
+                preference.edit { putBoolean("prefer_show_all", status) }
             }
             R.id.menu_skip_verify -> {
                 val status = !item.isChecked

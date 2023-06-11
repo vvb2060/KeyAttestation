@@ -28,7 +28,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         setListener(listener)
     }
 
-    fun updateData(attestationResult: AttestationResult) {
+    fun updateData(attestationResult: AttestationResult, showAll: Boolean) {
         val attestation = attestationResult.attestation
         val trustRootCertificate = attestationResult.isGoogleRootCertificate
 
@@ -82,7 +82,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     else BaseEncoding.base64().encode(it) + " (base64)"
                 }), id++)
 
-        addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+        if (showAll) addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.unique_id,
                 R.string.unique_id_description,
                 attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id)
@@ -94,7 +94,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
         val tee = createAuthorizationItems(attestation.teeEnforced)
         val sw = createAuthorizationItems(attestation.softwareEnforced)
-        for (i in tee.indices) {
+        for (i in IntRange(if (showAll) 0 else 26, tee.lastIndex)) {
             if (tee[i] == null && sw[i] == null) {
                 continue
             }
@@ -166,10 +166,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.paddingModes?.let { AuthorizationList.paddingModesToString(it) },
                     list.ecCurve?.let { AuthorizationList.ecCurveAsString(it) },
                     list.rsaPublicExponent?.toString(),
+                    list.mgfDigest?.let { AuthorizationList.digestsToString(it) },
                     list.rollbackResistance?.toString(),
+                    list.earlyBootOnly?.toString(),
                     list.activeDateTime?.let { AuthorizationList.formatDate(it) },
                     list.originationExpireDateTime?.let { AuthorizationList.formatDate(it) },
                     list.usageExpireDateTime?.let { AuthorizationList.formatDate(it) },
+                    list.usageCountLimit?.toString(),
                     list.noAuthRequired?.toString(),
                     list.userAuthType?.let { AuthorizationList.userAuthTypeToString(it) },
                     list.authTimeout?.toString(),
@@ -197,9 +200,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.model,
                     list.vendorPatchLevel?.toString(),
                     list.bootPatchLevel?.toString(),
-                    list.mgfDigest?.let { AuthorizationList.digestsToString(it) },
-                    list.earlyBootOnly?.toString(),
-                    list.usageCountLimit?.toString(),
                     list.deviceUniqueAttestation?.toString(),
                     list.identityCredentialKey?.toString(),
             )
@@ -213,10 +213,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_padding,
                 R.string.authorization_list_ecCurve,
                 R.string.authorization_list_rsaPublicExponent,
+                R.string.authorization_list_mgfDigest,
                 R.string.authorization_list_rollbackResistance,
+                R.string.authorization_list_earlyBootOnly,
                 R.string.authorization_list_activeDateTime,
                 R.string.authorization_list_originationExpireDateTime,
                 R.string.authorization_list_usageExpireDateTime,
+                R.string.authorization_list_usageCountLimit,
                 R.string.authorization_list_noAuthRequired,
                 R.string.authorization_list_userAuthType,
                 R.string.authorization_list_authTimeout,
@@ -244,9 +247,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdModel,
                 R.string.authorization_list_vendorPatchLevel,
                 R.string.authorization_list_bootPatchLevel,
-                R.string.authorization_list_mgfDigest,
-                R.string.authorization_list_earlyBootOnly,
-                R.string.authorization_list_usageCountLimit,
                 R.string.authorization_list_deviceUniqueAttestation,
                 R.string.authorization_list_identityCredentialKey,
         )
@@ -259,10 +259,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_padding_description,
                 R.string.authorization_list_ecCurve_description,
                 R.string.authorization_list_rsaPublicExponent_description,
+                R.string.authorization_list_mgfDigest_description,
                 R.string.authorization_list_rollbackResistance_description,
+                R.string.authorization_list_earlyBootOnly_description,
                 R.string.authorization_list_activeDateTime_description,
                 R.string.authorization_list_originationExpireDateTime_description,
                 R.string.authorization_list_usageExpireDateTime_description,
+                R.string.authorization_list_usageCountLimit_description,
                 R.string.authorization_list_noAuthRequired_description,
                 R.string.authorization_list_userAuthType_description,
                 R.string.authorization_list_authTimeout_description,
@@ -290,9 +293,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_attestationIdModel_description,
                 R.string.authorization_list_vendorPatchLevel_description,
                 R.string.authorization_list_bootPatchLevel_description,
-                R.string.authorization_list_mgfDigest_description,
-                R.string.authorization_list_earlyBootOnly_description,
-                R.string.authorization_list_usageCountLimit_description,
                 R.string.authorization_list_deviceUniqueAttestation_description,
                 R.string.authorization_list_identityCredentialKey_description,
         )
