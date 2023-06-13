@@ -59,7 +59,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
         viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
         viewModel.preferShowAll = preference.getBoolean("prefer_show_all", false)
-        viewModel.install(requireContext())
         viewModel.load()
     }
 

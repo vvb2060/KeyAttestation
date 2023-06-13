@@ -3,6 +3,8 @@ package io.github.vvb2060.keyattestation.attestation;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -38,9 +40,12 @@ public class VerifyCertificateChain {
 
     public static int verifyCertificateChain(List<X509Certificate> certs)
             throws GeneralSecurityException {
-        var context = AppApplication.getApp().getApplicationContext();
-        var stream = context.getResources().openRawResource(R.raw.status);
-        var entries = CertificateRevocationStatus.parseStatus(stream);
+        JsonObject entries;
+        try (var stream = AppApplication.app.getResources().openRawResource(R.raw.status)) {
+            entries = CertificateRevocationStatus.parseStatus(stream);
+        } catch (Exception e) {
+            throw new GeneralSecurityException("Failed to parse certificate revocation status", e);
+        }
         var root = certs.get(certs.size() - 1);
         var parent = root;
         for (int i = certs.size() - 1; i >= 0; i--) {

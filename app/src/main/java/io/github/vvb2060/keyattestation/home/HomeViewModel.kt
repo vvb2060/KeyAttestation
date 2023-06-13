@@ -1,7 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.content.ContentResolver
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -13,9 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.github.vvb2060.keyattestation.AppApplication
-import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
@@ -27,17 +24,12 @@ import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_STRONGBOX_UNAVAILABLE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.ProviderException
-import java.security.Security
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
@@ -149,9 +141,9 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         return parseCertificateChain(certs)
     }
 
-    fun save(cr: ContentResolver, uri: Uri?) = viewModelScope.launch(Dispatchers.IO) {
+    fun save(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
         val certs = currentCerts
-        if (uri == null || certs == null) return@launch
+        if (uri == null || certs == null) return@execute
         var name = uri.toString()
         val projection = arrayOf(OpenableColumns.DISPLAY_NAME)
         cr.query(uri, projection, null, null, null)?.use { cursor ->
@@ -165,16 +157,16 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             cr.openOutputStream(uri)?.use {
                 it.write(cf.generateCertPath(certs).encoded)
             } ?: throw IOException("openOutputStream $uri failed")
-            withContext(Dispatchers.Main) {
-                Toast.makeText(AppApplication.App, name, Toast.LENGTH_SHORT).show()
+            AppApplication.mainHandler.post {
+                Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             Log.e(AppApplication.TAG, "saveCerts: ", e)
         }
     }
 
-    fun load(cr: ContentResolver, uri: Uri?) = viewModelScope.launch(Dispatchers.IO) {
-        if (uri == null) return@launch
+    fun load(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
+        if (uri == null) return@execute
         this@HomeViewModel.currentCerts = null
         attestationResult.postValue(Resource.loading(null))
 
@@ -201,7 +193,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         attestationResult.postValue(result)
     }
 
-    fun load() = viewModelScope.launch(Dispatchers.IO) {
+    fun load() = AppApplication.executor.execute {
         attestationResult.postValue(Resource.loading(null))
 
         val useStrongBox = hasStrongBox && preferStrongBox
@@ -221,21 +213,5 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         }
 
         attestationResult.postValue(result)
-    }
-
-    fun install(context: Context) = viewModelScope.launch(Dispatchers.IO) {
-        if (BuildConfig.DEBUG) {
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
-            Security.insertProviderAt(BouncyCastleProvider(), 1)
-            return@launch
-        }
-        runCatching {
-            val gms = context.createPackageContext("com.google.android.gms",
-                    Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY)
-            gms.classLoader
-                    .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
-                    .getMethod("insertProvider", Context::class.java)
-                    .invoke(null, gms)
-        }
     }
 }
