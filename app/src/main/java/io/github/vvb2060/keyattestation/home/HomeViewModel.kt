@@ -137,7 +137,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             throw AttestationException(CODE_NOT_SUPPORT, e)
         }
         @Suppress("UNCHECKED_CAST")
-        this.currentCerts = certs as List<X509Certificate>
+        currentCerts = certs as List<X509Certificate>
         return parseCertificateChain(certs)
     }
 
@@ -167,7 +167,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
 
     fun load(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
         if (uri == null) return@execute
-        this@HomeViewModel.currentCerts = null
+        currentCerts = null
         attestationResult.postValue(Resource.loading(null))
 
         val result = try {
@@ -176,6 +176,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
                 @Suppress("UNCHECKED_CAST")
                 val certs = cf.generateCertPath(it).certificates as List<X509Certificate>
                 if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
+                currentCerts = certs
                 val attestationResult = parseCertificateChain(certs)
                 Resource.success(attestationResult)
             }
@@ -194,6 +195,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
     }
 
     fun load() = AppApplication.executor.execute {
+        currentCerts = null
         attestationResult.postValue(Resource.loading(null))
 
         val useStrongBox = hasStrongBox && preferStrongBox
@@ -205,6 +207,26 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause!! else e
             Log.w(AppApplication.TAG, "Do attestation error.", cause)
+
+            when (e) {
+                is AttestationException -> Resource.error(e, null)
+                else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
+            }
+        }
+
+        attestationResult.postValue(result)
+    }
+
+    fun reload() = AppApplication.executor.execute {
+        val certs = currentCerts ?: return@execute
+        attestationResult.postValue(Resource.loading(null))
+
+        val result = try {
+            val attestationResult = parseCertificateChain(certs)
+            Resource.success(attestationResult)
+        } catch (e: Throwable) {
+            val cause = if (e is AttestationException) e.cause!! else e
+            Log.w(AppApplication.TAG, "Reload attestation error.", cause)
 
             when (e) {
                 is AttestationException -> Resource.error(e, null)
