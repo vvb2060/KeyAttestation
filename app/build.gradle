@@ -23,7 +23,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = gitCommitCount
-        versionName = '1.4.1'
+        versionName = '1.5.0'
         resConfigs "en", "zh-rCN", "zh-rTW"
     }
 
