@@ -228,10 +228,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 dialog.findViewById<TextView>(rikka.material.R.id.design_about_version).apply {
                     movementMethod = LinkMovementMethod.getInstance()
                     this.text = text.toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
-                    setOnLongClickListener {
-                        viewModel.showSkipVerify = true
-                        return@setOnLongClickListener true
-                    }
                 }
                 dialog.findViewById<TextView>(rikka.material.R.id.design_about_info).isVisible = false
             }

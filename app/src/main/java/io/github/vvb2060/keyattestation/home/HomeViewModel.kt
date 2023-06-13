@@ -88,6 +88,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         try {
             isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
         } catch (e: GeneralSecurityException) {
+            showSkipVerify = true
             if (!preferSkipVerify) throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
         }
         // Find first attestation record
