@@ -251,7 +251,7 @@ public class AuthorizationList {
         for (; entry != null; entry = parseAsn1TaggedObject(parser)) {
             int tag = entry.getTagNo();
             ASN1Primitive value = entry.getObject();
-            Log.i(AppApplication.TAG, "Parsing tag: [" + tag + "], value: [" + value + "]");
+            Log.d(AppApplication.TAG, "Parsing tag: [" + tag + "], value: [" + value + "]");
             switch (tag) {
                 default:
                     throw new CertificateParsingException("Unknown tag " + tag + " found");
