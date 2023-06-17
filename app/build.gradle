@@ -100,4 +100,6 @@ dependencies {
     def lifecycleVersion = "2.6.2"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+
+    compileOnly(project(":stub"))
 }
