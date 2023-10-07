@@ -47,8 +47,8 @@ import co.nstant.in.cbor.model.Number;
 import io.github.vvb2060.keyattestation.AppApplication;
 
 public class AuthorizationList {
-    // https://cs.android.com/android/platform/superproject/+/master:hardware/libhardware/include/hardware/keymaster_defs.h
-    // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/security/keymaster/KeymasterDefs.java
+    // https://cs.android.com/android/platform/superproject/+/main:hardware/libhardware/include_all/hardware/keymaster_defs.h
+    // https://cs.android.com/android/platform/superproject/+/main:frameworks/base/core/java/android/security/keymaster/KeymasterDefs.java
 
     // Algorithm values.
     public static final int KM_ALGORITHM_RSA = 1;
@@ -250,7 +250,7 @@ public class AuthorizationList {
         ASN1TaggedObject entry = parseAsn1TaggedObject(parser);
         for (; entry != null; entry = parseAsn1TaggedObject(parser)) {
             int tag = entry.getTagNo();
-            ASN1Primitive value = entry.getObject();
+            ASN1Primitive value = entry.getBaseObject().toASN1Primitive();
             Log.d(AppApplication.TAG, "Parsing tag: [" + tag + "], value: [" + value + "]");
             switch (tag) {
                 default:
