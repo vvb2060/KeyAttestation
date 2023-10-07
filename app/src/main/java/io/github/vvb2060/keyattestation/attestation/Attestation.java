@@ -16,6 +16,8 @@
 
 package io.github.vvb2060.keyattestation.attestation;
 
+import android.util.Log;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
@@ -25,6 +27,7 @@ import java.security.cert.X509Certificate;
 import java.util.Set;
 
 import co.nstant.in.cbor.CborException;
+import io.github.vvb2060.keyattestation.AppApplication;
 
 /**
  * Parses an attestation certificate and provides an easy-to-use interface for examining the
@@ -76,7 +79,7 @@ public abstract class Attestation {
             }
         }
         if (x509Cert.getExtensionValue(CRL_DP_OID) != null) {
-            throw new CertificateParsingException(
+            Log.w(AppApplication.TAG,
                     "CRL Distribution Points extension found in leaf certificate.");
         }
         return new Asn1Attestation(x509Cert);
