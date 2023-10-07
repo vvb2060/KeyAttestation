@@ -18,32 +18,44 @@
     <string name="bootloader_unknown">Bootloader 状态未知</string>
     <string name="bootloader_summary_sw_level">该设备不支持硬件级别的密钥认证。</string>
     <string name="unknown_root_cert">未知的根证书</string>
-    <string name="unknown_root_cert_summary">根证书不受信任，可能由厂商自签名。</string>
+    <string name="unknown_root_cert_summary">根证书不是已知可信的证书颁发机构。</string>
     <string name="aosp_root_cert">来自AOSP的根证书</string>
     <string name="aosp_root_cert_summary">根证书的私钥众所周知，认证结果可以被篡改。</string>
 
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>
-    <string name="error_not_support">该设备不支持密钥认证</string>
-    <string name="error_not_support_summary"><![CDATA[
-    该设备未实现密钥认证功能，或设备的安全环境已损坏。<br>处理方法：咨询该设备的制造商，是否支持密钥认证功能以及安全环境损坏条件，例如解锁 Bootloader。
-    ]]></string>
+    <string name="error_unavailable">无法认证密钥</string>
+    <string name="error_unavailable_summary">
+    设备不支持或硬件认证密钥丢失，可能由于对 persist 分区的不当写入或 OEM 配置错误。
+    </string>
     <string name="error_cert_not_trusted">证书不受信任</string>
-    <string name="error_cert_not_trusted_summary"><![CDATA[
+    <string name="error_cert_not_trusted_summary">
     证书链中有证书已过期、被吊销或无法通过签名验证。
-    ]]></string>
+    </string>
     <string name="error_cant_parse_cert">无法解析证书</string>
-    <string name="error_cant_parse_cert_summary"><![CDATA[
+    <string name="error_cant_parse_cert_summary">
     证书格式错误或存在尚未支持的功能。
-    ]]></string>
+    </string>
     <string name="error_strongbox_unavailable">StrongBox 不可用</string>
-    <string name="error_strongbox_unavailable_summary"><![CDATA[
-    该设备声明具有 StrongBox 支持，但实际上不可用。
-    ]]></string>
-    <string name="error_unable_attest_deviceids">无法认证设备 ID</string>
-    <string name="error_unable_attest_deviceids_summary"><![CDATA[
-    该设备声明支持 ID 认证，但 ID 不匹配或设备已无法再证明其 ID。
-    ]]></string>
+    <string name="error_strongbox_unavailable_summary">
+    设备声明具有 StrongBox 支持，但实际上不可用。
+    </string>
+    <string name="error_deviceids_unavailable">无法认证设备 ID</string>
+    <string name="error_deviceids_unavailable_summary">
+    设备声明支持 ID 认证，但 ID 不匹配或设备已无法再证明其 ID。
+    </string>
+    <string name="error_out_of_keys">没有用于认证的远程配置密钥</string>
+    <string name="error_out_of_keys_summary">
+    设备未向远程密钥配置服务器注册，或者服务器拒绝颁发密钥。
+    </string>
+    <string name="error_out_of_keys_transient">暂无用于认证的远程配置密钥</string>
+    <string name="error_out_of_keys_transient_summary">
+    远程配置的密钥池已用完，请在联网环境下重试或检查系统更新。
+    </string>
+    <string name="error_unavailable_transient">暂时无法认证密钥</string>
+    <string name="error_unavailable_transient_summary">
+    问题是暂时的，请尝试重启设备或检查系统更新。
+    </string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬件抽象层 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>

@@ -5,6 +5,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.security.KeyStoreException
+import android.security.KeyStoreException.ERROR_ATTESTATION_KEYS_UNAVAILABLE
+import android.security.KeyStoreException.ERROR_ID_ATTESTATION_FAILURE
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
@@ -20,8 +23,11 @@ import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CANT_PARSE_CERT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CERT_NOT_TRUSTED
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_DEVICEIDS_UNAVAILABLE
-import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_NOT_SUPPORT
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_OUT_OF_KEYS
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_OUT_OF_KEYS_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_STRONGBOX_UNAVAILABLE
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
 import java.io.ByteArrayInputStream
@@ -124,18 +130,33 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
                 certs.add(cf.generateCertificate(buf))
             }
         } catch (e: ProviderException) {
-            if (Build.VERSION.SDK_INT >= 28 && e is StrongBoxUnavailableException) {
+            val cause = e.cause
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && e is StrongBoxUnavailableException) {
                 throw AttestationException(CODE_STRONGBOX_UNAVAILABLE, e)
-            } else if (e.cause?.message?.contains("device ids") == true) {
-                // The device does not support device ids attestation
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && cause is KeyStoreException) {
+                when (cause.numericErrorCode) {
+                    ERROR_ID_ATTESTATION_FAILURE ->
+                        throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
+
+                    ERROR_ATTESTATION_KEYS_UNAVAILABLE -> if (cause.isTransientFailure) {
+                        throw AttestationException(CODE_OUT_OF_KEYS_TRANSIENT, e)
+                    } else {
+                        throw AttestationException(CODE_OUT_OF_KEYS, e)
+                    }
+
+                    else -> if (cause.isTransientFailure) {
+                        throw AttestationException(CODE_UNAVAILABLE_TRANSIENT, e)
+                    } else {
+                        throw AttestationException(CODE_UNAVAILABLE, e)
+                    }
+                }
+            } else if (cause?.message?.contains("device ids") == true) {
                 throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
             } else {
-                // The device does not support key attestation
-                throw AttestationException(CODE_NOT_SUPPORT, e)
+                throw AttestationException(CODE_UNAVAILABLE, e)
             }
         } catch (e: Exception) {
-            // Unable to get certificate chain
-            throw AttestationException(CODE_NOT_SUPPORT, e)
+            throw AttestationException(CODE_UNKNOWN, e)
         }
         @Suppress("UNCHECKED_CAST")
         currentCerts = certs as List<X509Certificate>
@@ -182,7 +203,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
                 Resource.success(attestationResult)
             }
         } catch (e: Throwable) {
-            val cause = if (e is AttestationException) e.cause!! else e
+            val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Load attestation error.", cause)
 
             when (e) {
@@ -206,7 +227,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             val attestationResult = doAttestation(alias, useStrongBox, includeProps)
             Resource.success(attestationResult)
         } catch (e: Throwable) {
-            val cause = if (e is AttestationException) e.cause!! else e
+            val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Do attestation error.", cause)
 
             when (e) {
@@ -226,7 +247,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             val attestationResult = parseCertificateChain(certs)
             Resource.success(attestationResult)
         } catch (e: Throwable) {
-            val cause = if (e is AttestationException) e.cause!! else e
+            val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Reload attestation error.", cause)
 
             when (e) {

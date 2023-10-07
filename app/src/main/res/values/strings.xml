@@ -18,32 +18,44 @@ This software is open source under %2$s (%1$s).
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_summary_sw_level">This device does not support hardware-level key attestation.</string>
     <string name="unknown_root_cert">Unknown Root certificate</string>
-    <string name="unknown_root_cert_summary">Root certificate is not trusted, may self-signed by OEM.</string>
+    <string name="unknown_root_cert_summary">Root certificate is not a known trusted certificate authority.</string>
     <string name="aosp_root_cert">AOSP Root certificate</string>
-    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the attestation result can be tampered with.</string>
+    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the attestation can be tampered with.</string>
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="error_not_support">Not supported by this device</string>
-    <string name="error_not_support_summary"><![CDATA[
-    This device does not support key attestation or the trusted environment on this device is broken.<br>Solution: Consult the device manufacturer whether the device supports key attestation function and the destruction conditions of the trusted environment, such as unlocking the bootloader.
-    ]]></string>
+    <string name="error_unavailable">Unable to attest keys</string>
+    <string name="error_unavailable_summary">
+    The device is not supported or the hardware attestation key is lost, possibly due to a write to the persist partition or an OEM misconfiguration.
+    </string>
     <string name="error_cert_not_trusted">Certificate is not trusted</string>
-    <string name="error_cert_not_trusted_summary"><![CDATA[
+    <string name="error_cert_not_trusted_summary">
     A certificate in the certificate chain has expired, been revoked, or not verified by signature.
-    ]]></string>
+    </string>
     <string name="error_cant_parse_cert">Unable to parse certificate</string>
-    <string name="error_cant_parse_cert_summary"><![CDATA[
+    <string name="error_cant_parse_cert_summary">
     The certificate is in the wrong format or there is a feature that is not yet supported.
-    ]]></string>
+    </string>
     <string name="error_strongbox_unavailable">StrongBox not available</string>
-    <string name="error_strongbox_unavailable_summary"><![CDATA[
+    <string name="error_strongbox_unavailable_summary">
     This device is declared to have StrongBox support but it is actually unavailable.
-    ]]></string>
-    <string name="error_unable_attest_deviceids">Unable to attest device ids</string>
-    <string name="error_unable_attest_deviceids_summary"><![CDATA[
+    </string>
+    <string name="error_deviceids_unavailable">Unable to attest device ids</string>
+    <string name="error_deviceids_unavailable_summary">
     This device is declared to have ID attestation support, but IDs do not match or the device can no longer attest its IDs.
-    ]]></string>
+    </string>
+    <string name="error_out_of_keys">No remotely-provisioned keys for attestation</string>
+    <string name="error_out_of_keys_summary">
+    This device is not registered with the key provisioning server, or the server refuses key issuance.
+    </string>
+    <string name="error_out_of_keys_transient">Currently no remotely-provisioned keys for attestation</string>
+    <string name="error_out_of_keys_transient_summary">
+    The pool of remotely-provisioned keys has been exhausted, please try again with Internet or checking for system updates.
+    </string>
+    <string name="error_unavailable_transient">Currently unable to attest keys</string>
+    <string name="error_unavailable_transient_summary">
+    This issue is transient, please try reboot device or checking for system updates.
+    </string>
 
     <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>
@@ -111,7 +123,7 @@ This software is open source under %2$s (%1$s).
     <string name="authorization_list_deviceUniqueAttestation">Device unique attestation</string>
     <string name="authorization_list_identityCredentialKey">Identity credential key</string>
 
-    <!-- https://cs.android.com/android/platform/superproject/+/master:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl -->
+    <!-- https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl -->
     <string name="authorization_list_description"><![CDATA[
     This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.
     ]]></string>

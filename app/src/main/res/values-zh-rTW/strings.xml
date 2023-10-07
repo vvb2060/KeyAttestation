@@ -18,9 +18,9 @@
 
     <string name="error_message_subtitle">細節訊息：</string>
     <string name="error_unknown">未知錯誤</string>
-    <string name="error_not_support">該裝置不支援金鑰認證</string>
-    <string name="error_not_support_summary"><![CDATA[
-    該裝置未實現金鑰認證功能，或裝置的安全環境已損壞。<br>處理方法：諮詢該裝置的製造商，是否支援金鑰認證功能以及安全環境損壞的條件，例如：解鎖 Bootloader。
+    <string name="error_unavailable">無法認證金鑰</string>
+    <string name="error_unavailable_summary"><![CDATA[
+    設備不支持或硬體認證金鑰遺失，可能由於對 persist 分區的不當寫入或 OEM 配置錯誤。
     ]]></string>
     <string name="error_cert_not_trusted">證書不受信任</string>
     <string name="error_cert_not_trusted_summary"><![CDATA[
@@ -31,8 +31,8 @@
     <string name="error_strongbox_unavailable_summary"><![CDATA[
     該裝置宣告具有 StrongBox 的支援，但實際上無法使用。
     ]]></string>
-    <string name="error_unable_attest_deviceids">無法認證裝置 ID</string>
-    <string name="error_unable_attest_deviceids_summary"><![CDATA[
+    <string name="error_deviceids_unavailable">無法認證裝置 ID</string>
+    <string name="error_deviceids_unavailable_summary"><![CDATA[
     該裝置宣告支援 ID 認證，但 ID 不匹配且該裝置已無法再證明其 ID。
     ]]></string>
 
