@@ -57,6 +57,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         super.onCreate(savedInstanceState)
 
         viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
+        viewModel.preferAttestKey = preference.getBoolean("prefer_attest_key", true)
         viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
         viewModel.preferShowAll = preference.getBoolean("prefer_show_all", false)
         viewModel.load()
@@ -156,6 +157,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isVisible = viewModel.hasStrongBox
             isChecked = viewModel.preferStrongBox
         }
+        menu.findItem(R.id.menu_use_attest_key).apply {
+            isVisible = viewModel.hasAttestKey
+            isChecked = viewModel.preferAttestKey
+        }
         menu.findItem(R.id.menu_incluid_props).apply {
             isVisible = viewModel.hasDeviceIds
             isChecked = viewModel.preferIncludeProps
@@ -183,6 +188,13 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 viewModel.preferStrongBox = status
                 viewModel.load()
                 preference.edit { putBoolean("prefer_strongbox", status) }
+            }
+            R.id.menu_use_attest_key -> {
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferAttestKey = status
+                viewModel.load()
+                preference.edit { putBoolean("prefer_attest_key", status) }
             }
             R.id.menu_incluid_props -> {
                 val status = !item.isChecked

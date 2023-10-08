@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModel
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
+import io.github.vvb2060.keyattestation.attestation.AuthorizationList.KM_PURPOSE_ATTEST_KEY
 import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CANT_PARSE_CERT
@@ -53,6 +54,10 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
     var preferStrongBox = true
 
+    val hasAttestKey = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            pm.hasSystemFeature(PackageManager.FEATURE_KEYSTORE_APP_ATTEST_KEY)
+    var preferAttestKey = true
+
     val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             pm.hasSystemFeature("android.software.device_id_attestation")
     var preferIncludeProps = true
@@ -63,25 +68,35 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
     var preferSkipVerify = false
 
     @Throws(GeneralSecurityException::class)
-    private fun generateKey(alias: String, useStrongBox: Boolean, includeProps: Boolean) {
-        val keyPairGenerator = KeyPairGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
+    private fun generateKey(alias: String,
+                            useStrongBox: Boolean,
+                            includeProps: Boolean,
+                            attestKeyAlias: String?) {
         val now = Date()
-        val originationEnd = Date(now.time + 1000000)
-        val consumptionEnd = Date(now.time + 2000000)
-        val builder = KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_SIGN)
-                .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
-                .setKeyValidityStart(now)
-                .setKeyValidityForOriginationEnd(originationEnd)
-                .setKeyValidityForConsumptionEnd(consumptionEnd)
-                .setAttestationChallenge(now.toString().toByteArray())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && includeProps) {
-            builder.setDevicePropertiesAttestationIncluded(true)
+        val attestKey = alias == attestKeyAlias
+        val purposes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && attestKey) {
+            KeyProperties.PURPOSE_ATTEST_KEY
+        } else {
+            KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
         }
+        val builder = KeyGenParameterSpec.Builder(alias, purposes)
+                .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
+                .setDigests(KeyProperties.DIGEST_SHA256)
+                .setKeyValidityStart(now)
+                .setAttestationChallenge(now.toString().toByteArray())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && useStrongBox) {
             builder.setIsStrongBoxBacked(true)
         }
-        builder.setDigests(KeyProperties.DIGEST_NONE, KeyProperties.DIGEST_SHA256)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (includeProps) {
+                builder.setDevicePropertiesAttestationIncluded(true)
+            }
+            if (attestKeyAlias != null && !attestKey) {
+                builder.setAttestKeyAlias(attestKeyAlias)
+            }
+        }
+        val keyPairGenerator = KeyPairGenerator.getInstance(
+                KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         keyPairGenerator.initialize(builder.build())
         keyPairGenerator.generateKeyPair()
     }
@@ -97,12 +112,24 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             showSkipVerify = true
             if (!preferSkipVerify) throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
         }
-        // Find first attestation record
-        // Never use certs[0], as certificate chain can have arbitrary certificates appended
+        // Find attestation record. !! Never use certs[0] directly !!
+        //
+        // If key purpose included KeyPurpose::SIGN,
+        // then it could be used to sign arbitrary data, including any tbsCertificate,
+        // and so an attestation produced by the key would have no security properties.
+        //
+        // If the parent certificate can attest that the key purpose is only KeyPurpose::ATTEST_KEY,
+        // then the child certificate can be trusted.
         for (i in certs.indices.reversed()) {
             try {
                 attestation = Attestation.loadFromCertificate(certs[i])
-                break
+                val purposes = attestation.teeEnforced?.purposes
+                        ?: attestation.softwareEnforced?.purposes
+                if (purposes?.contains(KM_PURPOSE_ATTEST_KEY) == true) {
+                    continue
+                } else {
+                    break
+                }
             } catch (e: CertificateParsingException) {
                 exception = AttestationException(CODE_CANT_PARSE_CERT, e)
             }
@@ -114,17 +141,30 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
     }
 
     @Throws(AttestationException::class)
-    private fun doAttestation(alias: String, useStrongBox: Boolean, includeProps: Boolean
-    ): AttestationResult {
+    private fun doAttestation(useStrongBox: Boolean,
+                              includeProps: Boolean,
+                              useAttestKey: Boolean): AttestationResult {
         val certs: List<Certificate>
+        val alias = AppApplication.TAG
+        val attestKeyAlias = if (useAttestKey) "${alias}_persistent" else null
         try {
-            generateKey(alias, useStrongBox, includeProps)
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
-            val certificates = keyStore.getCertificateChain(alias)
+            if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
+                generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias);
+            }
+            generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
+            val chainAlias = if (useAttestKey) attestKeyAlias else alias
+            val certificates = keyStore.getCertificateChain(chainAlias)
                     ?: throw CertificateException("Unable to get certificate chain")
-            certs = ArrayList(certificates.size)
+            certs = ArrayList()
             val cf = CertificateFactory.getInstance("X.509")
+            if (useAttestKey) {
+                val certificate = keyStore.getCertificate(alias)
+                        ?: throw CertificateException("Unable to get certificate")
+                val buf = ByteArrayInputStream(certificate.encoded)
+                certs.add(cf.generateCertificate(buf))
+            }
             for (i in certificates.indices) {
                 val buf = ByteArrayInputStream(certificates[i].encoded)
                 certs.add(cf.generateCertificate(buf))
@@ -222,9 +262,9 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
 
         val useStrongBox = hasStrongBox && preferStrongBox
         val includeProps = hasDeviceIds && preferIncludeProps
+        val useAttestKey = hasAttestKey && preferAttestKey
         val result = try {
-            val alias = "Key_${useStrongBox}_$includeProps"
-            val attestationResult = doAttestation(alias, useStrongBox, includeProps)
+            val attestationResult = doAttestation(useStrongBox, includeProps, useAttestKey)
             Resource.success(attestationResult)
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e

@@ -89,11 +89,14 @@ public class AuthorizationList {
     public static final int KM_ORIGIN_SECURELY_IMPORTED = 4;
 
     // Operation Purposes.
+    // https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyPurpose.aidl
     public static final int KM_PURPOSE_ENCRYPT = 0;
     public static final int KM_PURPOSE_DECRYPT = 1;
     public static final int KM_PURPOSE_SIGN = 2;
     public static final int KM_PURPOSE_VERIFY = 3;
     public static final int KM_PURPOSE_WRAP = 5;
+    public static final int KM_PURPOSE_AGREE_KEY = 6;
+    public static final int KM_PURPOSE_ATTEST_KEY = 7;
 
     // User authenticators.
     public static final int HW_AUTH_PASSWORD = 1 << 0;
@@ -114,6 +117,7 @@ public class AuthorizationList {
     public static final int KEYMASTER_TAG_TYPE_MASK = 0x0FFFFFFF;
 
     // Keymaster tags
+    // https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyCreationResult.aidl
     public static final int KM_TAG_PURPOSE = KM_ENUM_REP | 1;
     public static final int KM_TAG_ALGORITHM = KM_ENUM | 2;
     public static final int KM_TAG_KEY_SIZE = KM_UINT | 3;
@@ -193,6 +197,8 @@ public class AuthorizationList {
             .put(KM_PURPOSE_SIGN, "SIGN")
             .put(KM_PURPOSE_VERIFY, "VERIFY")
             .put(KM_PURPOSE_WRAP, "WRAP")
+            .put(KM_PURPOSE_AGREE_KEY, "AGREE KEY")
+            .put(KM_PURPOSE_ATTEST_KEY, "ATTEST KEY")
             .build();
 
     private Integer securityLevel;

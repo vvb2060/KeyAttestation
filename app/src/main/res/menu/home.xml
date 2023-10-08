@@ -8,6 +8,12 @@
         android:title="@string/use_strongbox" />
 
     <item
+        android:id="@+id/menu_use_attest_key"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:title="@string/use_attest_key" />
+
+    <item
         android:id="@+id/menu_incluid_props"
         android:showAsAction="never"
         android:checkable="true"
