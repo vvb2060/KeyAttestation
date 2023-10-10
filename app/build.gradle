@@ -28,8 +28,8 @@ android {
     }
 
     signingConfigs {
-        if (properties.getProperty("storeFile") != null) {
-            sign {
+        debug {
+            if (properties.getProperty("storeFile") != null) {
                 storeFile file(properties.getProperty("storeFile"))
                 storePassword properties.getProperty("storePassword")
                 keyAlias properties.getProperty("keyAlias")
@@ -39,18 +39,12 @@ android {
     }
     buildTypes {
         debug {
-            if (properties.getProperty("storeFile") != null) {
-                signingConfig signingConfigs.sign
-            }
+            versionNameSuffix '-debug'
         }
         release {
             minifyEnabled true
             shrinkResources true
-            if (properties.getProperty("storeFile") != null) {
-                signingConfig signingConfigs.sign
-            } else {
-                signingConfig signingConfigs.debug
-            }
+            signingConfig signingConfigs.debug
             proguardFiles 'proguard-rules.pro'
         }
     }
