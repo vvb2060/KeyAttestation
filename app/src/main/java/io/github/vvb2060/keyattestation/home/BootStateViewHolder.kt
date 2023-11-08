@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.view.View
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
-import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.RootOfTrust
 import io.github.vvb2060.keyattestation.databinding.HomeHeaderBinding
@@ -25,8 +24,7 @@ class BootStateViewHolder(itemView: View, binding: HomeHeaderBinding) :
     override fun onBind() {
         val context = itemView.context
 
-        val attestation = data.attestation
-        val rootOfTrust = attestation.rootOfTrust
+        val rootOfTrust = data.rootOfTrust
         val locked = rootOfTrust?.isDeviceLocked
         val bootUnverified = rootOfTrust?.verifiedBootState != RootOfTrust.KM_VERIFIED_BOOT_VERIFIED
 
@@ -53,7 +51,7 @@ class BootStateViewHolder(itemView: View, binding: HomeHeaderBinding) :
             colorAttrRes = rikka.material.R.attr.colorSafe
         }
 
-        if (attestation.attestationSecurityLevel == Attestation.KM_SECURITY_LEVEL_SOFTWARE) {
+        if (data.isSoftwareLevel) {
             summaryRes = R.string.bootloader_summary_sw_level
         } else {
             summaryRes = 0

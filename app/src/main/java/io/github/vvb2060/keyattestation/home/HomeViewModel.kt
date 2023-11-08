@@ -16,13 +16,10 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.github.vvb2060.keyattestation.AppApplication
-import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
-import io.github.vvb2060.keyattestation.attestation.AuthorizationList.KM_PURPOSE_ATTEST_KEY
-import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
+import io.github.vvb2060.keyattestation.attestation.CertificateInfo.parseCertificateChain
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CANT_PARSE_CERT
-import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CERT_NOT_TRUSTED
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_DEVICEIDS_UNAVAILABLE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_OUT_OF_KEYS
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_OUT_OF_KEYS_TRANSIENT
@@ -99,45 +96,6 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
         keyPairGenerator.initialize(builder.build())
         keyPairGenerator.generateKeyPair()
-    }
-
-    @Throws(AttestationException::class)
-    private fun parseCertificateChain(certs: List<X509Certificate>): AttestationResult {
-        var attestation: Attestation? = null
-        var exception: AttestationException? = null
-        var isGoogleRootCertificate = VerifyCertificateChain.FAILED
-        try {
-            isGoogleRootCertificate = VerifyCertificateChain.verifyCertificateChain(certs)
-        } catch (e: GeneralSecurityException) {
-            showSkipVerify = true
-            if (!preferSkipVerify) throw AttestationException(CODE_CERT_NOT_TRUSTED, e)
-        }
-        // Find attestation record. !! Never use certs[0] directly !!
-        //
-        // If key purpose included KeyPurpose::SIGN,
-        // then it could be used to sign arbitrary data, including any tbsCertificate,
-        // and so an attestation produced by the key would have no security properties.
-        //
-        // If the parent certificate can attest that the key purpose is only KeyPurpose::ATTEST_KEY,
-        // then the child certificate can be trusted.
-        for (i in certs.indices.reversed()) {
-            try {
-                attestation = Attestation.loadFromCertificate(certs[i])
-                val purposes = attestation.teeEnforced?.purposes
-                        ?: attestation.softwareEnforced?.purposes
-                if (purposes?.contains(KM_PURPOSE_ATTEST_KEY) == true) {
-                    continue
-                } else {
-                    break
-                }
-            } catch (e: CertificateParsingException) {
-                exception = AttestationException(CODE_CANT_PARSE_CERT, e)
-            }
-        }
-        if (attestation == null) {
-            throw exception!!
-        }
-        return AttestationResult(attestation, isGoogleRootCertificate)
     }
 
     @Throws(AttestationException::class)

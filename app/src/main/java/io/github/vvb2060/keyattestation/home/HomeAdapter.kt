@@ -6,7 +6,7 @@ import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList
-import io.github.vvb2060.keyattestation.attestation.VerifyCertificateChain
+import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
@@ -29,26 +29,25 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun updateData(attestationResult: AttestationResult, showAll: Boolean) {
-        val attestation = attestationResult.attestation
-        val trustRootCertificate = attestationResult.isGoogleRootCertificate
+        val attestation = attestationResult.certs.last().attestation
 
         clear()
-        when (trustRootCertificate) {
-            VerifyCertificateChain.FAILED -> {
+        when (attestationResult.status) {
+            CertificateInfo.KEY_FAILED -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.error_cert_not_trusted,
                         R.string.error_cert_not_trusted_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorAlert), ID_NOT_GOOGLE_CERT)
             }
-            VerifyCertificateChain.UNKNOWN -> {
+            CertificateInfo.KEY_UNKNOWN -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.unknown_root_cert,
                         R.string.unknown_root_cert_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
             }
-            VerifyCertificateChain.AOSP -> {
+            CertificateInfo.KEY_AOSP -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.aosp_root_cert,
                         R.string.aosp_root_cert_summary,
