@@ -165,10 +165,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isVisible = viewModel.hasDeviceIds
             isChecked = viewModel.preferIncludeProps
         }
-        menu.findItem(R.id.menu_skip_verify).apply {
-            isVisible = viewModel.showSkipVerify
-            isChecked = viewModel.preferSkipVerify
-        }
         menu.findItem(R.id.menu_show_all).apply {
             isVisible = viewModel.currentCerts != null
             isChecked = viewModel.preferShowAll
@@ -209,12 +205,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 viewModel.preferShowAll = status
                 viewModel.reload()
                 preference.edit { putBoolean("prefer_show_all", status) }
-            }
-            R.id.menu_skip_verify -> {
-                val status = !item.isChecked
-                item.isChecked = status
-                viewModel.preferSkipVerify = status
-                viewModel.reload()
             }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")

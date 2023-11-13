@@ -5,7 +5,6 @@
     <string name="use_attest_key">使用应用生成的认证密钥</string>
     <string name="attest_device_props">认证设备属性</string>
     <string name="show_all">显示全部</string>
-    <string name="skip_verify">跳过验证证书链</string>
     <string name="load_certs">从文件加载</string>
     <string name="save_certs">保存到文件</string>
     <string name="about">关于</string>

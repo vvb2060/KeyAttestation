@@ -61,9 +61,6 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
 
     var preferShowAll = false
 
-    var showSkipVerify = false
-    var preferSkipVerify = false
-
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String,
                             useStrongBox: Boolean,

@@ -5,7 +5,6 @@
     <string name="use_attest_key">Use app generated attest key</string>
     <string name="attest_device_props">Attest device props</string>
     <string name="show_all">Show all</string>
-    <string name="skip_verify">Skip verify certificate chain</string>
     <string name="load_certs">Load from file</string>
     <string name="save_certs">Save to file</string>
     <string name="about">About</string>
