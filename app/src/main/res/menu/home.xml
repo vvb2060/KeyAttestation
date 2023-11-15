@@ -31,6 +31,11 @@
         android:title="@string/save_certs" />
 
     <item
+        android:id="@+id/menu_save2"
+        android:showAsAction="never"
+        android:title="@string/save_certs2" />
+
+    <item
         android:id="@+id/menu_load"
         android:showAsAction="never"
         android:title="@string/load_certs" />

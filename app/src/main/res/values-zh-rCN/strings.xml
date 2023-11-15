@@ -6,7 +6,8 @@
     <string name="attest_device_props">认证设备属性</string>
     <string name="show_all">显示全部</string>
     <string name="load_certs">从文件加载</string>
-    <string name="save_certs">保存到文件</string>
+    <string name="save_certs">保存到文件（p7b）</string>
+    <string name="save_certs2">保存到文件（pkipath）</string>
     <string name="about">关于</string>
     <string name="open_source_info"><![CDATA[
 此软件是 %2$s 下的开源软件（%1$s）。

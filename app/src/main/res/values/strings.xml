@@ -6,7 +6,8 @@
     <string name="attest_device_props">Attest device props</string>
     <string name="show_all">Show all</string>
     <string name="load_certs">Load from file</string>
-    <string name="save_certs">Save to file</string>
+    <string name="save_certs">Save to file (p7b)</string>
+    <string name="save_certs2">Save to file (pkipath)</string>
     <string name="about">About</string>
     <string name="open_source_info"><![CDATA[
 This software is open source under %2$s (%1$s).

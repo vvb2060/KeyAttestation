@@ -43,7 +43,11 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     private val save = registerForActivityResult(CreateDocument("application/x-pkcs7-certificates")) {
-        viewModel.save(requireContext().contentResolver, it)
+        viewModel.save(requireContext().contentResolver, it, "PKCS7")
+    }
+
+    private val save2 = registerForActivityResult(CreateDocument("application/pkix-pkipath")) {
+        viewModel.save(requireContext().contentResolver, it, "PkiPath")
     }
 
     private val load = registerForActivityResult(OpenDocument()) {
@@ -167,6 +171,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isChecked = viewModel.preferShowAll
         }
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
+        menu.findItem(R.id.menu_save2).isVisible = viewModel.currentCerts != null
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -201,6 +206,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.p7b")
+            }
+            R.id.menu_save2 -> {
+                save2.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")
             }
             R.id.menu_load -> {
                 load.launch(arrayOf("application/*"))

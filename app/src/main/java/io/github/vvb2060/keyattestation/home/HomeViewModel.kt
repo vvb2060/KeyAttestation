@@ -185,7 +185,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         return parseCertificateChain(certs)
     }
 
-    fun save(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
+    fun save(cr: ContentResolver, uri: Uri?, encoding: String) = AppApplication.executor.execute {
         val certs = currentCerts
         if (uri == null || certs == null) return@execute
         var name = uri.toString()
@@ -199,7 +199,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         try {
             val cf = CertificateFactory.getInstance("X.509")
             cr.openOutputStream(uri)?.use {
-                it.write(cf.generateCertPath(certs).getEncoded("PKCS7"))
+                it.write(cf.generateCertPath(certs).getEncoded(encoding))
             } ?: throw IOException("openOutputStream $uri failed")
             AppApplication.mainHandler.post {
                 Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
