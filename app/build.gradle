@@ -23,8 +23,8 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = gitCommitCount
-        versionName = '1.5.0'
-        resConfigs "en", "zh-rCN", "zh-rTW"
+        versionName = '1.6.0'
+        resourceConfigurations += ['en', 'zh-rCN', 'zh-rTW']
     }
 
     signingConfigs {
@@ -68,7 +68,7 @@ android {
         }
     }
 
-    lintOptions.checkReleaseBuilds false
+    lint.checkReleaseBuilds false
     dependenciesInfo.includeInApk false
 }
 
@@ -95,8 +95,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.10.0'
 
     implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.fragment:fragment-ktx:1.6.1'
-    implementation 'androidx.recyclerview:recyclerview:1.3.1'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
     def lifecycleVersion = "2.6.2"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
