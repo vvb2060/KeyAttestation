@@ -16,7 +16,7 @@ class SubtitleViewHolder(itemView: View, binding: HomeSubtitleBinding) : HomeVie
 
     init {
         itemView.setOnClickListener {
-            listener.onSubtitleDataClick(data)
+            listener.onCommonDataClick(data)
         }
     }
 

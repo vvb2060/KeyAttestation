@@ -22,6 +22,16 @@
     <string name="aosp_root_cert">来自AOSP的根证书</string>
     <string name="aosp_root_cert_summary">根证书的私钥众所周知，认证结果可以被篡改。</string>
 
+    <string name="cert_chain">证书链</string>
+    <string name="cert_chain_description">证书链是用于验证密钥的证书列表。从该密钥的证书开始，每个证书均由链中下一个证书签名，到根证书为止，根证书始终是自签名的。</string>
+    <string name="cert_info">证书信息</string>
+    <string name="cert_subject">使用者：</string>
+    <string name="cert_not_before">有效期从：</string>
+    <string name="cert_not_after">有效期至：</string>
+    <string name="cert_error_sign">签名错误：</string>
+    <string name="cert_error_revoked">已吊销：</string>
+    <string name="cert_error_expired">已过期：</string>
+
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>
     <string name="error_unavailable">无法认证密钥</string>

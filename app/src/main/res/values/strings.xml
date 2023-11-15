@@ -22,6 +22,16 @@ This software is open source under %2$s (%1$s).
     <string name="aosp_root_cert">AOSP Root certificate</string>
     <string name="aosp_root_cert_summary">Private key of root certificate is well known, the attestation can be tampered with.</string>
 
+    <string name="cert_chain">Certificate chain</string>
+    <string name="cert_chain_description">Certificate chain is a list of certificates used to authenticate a key. The chain begins with the certificate of that key, and each certificate in the chain is signed by the next certificate in the chain. The chain terminates with a root certificate, the root certificate is always self signed.</string>
+    <string name="cert_info">Certificate info</string>
+    <string name="cert_subject">subject: </string>
+    <string name="cert_not_before">not before: </string>
+    <string name="cert_not_after">not after: </string>
+    <string name="cert_error_sign">signature error: </string>
+    <string name="cert_error_revoked">revoked: </string>
+    <string name="cert_error_expired">expired: </string>
+
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_unavailable">Unable to attest keys</string>

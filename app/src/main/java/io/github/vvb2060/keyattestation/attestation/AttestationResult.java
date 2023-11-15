@@ -12,6 +12,7 @@ public class AttestationResult {
     private RootOfTrust rootOfTrust;
     private int status = CertificateInfo.KEY_FAILED;
     private boolean sw = true;
+    public Attestation showAttestation;
 
     private AttestationResult(List<CertificateInfo> certs) {
         this.certs = certs;
@@ -45,6 +46,7 @@ public class AttestationResult {
         var info = certs.get(certs.size() - 1);
         var attestation = info.getAttestation();
         if (attestation != null) {
+            result.showAttestation = attestation;
             result.rootOfTrust = attestation.getRootOfTrust();
             result.sw = attestation.getAttestationSecurityLevel() == KM_SECURITY_LEVEL_SOFTWARE;
         } else {

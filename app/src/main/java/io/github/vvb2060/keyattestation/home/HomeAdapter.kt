@@ -13,14 +13,15 @@ import rikka.recyclerview.IdBasedRecyclerViewAdapter
 class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
     interface Listener {
-
-        fun onSubtitleDataClick(data: SubtitleData)
-
-        fun onCommonDataClick(data: CommonData)
+        fun onCommonDataClick(data: Data)
 
         fun onSecurityLevelDataClick(data: SecurityLevelData)
 
         fun onAuthorizationItemDataClick(data: AuthorizationItemData)
+
+        fun onCertInfoClick(data: CertificateInfo)
+
+        fun onAttestationInfoClick(data: Attestation)
     }
 
     init {
@@ -29,7 +30,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     fun updateData(attestationResult: AttestationResult, showAll: Boolean) {
-        val attestation = attestationResult.certs.last().attestation
+        val attestation = attestationResult.showAttestation
 
         clear()
         when (attestationResult.status) {
@@ -38,26 +39,36 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                         R.string.error_cert_not_trusted,
                         R.string.error_cert_not_trusted_summary,
                         R.drawable.ic_error_outline_24,
-                        rikka.material.R.attr.colorAlert), ID_NOT_GOOGLE_CERT)
+                        rikka.material.R.attr.colorAlert), ID_CERT_STATUS)
             }
             CertificateInfo.KEY_UNKNOWN -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.unknown_root_cert,
                         R.string.unknown_root_cert_summary,
                         R.drawable.ic_error_outline_24,
-                        rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+                        rikka.material.R.attr.colorWarning), ID_CERT_STATUS)
             }
             CertificateInfo.KEY_AOSP -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.aosp_root_cert,
                         R.string.aosp_root_cert_summary,
                         R.drawable.ic_error_outline_24,
-                        rikka.material.R.attr.colorWarning), ID_NOT_GOOGLE_CERT)
+                        rikka.material.R.attr.colorWarning), ID_CERT_STATUS)
             }
         }
-        addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATE)
+        addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATUS)
 
-        var id = ID_DESCRIPTION_START
+        var id = ID_CERT_INFO_START
+        if (showAll) {
+            addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+                    R.string.cert_chain,
+                    R.string.cert_chain_description), id++)
+            attestationResult.certs.forEach { certInfo ->
+                addItem(CommonItemViewHolder.CERT_INFO_CREATOR, certInfo, id++)
+            }
+        }
+
+        id = ID_DESCRIPTION_START
         addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, SecurityLevelData(
                 R.string.attestation,
                 R.string.attestation_version_description,
@@ -136,7 +147,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     fun allowFrameAt(position: Int): Boolean {
         if (position < 0) return false
         val id = getItemId(position)
-        return id >= ID_DESCRIPTION_START
+        return id >= ID_CERT_INFO_START
     }
 
     fun shouldCommitFrameAt(position: Int): Boolean {
@@ -145,7 +156,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         if (position == itemCount - 1) {
             return true
         }
-        return if (id < ID_DESCRIPTION_START) {
+        return if (id < ID_CERT_INFO_START) {
             false
         } else {
             (getItemId(position + 1) / 1000 - id / 1000) > 0
@@ -155,8 +166,9 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     companion object {
 
         private const val ID_ERROR = 0L
-        private const val ID_BOOT_STATE = 1L
-        private const val ID_NOT_GOOGLE_CERT = 2L
+        private const val ID_BOOT_STATUS = 1L
+        private const val ID_CERT_STATUS = 2L
+        private const val ID_CERT_INFO_START = 2000L
         private const val ID_DESCRIPTION_START = 3000L
         private const val ID_AUTHORIZATION_LIST_START = 4000L
         private const val ID_ERROR_MESSAGE = 100000L

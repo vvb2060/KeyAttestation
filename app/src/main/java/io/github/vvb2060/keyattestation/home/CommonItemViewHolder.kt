@@ -5,6 +5,8 @@ import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVEL_STRONG_BOX
 import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT
+import io.github.vvb2060.keyattestation.attestation.AuthorizationList
+import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.databinding.HomeCommonItemBinding
 import rikka.core.res.resolveColorStateList
 import rikka.recyclerview.BaseViewHolder.Creator
@@ -110,6 +112,80 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         icon.setImageDrawable(context.getDrawable(iconRes))
                         icon.imageTintList = context.theme.resolveColorStateList(colorAttr)
                     }
+                }
+            }
+        }
+
+        val CERT_INFO_CREATOR = Creator<CertificateInfo> { inflater, parent ->
+            val binding = HomeCommonItemBinding.inflate(inflater, parent, false)
+            object : CommonItemViewHolder<CertificateInfo>(binding.root, binding) {
+
+                init {
+                    this.binding.apply {
+                        title.isVisible = false
+                        text1.isVisible = false
+                        icon.background = null
+                    }
+                }
+
+                override fun onBind() {
+                    val iconRes: Int?
+                    val colorAttr: Int?
+                    binding.icon.apply {
+                        setOnClickListener {
+                            data.attestation?.let { listener.onAttestationInfoClick(it) }
+                        }
+                        if (data.issuer == CertificateInfo.KEY_AOSP) {
+                            isVisible = true
+                            isClickable = false
+                            iconRes = R.drawable.ic_untrustworthy_24
+                            colorAttr = rikka.material.R.attr.colorWarning
+                        } else if (data.issuer == CertificateInfo.KEY_GOOGLE) {
+                            isVisible = true
+                            isClickable = false
+                            iconRes = R.drawable.ic_trustworthy_24
+                            colorAttr = rikka.material.R.attr.colorSafe
+                        } else if (data.attestation != null) {
+                            isVisible = true
+                            isClickable = true
+                            iconRes = R.drawable.ic_info_outline_24
+                            colorAttr = rikka.material.R.attr.colorAccent
+                        } else {
+                            isVisible = false
+                            isClickable = false
+                            iconRes = null
+                            colorAttr = null
+                        }
+                        iconRes?.let { setImageDrawable(context.getDrawable(it)) }
+                        colorAttr?.let { imageTintList = context.theme.resolveColorStateList(it) }
+                    }
+
+                    binding.root.setOnClickListener {
+                        listener.onCertInfoClick(data)
+                    }
+
+                    val sb = StringBuilder()
+                    val cert = data.cert
+                    val res = context.resources
+                    sb.append(res.getString(R.string.cert_subject))
+                            .append(cert.subjectDN)
+                            .append("\n")
+                            .append(res.getString(R.string.cert_not_before))
+                            .append(AuthorizationList.formatDate(cert.notBefore))
+                            .append("\n")
+                            .append(res.getString(R.string.cert_not_after))
+                            .append(AuthorizationList.formatDate(cert.notAfter))
+                    val resId = when (data.status) {
+                        CertificateInfo.CERT_SIGN -> R.string.cert_error_sign
+                        CertificateInfo.CERT_REVOKED -> R.string.cert_error_revoked
+                        CertificateInfo.CERT_EXPIRED -> R.string.cert_error_expired
+                        else -> null
+                    }
+                    if (resId != null) {
+                        sb.append("\n").append(res.getString(resId))
+                                .append(data.securityException.message)
+                    }
+                    binding.summary.text = sb.toString()
                 }
             }
         }

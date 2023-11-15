@@ -21,6 +21,8 @@ import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.app.AppFragment
+import io.github.vvb2060.keyattestation.attestation.Attestation
+import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.databinding.HomeBinding
 import io.github.vvb2060.keyattestation.ktx.activityViewModels
 import io.github.vvb2060.keyattestation.ktx.toHtml
@@ -103,18 +105,24 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         }
     }
 
-    override fun onSubtitleDataClick(data: SubtitleData) {
+    override fun onAttestationInfoClick(data: Attestation) {
+        val result = viewModel.attestationResult.value!!.data!!
+        result.showAttestation = data
+        adapter.updateData(result, viewModel.preferShowAll)
+    }
+
+    override fun onCertInfoClick(data: CertificateInfo) {
         val context = requireContext()
 
         AlertDialogFragment.Builder(context)
-                .title(data.title)
-                .message(context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
+                .title(context.getString(R.string.cert_info))
+                .message(data.cert.toString())
                 .positiveButton(android.R.string.ok)
                 .build()
                 .show(requireActivity().supportFragmentManager)
     }
 
-    override fun onCommonDataClick(data: CommonData) {
+    override fun onCommonDataClick(data: Data) {
         val context = requireContext()
 
         AlertDialogFragment.Builder(context)
