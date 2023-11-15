@@ -24,7 +24,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     }
 
     init {
-        setHasStableIds(false)
+        setHasStableIds(true)
         setListener(listener)
     }
 
@@ -93,8 +93,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
         val tee = createAuthorizationItems(attestation.teeEnforced)
         val sw = createAuthorizationItems(attestation.softwareEnforced)
-        for (i in IntRange(if (showAll) 0 else 26, tee.lastIndex)) {
+        val showIndex = authorizationItemTitles.indexOf(R.string.authorization_list_rootOfTrust)
+        for (i in tee.indices) {
             if (tee[i] == null && sw[i] == null) {
+                continue
+            }
+            if (!showAll && i < showIndex) {
+                id++ // Keep id stable
                 continue
             }
 

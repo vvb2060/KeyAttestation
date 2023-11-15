@@ -52,7 +52,6 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
 
                 override fun onBind() {
                     binding.apply {
-                        icon.setImageDrawable(context.getDrawable(R.drawable.ic_trustworthy_24))
                         title.setText(data.title)
                         if (!data.data.isNullOrBlank()) {
                             summary.text = data.data
@@ -114,9 +113,5 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                 }
             }
         }
-    }
-
-    init {
-        setIsRecyclable(false)
     }
 }
