@@ -42,7 +42,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         HomeViewModel(context.packageManager, sp)
     }
 
-    private val save = registerForActivityResult(CreateDocument("application/pkix-pkipath")) {
+    private val save = registerForActivityResult(CreateDocument("application/x-pkcs7-certificates")) {
         viewModel.save(requireContext().contentResolver, it)
     }
 
@@ -200,7 +200,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 adapter.updateData(viewModel.attestationResult.value!!.data!!, status)
             }
             R.id.menu_save -> {
-                save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")
+                save.launch("${Build.PRODUCT}-${AppApplication.TAG}.p7b")
             }
             R.id.menu_load -> {
                 load.launch(arrayOf("application/*"))

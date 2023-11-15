@@ -30,6 +30,7 @@ import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
+import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
@@ -194,7 +195,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         try {
             val cf = CertificateFactory.getInstance("X.509")
             cr.openOutputStream(uri)?.use {
-                it.write(cf.generateCertPath(certs).encoded)
+                it.write(cf.generateCertPath(certs).getEncoded("PKCS7"))
             } ?: throw IOException("openOutputStream $uri failed")
             AppApplication.mainHandler.post {
                 Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
@@ -211,13 +212,20 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
 
         val result = try {
             val cf = CertificateFactory.getInstance("X.509")
-            cr.openInputStream(uri).use {
-                @Suppress("UNCHECKED_CAST")
-                val certs = cf.generateCertPath(it).certificates as List<X509Certificate>
-                if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
-                val attestationResult = parseCertificateChain(certs)
-                Resource.success(attestationResult)
+            val certPath = BufferedInputStream(cr.openInputStream(uri)).use {
+                try {
+                    it.mark(8192)
+                    cf.generateCertPath(it, "PKCS7")
+                } catch (_: CertificateException) {
+                    it.reset()
+                    cf.generateCertPath(it, "PkiPath")
+                }
             }
+            val certs = certPath.certificates
+            if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
+            @Suppress("UNCHECKED_CAST")
+            val attestationResult = parseCertificateChain(certs as List<X509Certificate>)
+            Resource.success(attestationResult)
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Load attestation error.", cause)
