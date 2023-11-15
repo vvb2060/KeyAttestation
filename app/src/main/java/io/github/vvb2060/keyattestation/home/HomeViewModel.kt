@@ -44,6 +44,7 @@ import java.security.cert.CertificateParsingException
 import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import java.util.Date
+import javax.security.auth.x500.X500Principal
 
 class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : ViewModel() {
 
@@ -108,7 +109,9 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             if (includeProps) {
                 builder.setDevicePropertiesAttestationIncluded(true)
             }
-            if (attestKeyAlias != null && !attestKey) {
+            if (attestKey) {
+                builder.setCertificateSubject(X500Principal("CN=App Attest Key"))
+            } else {
                 builder.setAttestKeyAlias(attestKeyAlias)
             }
         }
