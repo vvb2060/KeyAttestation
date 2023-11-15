@@ -15,13 +15,12 @@ class AppApplication : Application() {
     companion object {
         const val TAG = "KeyAttestation"
         lateinit var app: AppApplication
-        lateinit var mainHandler: Handler
+        val mainHandler: Handler = Handler(Looper.getMainLooper())
         val executor: ExecutorService = Executors.newCachedThreadPool()
     }
 
     init {
         app = this
-        mainHandler = Handler(Looper.getMainLooper())
         DayNightDelegate.setApplicationContext(this)
         DayNightDelegate.setDefaultNightMode(DayNightDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         HtmlCompat.setContext(this)

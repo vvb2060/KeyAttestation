@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.edit
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -37,7 +36,11 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     private val binding: HomeBinding get() = _binding!!
 
-    private val viewModel by activityViewModels { HomeViewModel(requireContext().packageManager) }
+    private val viewModel by activityViewModels {
+        val context = requireContext()
+        val sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        HomeViewModel(context.packageManager, sp)
+    }
 
     private val save = registerForActivityResult(CreateDocument("application/pkix-pkipath")) {
         viewModel.save(requireContext().contentResolver, it)
@@ -49,20 +52,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     private val adapter by lazy {
         HomeAdapter(this)
-    }
-
-    private val preference by lazy {
-        requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.preferStrongBox = preference.getBoolean("prefer_strongbox", true)
-        viewModel.preferAttestKey = preference.getBoolean("prefer_attest_key", true)
-        viewModel.preferIncludeProps = preference.getBoolean("prefer_including_props", true)
-        viewModel.preferShowAll = preference.getBoolean("prefer_show_all", false)
-        viewModel.load()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -174,7 +163,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isChecked = viewModel.preferIncludeProps
         }
         menu.findItem(R.id.menu_show_all).apply {
-            isVisible = viewModel.currentCerts != null
+            isVisible = viewModel.attestationResult.value?.data != null
             isChecked = viewModel.preferShowAll
         }
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
@@ -191,28 +180,24 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 item.isChecked = status
                 viewModel.preferStrongBox = status
                 viewModel.load()
-                preference.edit { putBoolean("prefer_strongbox", status) }
             }
             R.id.menu_use_attest_key -> {
                 val status = !item.isChecked
                 item.isChecked = status
                 viewModel.preferAttestKey = status
                 viewModel.load()
-                preference.edit { putBoolean("prefer_attest_key", status) }
             }
             R.id.menu_incluid_props -> {
                 val status = !item.isChecked
                 item.isChecked = status
                 viewModel.preferIncludeProps = status
                 viewModel.load()
-                preference.edit { putBoolean("prefer_including_props", status) }
             }
             R.id.menu_show_all -> {
                 val status = !item.isChecked
                 item.isChecked = status
                 viewModel.preferShowAll = status
-                viewModel.reload()
-                preference.edit { putBoolean("prefer_show_all", status) }
+                adapter.updateData(viewModel.attestationResult.value!!.data!!, status)
             }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.pkipath")

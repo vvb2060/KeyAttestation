@@ -1,6 +1,7 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.content.ContentResolver
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -13,6 +14,7 @@ import android.security.keystore.KeyProperties
 import android.security.keystore.StrongBoxUnavailableException
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.github.vvb2060.keyattestation.AppApplication
@@ -42,24 +44,44 @@ import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import java.util.Date
 
-class HomeViewModel(pm: PackageManager) : ViewModel() {
+class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : ViewModel() {
 
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
     var currentCerts: List<X509Certificate>? = null
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
-    var preferStrongBox = true
+    var preferStrongBox = sp.getBoolean("prefer_strongbox", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_strongbox", value) }
+        }
 
     val hasAttestKey = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             pm.hasSystemFeature(PackageManager.FEATURE_KEYSTORE_APP_ATTEST_KEY)
-    var preferAttestKey = true
+    var preferAttestKey = sp.getBoolean("prefer_attest_key", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_attest_key", value) }
+        }
 
     val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
             pm.hasSystemFeature("android.software.device_id_attestation")
-    var preferIncludeProps = true
+    var preferIncludeProps = sp.getBoolean("prefer_including_props", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_including_props", value) }
+        }
 
-    var preferShowAll = false
+    var preferShowAll = sp.getBoolean("prefer_show_all", false)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_show_all", value) }
+        }
+
+    init {
+        load()
+    }
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String,
@@ -106,7 +128,7 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
-                generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias);
+                generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias)
             }
             generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
             val chainAlias = if (useAttestKey) attestKeyAlias else alias
@@ -193,7 +215,6 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
                 @Suppress("UNCHECKED_CAST")
                 val certs = cf.generateCertPath(it).certificates as List<X509Certificate>
                 if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
-                currentCerts = certs
                 val attestationResult = parseCertificateChain(certs)
                 Resource.success(attestationResult)
             }
@@ -224,26 +245,6 @@ class HomeViewModel(pm: PackageManager) : ViewModel() {
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Do attestation error.", cause)
-
-            when (e) {
-                is AttestationException -> Resource.error(e, null)
-                else -> Resource.error(AttestationException(CODE_UNKNOWN, e), null)
-            }
-        }
-
-        attestationResult.postValue(result)
-    }
-
-    fun reload() = AppApplication.executor.execute {
-        val certs = currentCerts ?: return@execute
-        attestationResult.postValue(Resource.loading(null))
-
-        val result = try {
-            val attestationResult = parseCertificateChain(certs)
-            Resource.success(attestationResult)
-        } catch (e: Throwable) {
-            val cause = if (e is AttestationException) e.cause else e
-            Log.w(AppApplication.TAG, "Reload attestation error.", cause)
 
             when (e) {
                 is AttestationException -> Resource.error(e, null)
