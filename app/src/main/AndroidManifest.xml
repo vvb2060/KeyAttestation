@@ -11,6 +11,9 @@
         android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         tools:node="remove" />
 
+    <uses-permission
+        android:name="com.samsung.android.security.permission.SAMSUNG_KEYSTORE_PERMISSION" />
+
     <application
         android:name=".AppApplication"
         android:icon="@drawable/ic_launcher"
@@ -19,6 +22,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
+
+        <uses-library
+            android:name="samsungkeystoreutils"
+            android:required="false" />
+
         <activity
             android:name=".home.HomeActivity"
             android:exported="true">

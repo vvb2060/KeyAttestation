@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.samsung.android.security.keystore.AttestParameterSpec
+import com.samsung.android.security.keystore.AttestationUtils
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo.parseCertificateChain
@@ -30,6 +32,7 @@ import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
+import io.github.vvb2060.keyattestation.util.SamsungUtils
 import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -112,10 +115,25 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 builder.setAttestKeyAlias(attestKeyAlias)
             }
         }
-        val keyPairGenerator = KeyPairGenerator.getInstance(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && SamsungUtils.isSecAttestationSupported()) {
+            val spec = AttestParameterSpec.Builder(alias, now.toString().toByteArray())
+                .setAlgorithm(KeyProperties.KEY_ALGORITHM_EC)
+                .setKeyGenParameterSpec(builder.build())
+                .setVerifiableIntegrity(true)
+                .setPackageName(AppApplication.app.packageName)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && includeProps) {
+                spec.setDevicePropertiesAttestationIncluded(true)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && attestKey) {
+                spec.setCertificateSubject(X500Principal("CN=App Attest Key"))
+            }
+            AttestationUtils().generateKeyPair(spec.build())
+        } else {
+            val keyPairGenerator = KeyPairGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
-        keyPairGenerator.initialize(builder.build())
-        keyPairGenerator.generateKeyPair()
+            keyPairGenerator.initialize(builder.build())
+            keyPairGenerator.generateKeyPair()
+        }
     }
 
     @Throws(AttestationException::class)
