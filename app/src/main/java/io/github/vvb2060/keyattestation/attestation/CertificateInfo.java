@@ -1,8 +1,12 @@
 package io.github.vvb2060.keyattestation.attestation;
 
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1OctetString;
 
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
@@ -13,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import co.nstant.in.cbor.CborDecoder;
+import co.nstant.in.cbor.model.Map;
+import co.nstant.in.cbor.model.Number;
 import io.github.vvb2060.keyattestation.AppApplication;
 import io.github.vvb2060.keyattestation.R;
 
@@ -64,6 +71,8 @@ public class CertificateInfo {
     private Attestation attestation;
     private CertificateParsingException certException;
 
+    private Integer certsIssued;
+
     private CertificateInfo(X509Certificate cert) {
         this.cert = cert;
     }
@@ -90,6 +99,10 @@ public class CertificateInfo {
 
     public CertificateParsingException getCertException() {
         return certException;
+    }
+
+    public Integer getCertsIssued() {
+        return certsIssued;
     }
 
     private void checkIssuer() {
@@ -138,8 +151,31 @@ public class CertificateInfo {
         } catch (CertificateParsingException e) {
             certException = e;
             terminate = false;
+            checkProvisioningInfo();
         }
         return terminate;
+    }
+
+    private void checkProvisioningInfo() {
+        // If have more data later, move to separate class
+        var bytes = cert.getExtensionValue("1.3.6.1.4.1.11129.2.1.30");
+        if (bytes == null) return;
+        try (var is = new ASN1InputStream(bytes)) {
+            var string = (ASN1OctetString) is.readObject();
+            var cborBytes = string.getOctets();
+            var map = (Map) CborDecoder.decode(cborBytes).get(0);
+            for (var key : map.getKeys()) {
+                var keyInt = ((Number) key).getValue().intValue();
+                if (keyInt == 1) {
+                    certsIssued = CborUtils.getInt(map, key);
+                } else {
+                    Log.w(AppApplication.TAG, "new provisioning info: "
+                            + keyInt + " = " + map.get(key));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(AppApplication.TAG, "checkProvisioningInfo", e);
+        }
     }
 
     public static AttestationResult parseCertificateChain(List<X509Certificate> certs) {

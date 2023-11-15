@@ -175,6 +175,13 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                             .append("\n")
                             .append(res.getString(R.string.cert_not_after))
                             .append(AuthorizationList.formatDate(cert.notAfter))
+
+                    if (data.certsIssued != null) {
+                        sb.append("\n")
+                                .append(res.getString(R.string.provisioning_info_certs_issued))
+                                .append(data.certsIssued)
+                    }
+
                     val resId = when (data.status) {
                         CertificateInfo.CERT_SIGN -> R.string.cert_error_sign
                         CertificateInfo.CERT_REVOKED -> R.string.cert_error_revoked

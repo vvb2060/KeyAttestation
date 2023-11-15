@@ -19,7 +19,7 @@
     <string name="bootloader_summary_sw_level">该设备不支持硬件级别的密钥认证。</string>
     <string name="unknown_root_cert">未知的根证书</string>
     <string name="unknown_root_cert_summary">根证书不是已知可信的证书颁发机构。</string>
-    <string name="aosp_root_cert">来自AOSP的根证书</string>
+    <string name="aosp_root_cert">来自 AOSP 的根证书</string>
     <string name="aosp_root_cert_summary">根证书的私钥众所周知，认证结果可以被篡改。</string>
 
     <string name="cert_chain">证书链</string>
@@ -31,6 +31,7 @@
     <string name="cert_error_sign">签名错误：</string>
     <string name="cert_error_revoked">已吊销：</string>
     <string name="cert_error_expired">已过期：</string>
+    <string name="provisioning_info_certs_issued">过去 30 天证书颁发数量：</string>
 
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>
