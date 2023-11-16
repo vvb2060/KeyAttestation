@@ -150,13 +150,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onPrepareMenu(menu: Menu) {
+        menu.findItem(R.id.menu_use_sak).apply {
+            isVisible = viewModel.hasSAK
+            isChecked = viewModel.preferSAK
+        }
         menu.findItem(R.id.menu_use_strongbox).apply {
             isVisible = viewModel.hasStrongBox
             isChecked = viewModel.preferStrongBox
         }
         menu.findItem(R.id.menu_use_attest_key).apply {
             isVisible = viewModel.hasAttestKey
-            isChecked = viewModel.preferAttestKey
+            isEnabled = !viewModel.preferSAK
+            isChecked = !viewModel.preferSAK && viewModel.preferAttestKey
         }
         menu.findItem(R.id.menu_incluid_props).apply {
             isVisible = viewModel.hasDeviceIds
@@ -171,6 +176,12 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.menu_use_sak -> {
+                val status = !item.isChecked
+                item.isChecked = status
+                viewModel.preferSAK = status
+                viewModel.load()
+            }
             R.id.menu_use_strongbox -> {
                 val status = !item.isChecked
                 item.isChecked = status
