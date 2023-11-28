@@ -81,7 +81,6 @@ configurations.configureEach {
 dependencies {
     implementation 'org.bouncycastle:bcprov-jdk18on:1.76'
     implementation 'com.google.guava:guava:32.1.2-android'
-    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'co.nstant.in:cbor:0.9'
 
     implementation 'dev.rikka.rikkax.appcompat:appcompat:1.6.1'

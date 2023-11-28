@@ -3,10 +3,9 @@ package io.github.vvb2060.keyattestation.attestation;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.gson.JsonObject;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.json.JSONObject;
 
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
@@ -23,7 +22,6 @@ import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.model.Map;
 import co.nstant.in.cbor.model.Number;
 import io.github.vvb2060.keyattestation.AppApplication;
-import io.github.vvb2060.keyattestation.R;
 
 public class CertificateInfo {
     public static final int KEY_FAILED = -1;
@@ -64,7 +62,7 @@ public class CertificateInfo {
     private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
-    private static JsonObject revocationJson;
+    private static final JSONObject revocationJson = RevocationList.getStatus();
 
     private final X509Certificate cert;
     private int issuer = KEY_UNKNOWN;
@@ -123,10 +121,9 @@ public class CertificateInfo {
             status = CERT_SIGN;
             cert.verify(parentKey);
             status = CERT_REVOKED;
-            var certStatus = CertificateRevocationStatus.decodeStatus(cert.getSerialNumber(), revocationJson);
+            var certStatus = RevocationList.decodeStatus(cert.getSerialNumber(), revocationJson);
             if (certStatus != null) {
-                throw new CertificateException("Certificate revocation status is "
-                        + certStatus.status + ", reason " + certStatus.reason);
+                throw new CertificateException("Certificate revocation " + certStatus);
             }
             status = CERT_EXPIRED;
             cert.checkValidity();
@@ -181,14 +178,6 @@ public class CertificateInfo {
     }
 
     public static AttestationResult parseCertificateChain(List<X509Certificate> certs) {
-        if (revocationJson == null) {
-            try (var input = AppApplication.app.getResources().openRawResource(R.raw.status)) {
-                revocationJson = CertificateRevocationStatus.parseStatus(input);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to parse certificate revocation status", e);
-            }
-        }
-
         var infoList = new ArrayList<CertificateInfo>();
 
         var parent = certs.get(certs.size() - 1);
