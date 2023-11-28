@@ -224,11 +224,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                     cf.generateCertPath(it, "PkiPath")
                 }
             }
-            val certs = certPath.certificates
-            if (certs.isEmpty()) throw CertificateParsingException("No certificate found")
-            @Suppress("UNCHECKED_CAST")
-            val attestationResult = parseCertificateChain(certs as List<X509Certificate>)
-            Resource.success(attestationResult)
+            Resource.success(parseCertificateChain(certPath))
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e
             Log.w(AppApplication.TAG, "Load attestation error.", cause)
