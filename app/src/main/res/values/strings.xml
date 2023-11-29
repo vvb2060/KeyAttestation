@@ -17,10 +17,16 @@ This software is open source under %2$s (%1$s).
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_summary_sw_level">This device does not support hardware-level key attestation.</string>
-    <string name="unknown_root_cert">Unknown Root certificate</string>
+    <string name="cert_chain_not_trusted">Certificate chain is not trusted</string>
+    <string name="cert_chain_not_trusted_summary">A certificate in the certificate chain has expired, been revoked, or not verified by signature.</string>
+    <string name="unknown_root_cert">Unknown root certificate</string>
     <string name="unknown_root_cert_summary">Root certificate is not a known trusted certificate authority.</string>
-    <string name="aosp_root_cert">AOSP Root certificate</string>
-    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the attestation can be tampered with.</string>
+    <string name="aosp_root_cert">AOSP root certificate</string>
+    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the certificate chain can be tampered with.</string>
+    <string name="google_root_cert">Google root certificate</string>
+    <string name="google_root_cert_summary">Google considers the certificate chain trustworthy</string>
+    <string name="oem_root_cert">OEM root certificate</string>
+    <string name="oem_root_cert_summary">OEM considers the certificate chain trustworthy</string>
 
     <string name="cert_chain">Certificate chain</string>
     <string name="cert_chain_description">Certificate chain is a list of certificates used to authenticate a key. The chain begins with the certificate of that key, and each certificate in the chain is signed by the next certificate in the chain. The chain terminates with a root certificate, the root certificate is always self signed.</string>
@@ -38,10 +44,6 @@ This software is open source under %2$s (%1$s).
     <string name="error_unavailable">Unable to attest keys</string>
     <string name="error_unavailable_summary">
     The device is not supported or the hardware attestation key is lost, possibly due to a write to the persist partition or an OEM misconfiguration.
-    </string>
-    <string name="error_cert_not_trusted">Certificate is not trusted</string>
-    <string name="error_cert_not_trusted_summary">
-    A certificate in the certificate chain has expired, been revoked, or not verified by signature.
     </string>
     <string name="error_cant_parse_cert">Unable to parse certificate</string>
     <string name="error_cant_parse_cert_summary">

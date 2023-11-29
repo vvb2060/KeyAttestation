@@ -36,8 +36,8 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         when (attestationResult.status) {
             CertificateInfo.KEY_FAILED -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
-                        R.string.error_cert_not_trusted,
-                        R.string.error_cert_not_trusted_summary,
+                        R.string.cert_chain_not_trusted,
+                        R.string.cert_chain_not_trusted_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorAlert), ID_CERT_STATUS)
             }
@@ -54,6 +54,20 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                         R.string.aosp_root_cert_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorWarning), ID_CERT_STATUS)
+            }
+            CertificateInfo.KEY_GOOGLE -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.google_root_cert,
+                        R.string.google_root_cert_summary,
+                        R.drawable.ic_trustworthy_24,
+                        rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
+            }
+            CertificateInfo.KEY_OEM -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.oem_root_cert,
+                        R.string.oem_root_cert_summary,
+                        R.drawable.ic_trustworthy_24,
+                        rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
         }
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATUS)

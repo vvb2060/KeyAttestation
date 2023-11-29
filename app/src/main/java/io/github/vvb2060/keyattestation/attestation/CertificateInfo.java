@@ -7,16 +7,20 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.security.cert.CertPath;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import co.nstant.in.cbor.CborDecoder;
 import co.nstant.in.cbor.model.Map;
@@ -28,6 +32,7 @@ public class CertificateInfo {
     public static final int KEY_UNKNOWN = 0;
     public static final int KEY_AOSP = 1;
     public static final int KEY_GOOGLE = 2;
+    public static final int KEY_OEM = 3;
 
     public static final int CERT_UNKNOWN = 0;
     public static final int CERT_SIGN = 1;
@@ -62,6 +67,7 @@ public class CertificateInfo {
     private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
+    private static final Set<PublicKey> oemKeys = getOemPublicKey();
     private static final JSONObject revocationJson = RevocationList.getStatus();
 
     private final X509Certificate cert;
@@ -113,6 +119,13 @@ public class CertificateInfo {
             issuer = KEY_AOSP;
         } else if (Arrays.equals(publicKey, aospRsaKey)) {
             issuer = KEY_AOSP;
+        } else if (oemKeys != null) {
+            for (var key : oemKeys) {
+                if (Arrays.equals(publicKey, key.getEncoded())) {
+                    issuer = KEY_OEM;
+                    break;
+                }
+            }
         }
     }
 
@@ -265,5 +278,36 @@ public class CertificateInfo {
             throw new CertificateParsingException("No certificate found");
         }
         return parseCertificateChain(sortCerts(certs));
+    }
+
+    private static Set<PublicKey> getOemPublicKey() {
+        var resName = "android:array/vendor_required_attestation_certificates";
+        var res = AppApplication.app.getResources();
+        // noinspection DiscouragedApi
+        var id = res.getIdentifier(resName, null, null);
+        if (id == 0) {
+            return null;
+        }
+        var set = new HashSet<PublicKey>();
+        try {
+            var cf = CertificateFactory.getInstance("X.509");
+            for (var s : res.getStringArray(id)) {
+                var cert = s.replaceAll("\\s+", "\n")
+                        .replaceAll("-BEGIN\\nCERTIFICATE-", "-BEGIN CERTIFICATE-")
+                        .replaceAll("-END\\nCERTIFICATE-", "-END CERTIFICATE-");
+                var input = new ByteArrayInputStream(cert.getBytes());
+                var publicKey = cf.generateCertificate(input).getPublicKey();
+                set.add(publicKey);
+            }
+        } catch (CertificateException e) {
+            Log.e(AppApplication.TAG, "getOemKeys: ", e);
+            return null;
+        }
+        set.removeIf(key -> Arrays.equals(key.getEncoded(), googleKey));
+        if (set.isEmpty()) {
+            return null;
+        }
+        set.forEach(key -> Log.i(AppApplication.TAG, "getOemKeys: " + key));
+        return set;
     }
 }
