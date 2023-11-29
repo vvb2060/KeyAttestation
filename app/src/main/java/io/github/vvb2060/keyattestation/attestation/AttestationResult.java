@@ -38,7 +38,7 @@ public class AttestationResult {
         var result = new AttestationResult(certs);
         result.status = certs.get(0).getIssuer();
         for (var cert : certs) {
-            if (cert.getStatus() != CertificateInfo.CERT_NORMAL) {
+            if (cert.getStatus() < CertificateInfo.CERT_EXPIRED) {
                 result.status = CertificateInfo.KEY_FAILED;
                 break;
             }

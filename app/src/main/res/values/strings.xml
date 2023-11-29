@@ -18,7 +18,7 @@ This software is open source under %2$s (%1$s).
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_summary_sw_level">This device does not support hardware-level key attestation.</string>
     <string name="cert_chain_not_trusted">Certificate chain is not trusted</string>
-    <string name="cert_chain_not_trusted_summary">A certificate in the certificate chain has expired, been revoked, or not verified by signature.</string>
+    <string name="cert_chain_not_trusted_summary">A certificate has been revoked or signature verification failed in the certificate chain.</string>
     <string name="unknown_root_cert">Unknown root certificate</string>
     <string name="unknown_root_cert_summary">Root certificate is not a known trusted certificate authority.</string>
     <string name="aosp_root_cert">AOSP root certificate</string>

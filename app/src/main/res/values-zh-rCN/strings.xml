@@ -18,7 +18,7 @@
     <string name="bootloader_unknown">Bootloader 状态未知</string>
     <string name="bootloader_summary_sw_level">该设备不支持硬件级别的密钥认证。</string>
     <string name="cert_chain_not_trusted">证书链不受信任</string>
-    <string name="cert_chain_not_trusted_summary">证书链中有证书已过期、被吊销或无法通过签名验证。</string>
+    <string name="cert_chain_not_trusted_summary">证书链中有证书被吊销或签名验证失败。</string>
     <string name="unknown_root_cert">未知的根证书</string>
     <string name="unknown_root_cert_summary">根证书不是已知可信的证书颁发机构。</string>
     <string name="aosp_root_cert">来自 AOSP 的根证书</string>
