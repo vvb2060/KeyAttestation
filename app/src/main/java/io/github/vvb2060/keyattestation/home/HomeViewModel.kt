@@ -40,7 +40,6 @@ import java.security.ProviderException
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
-import java.security.cert.CertificateParsingException
 import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import java.util.Date
@@ -125,8 +124,8 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
     private fun doAttestation(useStrongBox: Boolean,
                               includeProps: Boolean,
                               useAttestKey: Boolean): AttestationResult {
-        val certs: List<Certificate>
-        val alias = AppApplication.TAG
+        val certs = ArrayList<Certificate>()
+        val alias = if (useStrongBox) "${AppApplication.TAG}_strongbox" else AppApplication.TAG
         val attestKeyAlias = if (useAttestKey) "${alias}_persistent" else null
         try {
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
@@ -135,20 +134,21 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias)
             }
             generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
-            val chainAlias = if (useAttestKey) attestKeyAlias else alias
-            val certificates = keyStore.getCertificateChain(chainAlias)
-                    ?: throw CertificateException("Unable to get certificate chain")
-            certs = ArrayList()
+
             val cf = CertificateFactory.getInstance("X.509")
-            if (useAttestKey) {
-                val certificate = keyStore.getCertificate(alias)
-                        ?: throw CertificateException("Unable to get certificate")
-                val buf = ByteArrayInputStream(certificate.encoded)
+            val certChain = keyStore.getCertificateChain(alias)
+                    ?: throw CertificateException("Unable to get certificate chain")
+            for (cert in certChain) {
+                val buf = ByteArrayInputStream(cert.encoded)
                 certs.add(cf.generateCertificate(buf))
             }
-            for (i in certificates.indices) {
-                val buf = ByteArrayInputStream(certificates[i].encoded)
-                certs.add(cf.generateCertificate(buf))
+            if (useAttestKey) {
+                val persistChain = keyStore.getCertificateChain(attestKeyAlias)
+                        ?: throw CertificateException("Unable to get certificate chain")
+                for (cert in persistChain) {
+                    val buf = ByteArrayInputStream(cert.encoded)
+                    certs.add(cf.generateCertificate(buf))
+                }
             }
         } catch (e: ProviderException) {
             val cause = e.cause
@@ -158,13 +158,11 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 when (cause.numericErrorCode) {
                     ERROR_ID_ATTESTATION_FAILURE ->
                         throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
-
                     ERROR_ATTESTATION_KEYS_UNAVAILABLE -> if (cause.isTransientFailure) {
                         throw AttestationException(CODE_OUT_OF_KEYS_TRANSIENT, e)
                     } else {
                         throw AttestationException(CODE_OUT_OF_KEYS, e)
                     }
-
                     else -> if (cause.isTransientFailure) {
                         throw AttestationException(CODE_UNAVAILABLE_TRANSIENT, e)
                     } else {
