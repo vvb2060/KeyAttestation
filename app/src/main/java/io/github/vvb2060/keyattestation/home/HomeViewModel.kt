@@ -94,12 +94,12 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         val purposes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && attestKey) {
             KeyProperties.PURPOSE_ATTEST_KEY
         } else {
-            KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
+            KeyProperties.PURPOSE_SIGN
         }
         val builder = KeyGenParameterSpec.Builder(alias, purposes)
                 .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
                 .setDigests(KeyProperties.DIGEST_SHA256)
-                .setKeyValidityStart(now)
+                .setCertificateNotBefore(now)
                 .setAttestationChallenge(now.toString().toByteArray())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && useStrongBox) {
             builder.setIsStrongBoxBacked(true)

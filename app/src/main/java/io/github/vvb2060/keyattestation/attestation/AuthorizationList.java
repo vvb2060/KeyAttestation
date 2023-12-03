@@ -270,7 +270,6 @@ public class AuthorizationList {
                     break;
                 case KM_TAG_KEY_SIZE & KEYMASTER_TAG_TYPE_MASK:
                     keySize = Asn1Utils.getIntegerFromAsn1(value);
-                    Log.i(AppApplication.TAG, "Found KEY SIZE, value: " + keySize);
                     break;
                 case KM_TAG_DIGEST & KEYMASTER_TAG_TYPE_MASK:
                     digests = Asn1Utils.getIntegersFromAsn1Set(value);
@@ -418,7 +417,6 @@ public class AuthorizationList {
                     break;
                 case EatClaim.KEY_SIZE:
                     keySize = CborUtils.getInt(submodMap, key);
-                    Log.i(AppApplication.TAG, "Found KEY SIZE, value: " + keySize);
                     break;
                 case EatClaim.DIGEST:
                     digests = CborUtils.getIntSet(submodMap, key);

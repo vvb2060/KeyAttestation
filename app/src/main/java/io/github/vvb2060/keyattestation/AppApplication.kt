@@ -16,7 +16,7 @@ class AppApplication : Application() {
         const val TAG = "KeyAttestation"
         lateinit var app: AppApplication
         val mainHandler: Handler = Handler(Looper.getMainLooper())
-        val executor: ExecutorService = Executors.newCachedThreadPool()
+        val executor: ExecutorService = Executors.newSingleThreadExecutor()
     }
 
     init {

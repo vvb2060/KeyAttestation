@@ -16,6 +16,7 @@ import io.github.vvb2060.keyattestation.AppApplication;
 import io.github.vvb2060.keyattestation.R;
 
 public record RevocationList(String status, String reason) {
+    private static final JSONObject data = getStatus();
 
     private static String toString(InputStream input) throws IOException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -30,7 +31,7 @@ public record RevocationList(String status, String reason) {
         }
     }
 
-    public static JSONObject parseStatus(InputStream inputStream) throws IOException {
+    private static JSONObject parseStatus(InputStream inputStream) throws IOException {
         try {
             var statusListJson = new JSONObject(toString(inputStream));
             return statusListJson.getJSONObject("entries");
@@ -39,7 +40,7 @@ public record RevocationList(String status, String reason) {
         }
     }
 
-    public static JSONObject getStatus() {
+    private static JSONObject getStatus() {
         var statusUrl = "https://android.googleapis.com/attestation/status";
         var resName = "android:string/vendor_required_attestation_revocation_list_url";
         var res = AppApplication.app.getResources();
@@ -53,18 +54,17 @@ public record RevocationList(String status, String reason) {
             }
         }
         try (var input = res.openRawResource(R.raw.status)) {
-            return RevocationList.parseStatus(input);
+            return parseStatus(input);
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse certificate revocation status", e);
         }
     }
 
-    public static RevocationList decodeStatus(BigInteger serialNumber,
-                                              JSONObject entries) {
+    public static RevocationList get(BigInteger serialNumber) {
         String serialNumberString = serialNumber.toString(16).toLowerCase();
         JSONObject revocationStatus;
         try {
-            revocationStatus = entries.getJSONObject(serialNumberString);
+            revocationStatus = data.getJSONObject(serialNumberString);
         } catch (JSONException e) {
             return null;
         }

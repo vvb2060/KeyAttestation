@@ -68,7 +68,6 @@ public class CertificateInfo {
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
     private static final Set<PublicKey> oemKeys = getOemPublicKey();
-    private static final JSONObject revocationJson = RevocationList.getStatus();
 
     private final X509Certificate cert;
     private int issuer = KEY_UNKNOWN;
@@ -134,7 +133,7 @@ public class CertificateInfo {
             status = CERT_SIGN;
             cert.verify(parentKey);
             status = CERT_REVOKED;
-            var certStatus = RevocationList.decodeStatus(cert.getSerialNumber(), revocationJson);
+            var certStatus = RevocationList.get(cert.getSerialNumber());
             if (certStatus != null) {
                 throw new CertificateException("Certificate revocation " + certStatus);
             }
@@ -156,9 +155,6 @@ public class CertificateInfo {
             // If the parent certificate can attest that the key purpose is only KeyPurpose::ATTEST_KEY,
             // then the child certificate can be trusted.
             var purposes = attestation.getTeeEnforced().getPurposes();
-            if (purposes == null) {
-                purposes = attestation.getSoftwareEnforced().getPurposes();
-            }
             terminate = purposes == null || !purposes.contains(AuthorizationList.KM_PURPOSE_ATTEST_KEY);
         } catch (CertificateParsingException e) {
             certException = e;
