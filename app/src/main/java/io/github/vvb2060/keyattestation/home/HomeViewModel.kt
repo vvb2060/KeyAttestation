@@ -47,6 +47,9 @@ import javax.security.auth.x500.X500Principal
 
 class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : ViewModel() {
 
+    private val keyStore = KeyStore.getInstance("AndroidKeyStore")
+    private val certificateFactory = CertificateFactory.getInstance("X.509")
+
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
     var currentCerts: List<X509Certificate>? = null
 
@@ -81,6 +84,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         }
 
     init {
+        keyStore.load(null)
         load()
     }
 
@@ -128,26 +132,23 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         val alias = if (useStrongBox) "${AppApplication.TAG}_strongbox" else AppApplication.TAG
         val attestKeyAlias = if (useAttestKey) "${alias}_persistent" else null
         try {
-            val keyStore = KeyStore.getInstance("AndroidKeyStore")
-            keyStore.load(null)
             if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
                 generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias)
             }
             generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
 
-            val cf = CertificateFactory.getInstance("X.509")
             val certChain = keyStore.getCertificateChain(alias)
                     ?: throw CertificateException("Unable to get certificate chain")
             for (cert in certChain) {
                 val buf = ByteArrayInputStream(cert.encoded)
-                certs.add(cf.generateCertificate(buf))
+                certs.add(certificateFactory.generateCertificate(buf))
             }
             if (useAttestKey) {
                 val persistChain = keyStore.getCertificateChain(attestKeyAlias)
                         ?: throw CertificateException("Unable to get certificate chain")
                 for (cert in persistChain) {
                     val buf = ByteArrayInputStream(cert.encoded)
-                    certs.add(cf.generateCertificate(buf))
+                    certs.add(certificateFactory.generateCertificate(buf))
                 }
             }
         } catch (e: ProviderException) {
@@ -194,9 +195,8 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             }
         }
         try {
-            val cf = CertificateFactory.getInstance("X.509")
             cr.openOutputStream(uri)?.use {
-                it.write(cf.generateCertPath(certs).getEncoded("PKCS7"))
+                it.write(certificateFactory.generateCertPath(certs).getEncoded("PKCS7"))
             } ?: throw IOException("openOutputStream $uri failed")
             AppApplication.mainHandler.post {
                 Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
@@ -212,14 +212,13 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         attestationResult.postValue(Resource.loading(null))
 
         val result = try {
-            val cf = CertificateFactory.getInstance("X.509")
-            val certPath = BufferedInputStream(cr.openInputStream(uri)).use {
-                try {
-                    it.mark(8192)
-                    cf.generateCertPath(it, "PKCS7")
-                } catch (_: CertificateException) {
-                    it.reset()
-                    cf.generateCertPath(it, "PkiPath")
+            val certPath = try {
+                cr.openInputStream(uri).use {
+                    certificateFactory.generateCertPath(it, "PKCS7")
+                }
+            } catch (_: CertificateException) {
+                cr.openInputStream(uri).use {
+                    certificateFactory.generateCertPath(it)
                 }
             }
             Resource.success(parseCertificateChain(certPath))
@@ -237,9 +236,14 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         attestationResult.postValue(result)
     }
 
-    fun load() = AppApplication.executor.execute {
+    fun load(reset: Boolean = false) = AppApplication.executor.execute {
         currentCerts = null
         attestationResult.postValue(Resource.loading(null))
+        if (reset) {
+            for (alias in keyStore.aliases()) {
+                keyStore.deleteEntry(alias)
+            }
+        }
 
         val useStrongBox = hasStrongBox && preferStrongBox
         val includeProps = hasDeviceIds && preferIncludeProps

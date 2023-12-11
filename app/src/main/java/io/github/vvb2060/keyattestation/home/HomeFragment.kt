@@ -199,6 +199,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 viewModel.preferShowAll = status
                 adapter.updateData(viewModel.attestationResult.value!!.data!!, status)
             }
+            R.id.menu_reset -> {
+                viewModel.load(true)
+            }
             R.id.menu_save -> {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.p7b")
             }
