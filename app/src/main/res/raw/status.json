@@ -199,6 +199,14 @@
     "fc609574570c3e0a1d347e02a2ad6d4d" : {
       "status": "REVOKED",
       "reason": "SOFTWARE_FLAW"
+    },
+    "7355273169128314967" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "5344612975616013951" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
     }
   }
 }
