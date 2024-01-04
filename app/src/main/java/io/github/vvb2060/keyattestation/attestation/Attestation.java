@@ -98,7 +98,7 @@ public abstract class Attestation {
             case KM_SECURITY_LEVEL_STRONG_BOX:
                 return "StrongBox";
             default:
-                return "Unkown (" + attestationSecurityLevel + ")";
+                return "Unknown (" + attestationSecurityLevel + ")";
         }
     }
 
@@ -119,7 +119,7 @@ public abstract class Attestation {
             case 300:
                 return "KeyMint version 3.0";
             default:
-                return "Unkown (" + version + ")";
+                return "Unknown (" + version + ")";
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class Attestation {
             case 300:
                 return "KeyMint version 3.0";
             default:
-                return "Unkown (" + version + ")";
+                return "Unknown (" + version + ")";
         }
     }
 
