@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_use_sak"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:title="@string/use_sak" />
+
+    <item
         android:id="@+id/menu_use_strongbox"
         android:showAsAction="never"
         android:checkable="true"

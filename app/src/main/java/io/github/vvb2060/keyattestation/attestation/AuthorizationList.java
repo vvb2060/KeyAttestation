@@ -226,6 +226,7 @@ public class AuthorizationList {
     private Boolean rollbackResistant;
     private Boolean rollbackResistance;
     private RootOfTrust rootOfTrust;
+    private IntegrityStatus integrityStatus;
     private Integer osVersion;
     private Integer osPatchLevel;
     private Integer vendorPatchLevel;
@@ -767,6 +768,14 @@ public class AuthorizationList {
         return rootOfTrust;
     }
 
+    public IntegrityStatus getIntegrityStatus() {
+        return integrityStatus;
+    }
+
+    void setIntegrityStatus(IntegrityStatus is) {
+        integrityStatus = is;
+    }
+
     public Integer getOsVersion() {
         return osVersion;
     }
@@ -958,6 +967,15 @@ public class AuthorizationList {
         if (rootOfTrust != null) {
             s.append("\nRoot of Trust:\n");
             s.append(rootOfTrust);
+        }
+
+        if (integrityStatus != null) {
+            s.append("\nIntegrity Status:\n");
+            s.append(integrityStatus);
+            if (integrityStatus.getAuthResult() != null) {
+                s.append("\nCaller Auth Status:\n");
+                s.append(integrityStatus.getAuthResult());
+            }
         }
 
         if (osVersion != null) {

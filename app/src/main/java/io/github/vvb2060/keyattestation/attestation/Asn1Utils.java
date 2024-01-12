@@ -28,6 +28,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERPrintableString;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -63,11 +64,16 @@ public class Asn1Utils {
 
     public static byte[] getByteArrayFromAsn1(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (asn1Encodable == null || !(asn1Encodable instanceof DEROctetString)) {
+        if (asn1Encodable == null) {
             throw new CertificateParsingException("Expected DEROctetString");
         }
-        ASN1OctetString derOctectString = (ASN1OctetString) asn1Encodable;
-        return derOctectString.getOctets();
+        if (asn1Encodable instanceof DEROctetString) {
+            return ((ASN1OctetString) asn1Encodable).getOctets();
+        }
+        if (asn1Encodable instanceof DERPrintableString) {
+            return ((DERPrintableString) asn1Encodable).getOctets();
+        }
+        throw new CertificateParsingException("Expected DEROctetString");
     }
 
     public static ASN1Encodable getAsn1EncodableFromBytes(byte[] bytes)

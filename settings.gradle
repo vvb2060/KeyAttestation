@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "KeyAttestation"
 include(":app")
+include(":stub")

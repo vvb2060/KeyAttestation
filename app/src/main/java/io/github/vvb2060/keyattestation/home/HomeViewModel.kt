@@ -17,6 +17,8 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.samsung.android.security.keystore.AttestParameterSpec
+import com.samsung.android.security.keystore.AttestationUtils
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo.parseCertificateChain
@@ -30,6 +32,7 @@ import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
+import io.github.vvb2060.keyattestation.util.SamsungUtils
 import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -50,6 +53,14 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
 
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
     var currentCerts: List<X509Certificate>? = null
+
+    val hasSAK = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            SamsungUtils.isSecAttestationSupported()
+    var preferSAK = sp.getBoolean("prefer_sak", hasSAK)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_sak", value) }
+        }
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
@@ -87,6 +98,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
 
     @Throws(GeneralSecurityException::class)
     private fun generateKey(alias: String,
+                            useSAK: Boolean,
                             useStrongBox: Boolean,
                             includeProps: Boolean,
                             attestKeyAlias: String?) {
@@ -116,14 +128,30 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 builder.setCertificateSubject(X500Principal("CN=App Attest Key"))
             }
         }
-        val keyPairGenerator = KeyPairGenerator.getInstance(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && useSAK) {
+            val spec = AttestParameterSpec.Builder(alias, now.toString().toByteArray())
+                .setAlgorithm(KeyProperties.KEY_ALGORITHM_EC)
+                .setKeyGenParameterSpec(builder.build())
+                .setVerifiableIntegrity(true)
+                .setPackageName(AppApplication.app.packageName)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && includeProps) {
+                spec.setDevicePropertiesAttestationIncluded(true)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && attestKey) {
+                spec.setCertificateSubject(X500Principal("CN=App Attest Key"))
+            }
+            AttestationUtils().generateKeyPair(spec.build())
+        } else {
+            val keyPairGenerator = KeyPairGenerator.getInstance(
                 KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
-        keyPairGenerator.initialize(builder.build())
-        keyPairGenerator.generateKeyPair()
+            keyPairGenerator.initialize(builder.build())
+            keyPairGenerator.generateKeyPair()
+        }
     }
 
     @Throws(AttestationException::class)
-    private fun doAttestation(useStrongBox: Boolean,
+    private fun doAttestation(useSAK: Boolean,
+                              useStrongBox: Boolean,
                               includeProps: Boolean,
                               useAttestKey: Boolean): AttestationResult {
         val certs: List<Certificate>
@@ -133,9 +161,9 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             val keyStore = KeyStore.getInstance("AndroidKeyStore")
             keyStore.load(null)
             if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
-                generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias)
+                generateKey(attestKeyAlias!!, useSAK, useStrongBox, includeProps, attestKeyAlias)
             }
-            generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
+            generateKey(alias, useSAK, useStrongBox, includeProps, attestKeyAlias)
             val chainAlias = if (useAttestKey) attestKeyAlias else alias
             val certificates = keyStore.getCertificateChain(chainAlias)
                     ?: throw CertificateException("Unable to get certificate chain")
@@ -247,11 +275,12 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         currentCerts = null
         attestationResult.postValue(Resource.loading(null))
 
+        val useSAK = hasSAK && preferSAK
         val useStrongBox = hasStrongBox && preferStrongBox
         val includeProps = hasDeviceIds && preferIncludeProps
-        val useAttestKey = hasAttestKey && preferAttestKey
+        val useAttestKey = hasAttestKey && preferAttestKey && !useSAK
         val result = try {
-            val attestationResult = doAttestation(useStrongBox, includeProps, useAttestKey)
+            val attestationResult = doAttestation(useSAK, useStrongBox, includeProps, useAttestKey)
             Resource.success(attestationResult)
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e

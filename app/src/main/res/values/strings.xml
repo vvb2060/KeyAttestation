@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Key Attestation</string>
+    <string name="use_sak">Use Samsung attestation</string>
     <string name="use_strongbox">Use StrongBox</string>
     <string name="use_attest_key">Use app generated attest key</string>
     <string name="attest_device_props">Attest device props</string>
@@ -115,6 +116,8 @@ This software is open source under %2$s (%1$s).
     <string name="authorization_list_origin">Origin</string>
     <string name="authorization_list_rollbackResistant">Rollback resistant</string>
     <string name="authorization_list_rootOfTrust">Root of trust</string>
+    <string name="authorization_list_integrityStatus">Integrity status</string>
+    <string name="authorization_list_authResult">Caller auth status</string>
     <string name="authorization_list_osVersion">OS version</string>
     <string name="authorization_list_osPatchLevel">OS patch level</string>
     <string name="authorization_list_attestationApplicationId">Attestation application ID</string>
@@ -210,6 +213,12 @@ This software is open source under %2$s (%1$s).
     ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
     This collection of values defines key information about the device\'s status.
+    ]]></string>
+    <string name="authorization_list_integrityStatus_description"><![CDATA[
+    This collection of values defines key information about the device\'s status (Samsung specific).
+    ]]></string>
+    <string name="authorization_list_authResult_description"><![CDATA[
+    This collection of values defines key information about the attestation caller auth (Samsung specific).
     ]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
     The version of the Android operating system associated with the Keymaster, specified as a six-digit integer. For example, version 8.1.0 is represented as 080100.

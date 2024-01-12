@@ -34,6 +34,7 @@ import io.github.vvb2060.keyattestation.AppApplication;
  * contents.
  */
 public abstract class Attestation {
+    static final String KNOX_EXTENSION_OID = "1.3.6.1.4.1.236.11.3.23.7";
     static final String EAT_OID = "1.3.6.1.4.1.11129.2.1.25";
     static final String ASN1_OID = "1.3.6.1.4.1.11129.2.1.17";
     static final String KEY_USAGE_OID = "2.5.29.15"; // Standard key usage extension.
@@ -64,9 +65,16 @@ public abstract class Attestation {
      */
 
     public static Attestation loadFromCertificate(X509Certificate x509Cert) throws CertificateParsingException {
-        if (x509Cert.getExtensionValue(EAT_OID) == null
+        if (x509Cert.getExtensionValue(KNOX_EXTENSION_OID) == null
+                && x509Cert.getExtensionValue(EAT_OID) == null
                 && x509Cert.getExtensionValue(ASN1_OID) == null) {
             throw new CertificateParsingException("No attestation extensions found");
+        }
+        if (x509Cert.getExtensionValue(KNOX_EXTENSION_OID) != null) {
+            if (x509Cert.getExtensionValue(EAT_OID) != null) {
+                throw new CertificateParsingException("Multiple attestation extensions found");
+            }
+            return new KnoxAttestation(x509Cert);
         }
         if (x509Cert.getExtensionValue(EAT_OID) != null) {
             if (x509Cert.getExtensionValue(ASN1_OID) != null) {
