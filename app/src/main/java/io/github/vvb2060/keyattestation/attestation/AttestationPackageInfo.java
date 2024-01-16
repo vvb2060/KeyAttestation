@@ -61,7 +61,7 @@ public class AttestationPackageInfo implements java.lang.Comparable<AttestationP
 
     @Override
     public String toString() {
-        return getPackageName() + " (version code " + getVersion() + ")\n";
+        return getPackageName() + " (version code " + getVersion() + ")";
     }
 
     @Override

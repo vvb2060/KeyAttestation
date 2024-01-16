@@ -20,6 +20,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
 
+import com.google.common.io.BaseEncoding;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
@@ -99,15 +101,14 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
         for (AttestationPackageInfo info : packageInfos) {
             sb.append("Package info " + i++ + "/" + noOfInfos + ":\n");
             sb.append(info);
+            sb.append('\n');
         }
         sb.append('\n');
         i = 1;
         int noOfSigs = signatureDigests.size();
         for (byte[] sig : signatureDigests) {
-            sb.append("Signature digest " + i++ + "/" + noOfSigs + ":\n");
-            for (byte b : sig) {
-                sb.append(String.format("%02X ", b));
-            }
+            sb.append("Certificate sha256 digest " + i++ + "/" + noOfSigs + ":\n");
+            sb.append(BaseEncoding.base16().encode(sig));
             sb.append('\n');
         }
         return sb.toString();

@@ -9,12 +9,10 @@
     <string name="load_certs">Load from file</string>
     <string name="save_certs">Save to file</string>
     <string name="about">About</string>
-    <string name="open_source_info"><![CDATA[
-This software is open source under %2$s (%1$s).
-    ]]></string>
+    <string name="open_source_info">This software is open source under %2$s (%1$s).</string>
 
     <string name="bootloader_locked">Bootloader is locked</string>
-    <string name="bootloader_user">Root of trust set by user</string>
+    <string name="bootloader_user">Root of trust set by end user</string>
     <string name="bootloader_unlocked">Bootloader is unlocked</string>
     <string name="bootloader_unknown">Bootloader status is unknown</string>
     <string name="bootloader_summary_sw_level">This device does not support hardware-level key attestation.</string>
@@ -22,15 +20,15 @@ This software is open source under %2$s (%1$s).
     <string name="cert_chain_not_trusted_summary">A certificate has been revoked or signature verification failed in the certificate chain.</string>
     <string name="unknown_root_cert">Unknown root certificate</string>
     <string name="unknown_root_cert_summary">Root certificate is not a known trusted certificate authority.</string>
-    <string name="aosp_root_cert">AOSP root certificate</string>
-    <string name="aosp_root_cert_summary">Private key of root certificate is well known, the certificate chain can be tampered with.</string>
-    <string name="google_root_cert">Google root certificate</string>
-    <string name="google_root_cert_summary">Google considers the certificate chain trustworthy</string>
+    <string name="aosp_root_cert">AOSP software attestation root certificate</string>
+    <string name="aosp_root_cert_summary">Private key of attest key is well known, the certificate chain can be tampered with.</string>
+    <string name="google_root_cert">Google hardware attestation root certificate</string>
+    <string name="google_root_cert_summary">GMS compatible devices can use attest keys signed by Google.</string>
     <string name="oem_root_cert">OEM root certificate</string>
-    <string name="oem_root_cert_summary">OEM considers the certificate chain trustworthy</string>
+    <string name="oem_root_cert_summary">This device trusts this root certificate, but it may not be trusted by others.</string>
 
     <string name="cert_chain">Certificate chain</string>
-    <string name="cert_chain_description">Certificate chain is a list of certificates used to authenticate a key. The chain begins with the certificate of that key, and each certificate in the chain is signed by the next certificate in the chain. The chain terminates with a root certificate, the root certificate is always self signed.</string>
+    <string name="cert_chain_description">Certificate chain is a list of certificates used to authenticate a key. The chain begins with the certificate of that key, and each certificate in the chain is signed by the next certificate in the chain. The chain terminates with a root certificate. The trustworthiness of the attestation depends on the root certificate of the chain.</string>
     <string name="cert_info">Certificate info</string>
     <string name="cert_subject">subject: </string>
     <string name="cert_not_before">not before: </string>
@@ -42,9 +40,10 @@ This software is open source under %2$s (%1$s).
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
-    <string name="error_unavailable">Unable to attest keys</string>
+    <string name="error_unavailable">Unable to attest</string>
     <string name="error_unavailable_summary">
-    The device is not supported or the hardware attestation key is lost, possibly due to a write to the persist partition or an OEM misconfiguration.
+    The device does not support attestation or the factory provisioned attest key is lost, possibly due to an OEM misconfiguration or the end user writing to the persist partition.
+    It is recommended to try again after adjusting the menu options.
     </string>
     <string name="error_cant_parse_cert">Unable to parse certificate</string>
     <string name="error_cant_parse_cert_summary">
@@ -58,34 +57,34 @@ This software is open source under %2$s (%1$s).
     <string name="error_deviceids_unavailable_summary">
     This device is declared to have ID attestation support, but IDs do not match or the device can no longer attest its IDs.
     </string>
-    <string name="error_out_of_keys">No remotely-provisioned keys for attestation</string>
+    <string name="error_out_of_keys">No remotely provisioned keys for attestation</string>
     <string name="error_out_of_keys_summary">
     This device is not registered with the key provisioning server, or the server refuses key issuance.
     </string>
-    <string name="error_out_of_keys_transient">Currently no remotely-provisioned keys for attestation</string>
+    <string name="error_out_of_keys_transient">Currently no remotely provisioned keys for attestation</string>
     <string name="error_out_of_keys_transient_summary">
-    The pool of remotely-provisioned keys has been exhausted, please try again with Internet or checking for system updates.
+    The pool of remotely provisioned keys has been exhausted, please try again with Internet or checking for system updates.
     </string>
-    <string name="error_unavailable_transient">Currently unable to attest keys</string>
+    <string name="error_unavailable_transient">Currently unable to attest</string>
     <string name="error_unavailable_transient_summary">
-    This issue is transient, please try reboot device or checking for system updates.
+    This issue is transient, try to reset in the menu, or check for system updates.
     </string>
 
     <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>
-    <string name="keymaster" translatable="false">Keymaster</string>
-    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster hardware abstraction layer (HAL). Use 0 to represent version 0.2 or 0.3, 1 to represent version 1.0, and 2 to represent version 2.0.]]></string>
-    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>The security of the implementation.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>Implemented by the Android system. This location is less secure than the TEE but is more secure than app\'s process space.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>Implemented in secure hardware, such as a TEE (Trusted Execution Environment). This location is more secure because secure hardware is highly resistant to remote compromise.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>Implemented in a dedicated hardware security module. This location is more secure because it is highly resistant to remote compromise and hardware attacks against the module.</li></ul>]]></string>
+    <string name="keymaster" translatable="false">Keymaster / KeyMint</string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster or KeyMint hardware abstraction layer (HAL).]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>This data structure indicates the extent to which a software feature, such as a key pair, is protected based on its location within the device.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>The logic for creating and managing the feature is implemented in the Android system. For the purposes of creating and storing key pairs, this location is less secure than the TEE but is more secure than your app\'s process space.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>The logic for creating and managing the feature is implemented in secure hardware, such as a TEE. For the purposes of creating and storing key pairs, this location is more secure because secure hardware is highly resistant to remote compromise.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>The logic for creating and managing the feature is implemented in a dedicated <a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">hardware security module</a>. For the purposes of creating and storing key pairs, this location is more secure because it is highly resistant to remote compromise and hardware attacks against the module.</li></ul>]]></string>
     <string name="attestation_summary_format">Version: %1$s\nSecurity level: %2$s</string>
     <string name="attestation_challenge" translatable="false">Attestation challenge</string>
-    <string name="attestation_challenge_description"><![CDATA[The purpose of the challenge value is to enable relying parties to verify that the key was created in response to a specific request.<p>In production environment, the challenge value should be randomly generated every time.]]></string>
+    <string name="attestation_challenge_description">Contains the challenge that was provided at key creation time. Check whether this value matches the value your server provided. Otherwise, your service might be vulnerable to replaying of old attestation certificates.</string>
     <string name="unique_id" translatable="false">Unique ID</string>
-    <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is computed and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
+    <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is <a href="https://source.android.com/security/keystore/attestation#unique-id">computed</a> and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
 
     <string name="empty">(empty)</string>
-    <string name="security_level_software" translatable="false">Software</string>
-    <string name="security_level_trusted_environment" translatable="false">TrustedEnvironment</string>
-    <string name="security_level_strongbox" translatable="false">StrongBox</string>
+    <string name="security_level_software">Software</string>
+    <string name="security_level_trusted_environment">TrustedEnvironment</string>
+    <string name="security_level_strongbox">StrongBox</string>
 
     <string name="sw_enforced" translatable="false">SW</string>
     <string name="sw_enforced_description"><![CDATA[This item is enforced by the Android system, not by the device\'s TEE.]]></string>
@@ -139,7 +138,7 @@ This software is open source under %2$s (%1$s).
 
     <!-- https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl -->
     <string name="authorization_list_description"><![CDATA[
-    This data structure contains the key pair\'s properties themselves, as defined in the Keymaster hardware abstraction layer (HAL).<p>App developers can compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use.
+    This data structure contains the key pair\'s properties themselves, as defined in the Keymaster or KeyMint hardware abstraction layer (HAL). You compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use in your app.
     ]]></string>
     <string name="authorization_list_purpose_description"><![CDATA[
     Specifies the set of purposes for which the key may be used.
@@ -184,7 +183,7 @@ This software is open source under %2$s (%1$s).
     Specifies the time in seconds for which the key is authorized for use, after authentication.
     ]]></string>
     <string name="authorization_list_allowWhileOnBody_description"><![CDATA[
-    This tag is applicable only for Android Wear devices with on-body sensors. At this point, it\'s not expected that any TEE will be able to provide secure access to an on-body sensor, or that on-body sensors are very secure, so this is expected to be a purely software-enforced feature.
+    Allows the key to be used after its authentication timeout period if the user is still wearing the device on their body. Note that a secure on-body sensor determines whether the device is being worn on the user\'s body.
     ]]></string>
     <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
     Specifies that this key is usable only if the user has provided proof of physical presence.
@@ -211,8 +210,12 @@ This software is open source under %2$s (%1$s).
     Indicates that the key is rollback-resistant, meaning that when deleted by deleteKey or deleteAllKeys, the key is guaranteed to be permanently deleted and unusable. It\'s possible that keys without this tag could be deleted and then restored from backup.
     ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
-    This collection of values defines key information about the device\'s status.
-    ]]></string>
+    This collection of values defines key information about the device\'s status.<br/><p>
+    verifiedBootKey: <br/>A secure hash of the key that verifies the system image.<br/><br/>
+    deviceLocked: <br/>True if the device\'s bootloader is locked, which enables Verified Boot checking and prevents an unsigned device image from being flashed onto the device.<br/><br/>
+    verifiedBootState: <br/>This data structure provides the device\'s current boot state, which represents the level of protection provided to the user and to apps after the device finishes booting.<br/><br/>
+    verifiedBootHash: <br/>A digest of all data protected by Verified Boot. For devices that use the Android Verified Boot implementation of Verified Boot, this value contains the digest of the VBMeta struct, or the Verified Boot metadata structure.
+    </p>]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
     The version of the Android operating system associated with the Keymaster, specified as a six-digit integer. For example, version 8.1.0 is represented as 080100.
     ]]></string>

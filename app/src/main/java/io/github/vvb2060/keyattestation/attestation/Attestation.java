@@ -90,62 +90,40 @@ public abstract class Attestation {
     }
 
     public static String securityLevelToString(int attestationSecurityLevel) {
-        switch (attestationSecurityLevel) {
-            case KM_SECURITY_LEVEL_SOFTWARE:
-                return "Software";
-            case KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT:
-                return "TEE";
-            case KM_SECURITY_LEVEL_STRONG_BOX:
-                return "StrongBox";
-            default:
-                return "Unkown (" + attestationSecurityLevel + ")";
-        }
+        return switch (attestationSecurityLevel) {
+            case KM_SECURITY_LEVEL_SOFTWARE -> "Software";
+            case KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT -> "TEE";
+            case KM_SECURITY_LEVEL_STRONG_BOX -> "StrongBox";
+            default -> "Unknown (" + attestationSecurityLevel + ")";
+        };
     }
 
     public static String attestationVersionToString(int version) {
-        switch (version) {
-            case 1:
-                return "Keymaster version 2.0";
-            case 2:
-                return "Keymaster version 3.0";
-            case 3:
-                return "Keymaster version 4.0";
-            case 4:
-                return "Keymaster version 4.1";
-            case 100:
-                return "KeyMint version 1.0";
-            case 200:
-                return "KeyMint version 2.0";
-            case 300:
-                return "KeyMint version 3.0";
-            default:
-                return "Unkown (" + version + ")";
-        }
+        return switch (version) {
+            case 1 -> "Keymaster 2.0";
+            case 2 -> "Keymaster 3.0";
+            case 3 -> "Keymaster 4.0";
+            case 4 -> "Keymaster 4.1";
+            case 100 -> "KeyMint 1.0";
+            case 200 -> "KeyMint 2.0";
+            case 300 -> "KeyMint 3.0";
+            default -> "Unknown (" + version + ")";
+        };
     }
 
     public static String keymasterVersionToString(int version) {
-        switch (version) {
-            case 0:
-                return "Keymaster version 0.2 or 0.3";
-            case 1:
-                return "Keymaster version 1.0";
-            case 2:
-                return "Keymaster version 2.0";
-            case 3:
-                return "Keymaster version 3.0";
-            case 4:
-                return "Keymaster version 4.0";
-            case 41:
-                return "Keymaster version 4.1";
-            case 100:
-                return "KeyMint version 1.0";
-            case 200:
-                return "KeyMint version 2.0";
-            case 300:
-                return "KeyMint version 3.0";
-            default:
-                return "Unkown (" + version + ")";
-        }
+        return switch (version) {
+            case 0 -> "Keymaster 0.2 or 0.3";
+            case 1 -> "Keymaster 1.0";
+            case 2 -> "Keymaster 2.0";
+            case 3 -> "Keymaster 3.0";
+            case 4 -> "Keymaster 4.0";
+            case 41 -> "Keymaster 4.1";
+            case 100 -> "KeyMint 1.0";
+            case 200 -> "KeyMint 2.0";
+            case 300 -> "KeyMint 3.0";
+            default -> "Unknown (" + version + ")";
+        };
     }
 
     public int getAttestationVersion() {

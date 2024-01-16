@@ -9,28 +9,26 @@
     <string name="load_certs">从文件加载</string>
     <string name="save_certs">保存到文件</string>
     <string name="about">关于</string>
-    <string name="open_source_info"><![CDATA[
-此软件是 %2$s 下的开源软件（%1$s）。
-    ]]></string>
+    <string name="open_source_info">此软件是 %2$s 下的开源软件（%1$s）。</string>
 
     <string name="bootloader_locked">Bootloader 已锁定</string>
-    <string name="bootloader_user">信任根由用户设置</string>
+    <string name="bootloader_user">信任根由最终用户设置</string>
     <string name="bootloader_unlocked">Bootloader 已解锁</string>
     <string name="bootloader_unknown">Bootloader 状态未知</string>
     <string name="bootloader_summary_sw_level">该设备不支持硬件级别的密钥认证。</string>
     <string name="cert_chain_not_trusted">证书链不受信任</string>
     <string name="cert_chain_not_trusted_summary">证书链中有证书被吊销或签名验证失败。</string>
-    <string name="unknown_root_cert">未知的根证书</string>
+    <string name="unknown_root_cert">由未知根证书签名</string>
     <string name="unknown_root_cert_summary">根证书不是已知可信的证书颁发机构。</string>
-    <string name="aosp_root_cert">来自 AOSP 的根证书</string>
-    <string name="aosp_root_cert_summary">根证书的私钥众所周知，证书链可以被篡改。</string>
-    <string name="google_root_cert">来自 Google 的根证书</string>
-    <string name="google_root_cert_summary">Google 认为证书链可信</string>
-    <string name="oem_root_cert">来自设备制造商的根证书</string>
-    <string name="oem_root_cert_summary">设备制造商认为证书链可信</string>
+    <string name="aosp_root_cert">由 AOSP 软件认证根证书签名</string>
+    <string name="aosp_root_cert_summary">认证密钥的私钥众所周知，证书链可以被篡改。</string>
+    <string name="google_root_cert">由 Google 硬件认证根证书签名</string>
+    <string name="google_root_cert_summary">兼容 GMS 的设备可以使用由 Google 签名的认证密钥。</string>
+    <string name="oem_root_cert">由设备制造商的根证书签名</string>
+    <string name="oem_root_cert_summary">此设备信任该根证书，但它可能不被其它人信任。</string>
 
     <string name="cert_chain">证书链</string>
-    <string name="cert_chain_description">证书链是用于验证密钥的证书列表。从该密钥的证书开始，每个证书均由链中下一个证书签名，到根证书为止，根证书始终是自签名的。</string>
+    <string name="cert_chain_description">证书链是用于验证密钥的证书列表。从该密钥的证书开始，每个证书均由链中下一个证书签名，到根证书为止。认证的可信度取决于证书链的根证书。</string>
     <string name="cert_info">证书信息</string>
     <string name="cert_subject">使用者：</string>
     <string name="cert_not_before">有效期从：</string>
@@ -42,9 +40,9 @@
 
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>
-    <string name="error_unavailable">无法认证密钥</string>
+    <string name="error_unavailable">无法认证</string>
     <string name="error_unavailable_summary">
-    设备不支持或硬件认证密钥丢失，可能由于对 persist 分区的不当写入或 OEM 配置错误。
+    设备不支持认证或工厂提供的认证密钥丢失，可能因为 OEM 配置有误或用户不当写入 persist 分区。建议在菜单调整选项后再试。
     </string>
     <string name="error_cant_parse_cert">无法解析证书</string>
     <string name="error_cant_parse_cert_summary">
@@ -58,35 +56,36 @@
     <string name="error_deviceids_unavailable_summary">
     设备声明支持 ID 认证，但 ID 不匹配或设备已无法再证明其 ID。
     </string>
-    <string name="error_out_of_keys">没有用于认证的远程配置密钥</string>
+    <string name="error_out_of_keys">没有远程提供的认证密钥</string>
     <string name="error_out_of_keys_summary">
-    设备未向远程密钥配置服务器注册，或者服务器拒绝颁发密钥。
+    设备未向密钥提供服务器注册，或者服务器拒绝颁发密钥。
     </string>
-    <string name="error_out_of_keys_transient">暂无用于认证的远程配置密钥</string>
+    <string name="error_out_of_keys_transient">暂无远程提供的认证密钥</string>
     <string name="error_out_of_keys_transient_summary">
-    远程配置的密钥池已用完，请在联网环境下重试或检查系统更新。
+    远程提供的密钥池已用完，请在联网环境下重试或检查系统更新。
     </string>
-    <string name="error_unavailable_transient">暂时无法认证密钥</string>
+    <string name="error_unavailable_transient">暂时无法认证</string>
     <string name="error_unavailable_transient_summary">
-    问题是暂时的，请尝试重启设备或检查系统更新。
+    问题是暂时的，尝试在菜单重置，或者检查系统更新。
     </string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
-    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 硬件抽象层 (HAL) 的版本。使用 0 表示版本 0.2 或 0.3，使用 1 表示版本 1.0，使用 2 表示版本 2.0。]]></string>
-    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>在 Android 系统中实现。此位置没有 TEE 安全，但比应用的进程空间安全，能抵御针对应用的攻击。</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>在安全硬件中实现，例如 TEE（Trusted Execution Environment，受信任的执行环境），能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>在专用的硬件安全模块中实现，能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 或 KeyMint 硬件抽象层 (HAL) 的版本。]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示软件功能（例如密钥对）受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>用于创建和管理功能的逻辑在 Android 系统中实现。如果用于创建和存储密钥对，此位置没有 TEE 安全，但比应用的进程空间安全。</li><li gap="8sp"><font face="sans-serif-medium">可信环境</font><br>用于创建和管理在安全硬件（如 TEE）中实现的功能的逻辑。如果用于创建和存储密钥对，此位置比较安全，因为安全硬件更能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">保险箱</font><br>用于创建和管理功能的逻辑在专用<a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">硬件安全模块</a>中实现。对于创建和存储密钥对，此位置更安全，因为它更能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
     <string name="attestation_summary_format">版本：%1$s\n安全等级：%2$s</string>
-    <string name="attestation_challenge_description"><![CDATA[质询值的目的是使依赖方能够验证是否已响应特定请求创建了密钥。<p>在生产环境中，质询值应每次都随机生成。]]></string>
-    <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过计算得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
+    <string name="attestation_challenge_description">包含创建密钥时提供的质询。检查此值是否与您的服务器提供的值匹配。否则，您的服务可能容易受到旧认证证书重放的攻击。</string>
+    <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过<a href="https://source.android.com/security/keystore/attestation#unique-id">计算</a>得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
 
     <string name="empty">（空）</string>
+    <string name="security_level_software">软件</string>
+    <string name="security_level_trusted_environment">可信环境</string>
+    <string name="security_level_strongbox">保险箱</string>
 
-    <string name="sw_enforced" translatable="false">SW</string>
     <string name="sw_enforced_description"><![CDATA[此项目由 Android 系统（而非设备的 TEE）强制执行。]]></string>
-    <string name="tee_enforced" translatable="false">TEE</string>
     <string name="tee_enforced_description"><![CDATA[此项目由设备的 TEE 强制执行。]]></string>
 
     <string name="authorization_list_description"><![CDATA[
-    此数据结构包含密钥对的属性本身，如 Keymaster 硬件抽象层 (HAL) 中所定义。<p>应用开发者将这些值与设备的当前状态或一组预期值进行比较，以验证密钥对是否仍适用。
+    此数据结构包含密钥对的属性本身，如 Keymaster 或 KeyMint 硬件抽象层 (HAL) 中所定义。将这些值与设备的当前状态或一组预期值进行比较，以验证密钥对是否仍适用于您的应用。
     ]]></string>
     <string name="authorization_list_purpose_description"><![CDATA[
     用于指定相应密钥可用于哪些目的。
@@ -104,7 +103,7 @@
     用于指定可与相应密钥配合使用的填充模式。此标记与 RSA 密钥和 AES 密钥有关。
     ]]></string>
     <string name="authorization_list_ecCurve_description"><![CDATA[
-    用于生成椭圆曲线 (EC) 密钥对的参数集，该参数集在 Android 系统密钥库中使用 ECDSA 进行签名和验证。
+    Android 系统密钥库中用于生成椭圆曲线 (EC) 密钥对的参数集，该参数集使用 ECDSA 进行签名和验证。
     ]]></string>
     <string name="authorization_list_rsaPublicExponent_description"><![CDATA[
     用于为 RSA 密钥对指定公开指数的值。此标记仅与 RSA 密钥有关，而且是所有 RSA 密钥都必需的标记。
@@ -131,7 +130,7 @@
     用于指定授权在多长时间内使用相应密钥（以秒数计，从通过身份验证开始算起）。
     ]]></string>
     <string name="authorization_list_allowWhileOnBody_description"><![CDATA[
-    此标记仅适用于配备贴身传感器的 Android Wear 设备。目前，TEE 并不能提供对贴身传感器的安全访问，贴身传感器也不是非常安全，因此这应该是一项完全由软件强制执行的功能。
+    如果用户身上仍佩戴着设备，允许在密钥身份验证超时后使用密钥。请注意，安全的体感传感器可以确定设备是否正佩戴在用户身上。
     ]]></string>
     <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
     指定仅在用户提供了物理存在证明时，此密钥才可用。
@@ -146,7 +145,7 @@
     指示设备上的所有应用是否都可以访问密钥对。
     ]]></string>
     <string name="authorization_list_applicationId_description"><![CDATA[
-    将此标记提供给 generateKey 或 importKey 后，此标记用于指定使用相应密钥时均须提供的数据。
+    如果将此标记提供给 generateKey 或 importKey，则可指定使用相应密钥时所必需的数据。
     ]]></string>
     <string name="authorization_list_creationDateTime_description"><![CDATA[
     用于指定相应密钥的创建日期和时间（以距 1970 年 1 月 1 日的毫秒数计）。此标记为可选标记，仅供参考。
@@ -158,8 +157,12 @@
     用于表明密钥可抗回滚，也就是说，当通过 deleteKey 或 deleteAllKeys 删除密钥后，可保证该密钥已被永久删除且无法再使用。如果密钥不带此标记，那么在被删除后，可能能够从备份中恢复。
     ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
-    这个值集合可以定义与设备状态有关的密钥信息。
-    ]]></string>
+    这个值集合可以定义与设备状态有关的密钥信息。<br/><p>
+    verifiedBootKey: <br/>验证系统映像的密钥的安全哈希值。<br/><br/>
+    deviceLocked: <br/>在设备的引导加载程序处于锁定状态时为 true，这将启用启动时验证检查，并防止将未签名的设备映像刷写到设备上。<br/><br/>
+    verifiedBootState: <br/>此数据结构提供设备的当前启动状态，表示在设备完成启动后为用户和应用提供的保护级别。<br/><br/>
+    verifiedBootHash: <br/>受启动时验证保护的所有数据的摘要。对于使用 Android 启动时验证功能实现（针对启动时验证功能）的设备，此值包含 VBMeta 结构或启动时验证元数据结构的摘要。
+    </p>]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
     与 Keymaster 关联的 Android 操作系统的版本，使用一个 6 位整数表示。例如，版本 8.1.0 表示为 080100。
     ]]></string>
@@ -167,7 +170,7 @@
     与 Keymaster 中使用的安全补丁程序关联的月份和年度，使用一个 6 位整数表示。例如，2018 年 8 月的补丁程序表示为 201808。
     ]]></string>
     <string name="authorization_list_attestationApplicationId_description"><![CDATA[
-    此数据结构反映了 Android 平台对于允许哪些应用使用认证中的密钥材料的观点。当且仅当多个软件包共享同一 UID 时，此 ID 才可以包含多个软件包。
+    此数据结构反映了 Android 平台允许哪些应用使用认证中的密钥材料。当且仅当多个软件包共享同一 UID 时，此 ID 才可以包含多个软件包。
     ]]></string>
     <string name="authorization_list_attestationIdBrand_description"><![CDATA[
     提供设备的品牌名称（由 Android 中的 Build.BRAND 返回）。仅在请求认证该设备的标识符时才会设置此字段。
@@ -194,9 +197,9 @@
     提供设备的型号名称（由 Android 中的 Build.MODEL 返回）。仅在请求认证该设备的标识符时才会设置此字段。
     ]]></string>
     <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
-    指定要使用此密钥必须在设备上安装的供应商映像安全补丁程序级别。此值以 YYYYMMDD 的形式显示，表示供应商安全补丁程序的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了供应商于 2018 年 8 月 1 日提供的安全补丁程序，其值将表示为 20180801。
+    规定为了使用此密钥而必须在设备上安装的供应商映像安全补丁级别。此值以 YYYYMMDD 的形式显示，表示供应商安全补丁的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了供应商于 2018 年 8 月 1 日提供的安全补丁，其值将表示为 20180801。
     ]]></string>
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
-    指定要使用此密钥必须在设备上安装的内核映像安全补丁程序级别。此值以 YYYYMMDD 的形式显示，表示系统安全补丁程序的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了系统于 2018 年 8 月 5 日提供的安全补丁程序，其值将表示为 20180805。
+    规定为了使用此密钥而必须在设备上安装的内核映像安全补序级别。此值以 YYYYMMDD 的形式显示，表示系统安全补丁的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了系统于 2018 年 8 月 5 日提供的安全补丁，其值将表示为 20180805。
     ]]></string>
 </resources>
