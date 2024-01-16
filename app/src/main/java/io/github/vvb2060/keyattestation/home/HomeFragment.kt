@@ -79,7 +79,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
                     binding.list.isVisible = true
-                    adapter.updateData(res.data!!, viewModel.preferShowAll)
+                    adapter.updateData(res.data!!)
                 }
                 Status.ERROR -> {
                     binding.progress.isVisible = false
@@ -97,7 +97,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     override fun onAttestationInfoClick(data: Attestation) {
         val result = viewModel.attestationResult.value!!.data!!
         result.showAttestation = data
-        adapter.updateData(result, viewModel.preferShowAll)
+        adapter.updateData(result)
     }
 
     override fun onCertInfoClick(data: CertificateInfo) {
@@ -162,10 +162,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isVisible = viewModel.hasDeviceIds
             isChecked = viewModel.preferIncludeProps
         }
-        menu.findItem(R.id.menu_show_all).apply {
-            isVisible = viewModel.attestationResult.value?.data != null
-            isChecked = viewModel.preferShowAll
-        }
         menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
     }
 
@@ -192,12 +188,6 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 item.isChecked = status
                 viewModel.preferIncludeProps = status
                 viewModel.load()
-            }
-            R.id.menu_show_all -> {
-                val status = !item.isChecked
-                item.isChecked = status
-                viewModel.preferShowAll = status
-                adapter.updateData(viewModel.attestationResult.value!!.data!!, status)
             }
             R.id.menu_reset -> {
                 viewModel.load(true)

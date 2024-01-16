@@ -77,12 +77,6 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             sp.edit { putBoolean("prefer_including_props", value) }
         }
 
-    var preferShowAll = sp.getBoolean("prefer_show_all", false)
-        set(value) {
-            field = value
-            sp.edit { putBoolean("prefer_show_all", value) }
-        }
-
     init {
         keyStore.load(null)
         load()

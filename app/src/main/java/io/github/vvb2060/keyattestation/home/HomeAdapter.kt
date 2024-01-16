@@ -29,7 +29,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         setListener(listener)
     }
 
-    fun updateData(attestationResult: AttestationResult, showAll: Boolean) {
+    fun updateData(attestationResult: AttestationResult) {
         val attestation = attestationResult.showAttestation
 
         clear()
@@ -73,13 +73,11 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATUS)
 
         var id = ID_CERT_INFO_START
-        if (showAll) {
-            addItem(SubtitleViewHolder.CREATOR, SubtitleData(
-                    R.string.cert_chain,
-                    R.string.cert_chain_description), id++)
-            attestationResult.certs.forEach { certInfo ->
-                addItem(CommonItemViewHolder.CERT_INFO_CREATOR, certInfo, id++)
-            }
+        addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+                R.string.cert_chain,
+                R.string.cert_chain_description), id++)
+        attestationResult.certs.forEach { certInfo ->
+            addItem(CommonItemViewHolder.CERT_INFO_CREATOR, certInfo, id++)
         }
 
         id = ID_DESCRIPTION_START
@@ -106,7 +104,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     else BaseEncoding.base64().encode(it) + " (base64)"
                 }), id++)
 
-        if (showAll) addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+        addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.unique_id,
                 R.string.unique_id_description,
                 attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id)
@@ -118,13 +116,8 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
         val tee = createAuthorizationItems(attestation.teeEnforced)
         val sw = createAuthorizationItems(attestation.softwareEnforced)
-        val showIndex = authorizationItemTitles.indexOf(R.string.authorization_list_rootOfTrust)
         for (i in tee.indices) {
             if (tee[i] == null && sw[i] == null) {
-                continue
-            }
-            if (!showAll && i < showIndex) {
-                id++ // Keep id stable
                 continue
             }
 

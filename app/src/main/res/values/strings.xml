@@ -4,7 +4,6 @@
     <string name="use_strongbox">Use StrongBox</string>
     <string name="use_attest_key">Use app generated attest key</string>
     <string name="attest_device_props">Attest device props</string>
-    <string name="show_all">Show all</string>
     <string name="reset">Reset</string>
     <string name="load_certs">Load from file</string>
     <string name="save_certs">Save to file</string>
