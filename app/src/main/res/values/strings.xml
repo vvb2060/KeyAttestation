@@ -272,4 +272,24 @@
     <string name="authorization_list_identityCredentialKey_description"><![CDATA[
     It is used in attestations produced by the IIdentityCredential HAL when that HAL attests to Credential Keys. IIdentityCredential produces KeyMint-style attestations.
     ]]></string>
+
+    <string name="knox" translatable="false">Samsung Knox Attestation</string>
+    <string name="knox_description"><![CDATA[
+    Samsung Knox Attestation is a feature that verifies a Samsung device’s data integrity by checking that the device isn’t rooted or running unofficial firmware.
+    ]]></string>
+    <string name="knox_challenge">@string/attestation_challenge</string>
+    <string name="knox_challenge_description">@string/attestation_challenge_description</string>
+    <string name="knox_integrity">Integrity status</string>
+    <string name="knox_integrity_description"><![CDATA[
+    The Keymaster Trusted Application (TA) in Secure World gathers this data:
+    <ul>
+    <li gap="8sp">the requesting app’s package name, version code, and developer key.</li>
+    <li gap="8sp">signed info about the device’s current state and expected environment.</li>
+    <li gap="8sp">hardware fuse readings indicating if untrusted firmware was ever loaded onto the device.</li>
+    </ul>
+    ]]></string>
+    <string name="knox_record_hash">Attestation record hash</string>
+    <string name="knox_record_hash_description"><![CDATA[
+    a SHA256 digest of the TA requesting the integrity status data from ICCC.
+    ]]></string>
 </resources>

@@ -36,6 +36,7 @@ import io.github.vvb2060.keyattestation.AppApplication;
 public abstract class Attestation {
     static final String EAT_OID = "1.3.6.1.4.1.11129.2.1.25";
     static final String ASN1_OID = "1.3.6.1.4.1.11129.2.1.17";
+    static final String KNOX_OID = "1.3.6.1.4.1.236.11.3.23.7";
     static final String KEY_USAGE_OID = "2.5.29.15"; // Standard key usage extension.
     static final String CRL_DP_OID = "2.5.29.31"; // Standard CRL Distribution Points extension.
 
@@ -81,6 +82,9 @@ public abstract class Attestation {
         if (x509Cert.getExtensionValue(CRL_DP_OID) != null) {
             Log.w(AppApplication.TAG,
                     "CRL Distribution Points extension found in leaf certificate.");
+        }
+        if (x509Cert.getExtensionValue(KNOX_OID) != null) {
+            return new KnoxAttestation(x509Cert);
         }
         return new Asn1Attestation(x509Cert);
     }

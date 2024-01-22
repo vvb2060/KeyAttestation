@@ -5,7 +5,6 @@ import android.util.Log;
 
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;

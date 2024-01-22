@@ -7,6 +7,7 @@ import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo
+import io.github.vvb2060.keyattestation.attestation.KnoxAttestation
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
@@ -136,6 +137,28 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
             }
         }
 
+        if (attestation is KnoxAttestation) {
+            id = ID_KNOX_START
+            addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+                    R.string.knox,
+                    R.string.knox_description), id++)
+
+            addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+                    R.string.knox_challenge,
+                    R.string.knox_challenge_description,
+                    attestation.knoxChallenge), id++)
+
+            addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+                    R.string.knox_integrity,
+                    R.string.knox_integrity_description,
+                    attestation.knoxIntegrity.toString()), id++)
+
+            addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+                    R.string.knox_record_hash,
+                    R.string.knox_record_hash_description,
+                    BaseEncoding.base16().encode(attestation.recordHash)), id++)
+        }
+
         notifyDataSetChanged()
     }
 
@@ -178,6 +201,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         private const val ID_CERT_INFO_START = 2000L
         private const val ID_DESCRIPTION_START = 3000L
         private const val ID_AUTHORIZATION_LIST_START = 4000L
+        private const val ID_KNOX_START = 5000L
         private const val ID_ERROR_MESSAGE = 100000L
 
         private fun createAuthorizationItems(list: AuthorizationList): Array<String?> {

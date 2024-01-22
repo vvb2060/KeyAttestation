@@ -25,6 +25,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1PrintableString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
@@ -129,6 +130,15 @@ public class Asn1Utils {
 
         ASN1OctetString octetString = (ASN1OctetString) encodable;
         return new String(octetString.getOctets(), StandardCharsets.UTF_8);
+    }
+
+    public static String getStringFromASN1PrintableString(ASN1Encodable encodable)
+            throws CertificateParsingException {
+        if (!(encodable instanceof ASN1PrintableString printableString)) {
+            throw new CertificateParsingException(
+                    "Expected printable string, found " + encodable.getClass().getName());
+        }
+        return printableString.getString();
     }
 
     public static Date getDateFromAsn1(ASN1Primitive value) throws CertificateParsingException {

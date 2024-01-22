@@ -201,4 +201,19 @@
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
     规定为了使用此密钥而必须在设备上安装的内核映像安全补序级别。此值以 YYYYMMDD 的形式显示，表示系统安全补丁的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了系统于 2018 年 8 月 5 日提供的安全补丁，其值将表示为 20180805。
     ]]></string>
+
+    <string name="knox_description"><![CDATA[
+    三星 Knox 认证通过检查设备是否被 Root 或运行非官方固件来验证三星设备的数据完整性。
+    ]]></string>
+    <string name="knox_integrity_description"><![CDATA[
+    安全世界中的密钥管理可信应用（TA）收集这些数据：
+    <ul>
+    <li gap="8sp">请求应用的软件包名称、版本号和开发者密钥。</li>
+    <li gap="8sp">设备当前状态和预期环境的签名信息。</li>
+    <li gap="8sp">硬件保险丝读数显示设备上是否加载过不受信任的固件。</li>
+    </ul>
+    ]]></string>
+    <string name="knox_record_hash_description"><![CDATA[
+    向 ICCC 请求完整性状态数据的 TA 的 SHA256 散列。
+    ]]></string>
 </resources>
