@@ -23,6 +23,8 @@
     <string name="aosp_root_cert_summary">认证密钥的私钥众所周知，证书链可以被篡改。</string>
     <string name="google_root_cert">由 Google 硬件认证根证书签名</string>
     <string name="google_root_cert_summary">兼容 GMS 的设备可以使用由 Google 签名的认证密钥。</string>
+    <string name="knox_root_cert">由三星 Knox 认证根证书签名</string>
+    <string name="knox_root_cert_summary">Knox 认证使用三星认证密钥（SAK）签名。</string>
     <string name="oem_root_cert">由设备制造商的根证书签名</string>
     <string name="oem_root_cert_summary">此设备信任该根证书，但它可能不被其它人信任。</string>
 

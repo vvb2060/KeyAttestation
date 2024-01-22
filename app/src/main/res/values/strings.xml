@@ -23,6 +23,8 @@
     <string name="aosp_root_cert_summary">Private key of attest key is well known, the certificate chain can be tampered with.</string>
     <string name="google_root_cert">Google hardware attestation root certificate</string>
     <string name="google_root_cert_summary">GMS compatible devices can use attest keys signed by Google.</string>
+    <string name="knox_root_cert">Samsung Knox attestation root certificate</string>
+    <string name="knox_root_cert_summary">Knox attestation is signed using Samsung attestation key(SAK).</string>
     <string name="oem_root_cert">OEM root certificate</string>
     <string name="oem_root_cert_summary">This device trusts this root certificate, but it may not be trusted by others.</string>
 

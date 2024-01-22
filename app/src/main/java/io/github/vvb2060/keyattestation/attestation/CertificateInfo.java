@@ -31,7 +31,8 @@ public class CertificateInfo {
     public static final int KEY_UNKNOWN = 0;
     public static final int KEY_AOSP = 1;
     public static final int KEY_GOOGLE = 2;
-    public static final int KEY_OEM = 3;
+    public static final int KEY_KNOX = 3;
+    public static final int KEY_OEM = 4;
 
     public static final int CERT_UNKNOWN = 0;
     public static final int CERT_SIGN = 1;
@@ -63,9 +64,16 @@ public class CertificateInfo {
             "MdsGUmX4RFlXYfC78hdLt0GAZMAoDo9Sd47b0ke2RekZyOmLw9vCkT/X11DEHTVm" +
             "+Vfkl5YLCazOkjWFmwIDAQAB";
 
+    private static final String KNOX_SAKV2_ROOT_PUBLIC_KEY = "" +
+            "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBhbGuLrpql5I2WJmrE5kEVZOo+dgA" +
+            "46mKrVJf/sgzfzs2u7M9c1Y9ZkCEiiYkhTFE9vPbasmUfXybwgZ2EM30A1ABPd12" +
+            "4n3JbEDfsB/wnMH1AcgsJyJFPbETZiy42Fhwi+2BCA5bcHe7SrdkRIYSsdBRaKBo" +
+            "ZsapxB0gAOs0jSPRX5M=";
+
     private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
+    private static final byte[] knoxSakv2Key = Base64.decode(KNOX_SAKV2_ROOT_PUBLIC_KEY, 0);
     private static final Set<PublicKey> oemKeys = getOemPublicKey();
 
     private final X509Certificate cert;
@@ -117,6 +125,8 @@ public class CertificateInfo {
             issuer = KEY_AOSP;
         } else if (Arrays.equals(publicKey, aospRsaKey)) {
             issuer = KEY_AOSP;
+        } else if (Arrays.equals(publicKey, knoxSakv2Key)) {
+            issuer = KEY_KNOX;
         } else if (oemKeys != null) {
             for (var key : oemKeys) {
                 if (Arrays.equals(publicKey, key.getEncoded())) {
