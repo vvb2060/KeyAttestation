@@ -207,6 +207,30 @@
     "5344612975616013951" : {
       "status": "REVOKED",
       "reason": "KEY_COMPROMISE"
+    },
+    "16166206677093325219" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "15489222854939603791" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "18154252358500841010" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "12098947777634431853" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "10997554208317698753" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
+    },
+    "12365028775357944392" : {
+      "status": "REVOKED",
+      "reason": "KEY_COMPROMISE"
     }
   }
 }
