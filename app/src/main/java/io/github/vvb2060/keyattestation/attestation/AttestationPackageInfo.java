@@ -17,7 +17,6 @@ package io.github.vvb2060.keyattestation.attestation;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 
-import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateParsingException;
 
 public class AttestationPackageInfo implements java.lang.Comparable<AttestationPackageInfo> {
@@ -33,21 +32,14 @@ public class AttestationPackageInfo implements java.lang.Comparable<AttestationP
     }
 
     public AttestationPackageInfo(ASN1Encodable asn1Encodable) throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Sequence)) {
+        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
             throw new CertificateParsingException(
                     "Expected sequence for AttestationPackageInfo, found "
                             + asn1Encodable.getClass().getName());
         }
 
-        ASN1Sequence sequence = (ASN1Sequence) asn1Encodable;
-        try {
-            packageName = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(
-                    sequence.getObjectAt(PACKAGE_NAME_INDEX));
-        } catch (UnsupportedEncodingException e) {
-            throw new CertificateParsingException(
-                    "Converting octet stream to String triggered an UnsupportedEncodingException",
-                    e);
-        }
+        packageName = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(
+                sequence.getObjectAt(PACKAGE_NAME_INDEX));
         version = Asn1Utils.getLongFromAsn1(sequence.getObjectAt(VERSION_INDEX));
     }
 

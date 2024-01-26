@@ -20,6 +20,8 @@ Useful links
 
 [RKP documentation](https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/rkp/README.md)
 
+[Legacy keymaster tags](https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/keymaster/3.0/types.hal)
+
 License
 -------
 

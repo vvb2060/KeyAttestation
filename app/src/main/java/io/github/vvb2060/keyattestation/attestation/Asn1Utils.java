@@ -31,7 +31,6 @@ import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEROctetString;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
@@ -64,7 +63,7 @@ public class Asn1Utils {
 
     public static byte[] getByteArrayFromAsn1(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (asn1Encodable == null || !(asn1Encodable instanceof DEROctetString)) {
+        if (!(asn1Encodable instanceof DEROctetString)) {
             throw new CertificateParsingException("Expected DEROctetString");
         }
         ASN1OctetString derOctectString = (ASN1OctetString) asn1Encodable;
@@ -122,13 +121,12 @@ public class Asn1Utils {
     }
 
     public static String getStringFromAsn1OctetStreamAssumingUTF8(ASN1Encodable encodable)
-            throws CertificateParsingException, UnsupportedEncodingException {
-        if (!(encodable instanceof ASN1OctetString)) {
+            throws CertificateParsingException {
+        if (!(encodable instanceof ASN1OctetString octetString)) {
             throw new CertificateParsingException(
                     "Expected octet string, found " + encodable.getClass().getName());
         }
 
-        ASN1OctetString octetString = (ASN1OctetString) encodable;
         return new String(octetString.getOctets(), StandardCharsets.UTF_8);
     }
 
@@ -147,11 +145,10 @@ public class Asn1Utils {
 
     public static boolean getBooleanFromAsn1(ASN1Encodable value)
             throws CertificateParsingException {
-        if (!(value instanceof ASN1Boolean)) {
+        if (!(value instanceof ASN1Boolean booleanValue)) {
             throw new CertificateParsingException(
                     "Expected boolean, found " + value.getClass().getName());
         }
-        ASN1Boolean booleanValue = (ASN1Boolean) value;
         if (booleanValue.equals(ASN1Boolean.TRUE)) {
             return true;
         } else if (booleanValue.equals((ASN1Boolean.FALSE))) {
