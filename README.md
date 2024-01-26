@@ -14,11 +14,13 @@ Useful links
 
 [Official implementation](https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/services/core/java/com/android/server/security/AttestationVerificationPeerDeviceVerifier.java)
 
-[Authorization tags](https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl)
+[Authorization tags](https://cs.android.com/android/platform/superproject/main/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/Tag.aidl)
 
-[Key attestation extension data schema](https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyCreationResult.aidl)
+[Key attestation extension data schema](https://cs.android.com/android/platform/superproject/main/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyCreationResult.aidl)
 
-[RKP documentation](https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/rkp/README.md)
+[RKP documentation](https://cs.android.com/android/platform/superproject/main/+/main:hardware/interfaces/security/rkp/README.md)
+
+[Legacy keymaster tags](https://cs.android.com/android/platform/superproject/main/+/main:hardware/interfaces/keymaster/3.0/types.hal)
 
 License
 -------

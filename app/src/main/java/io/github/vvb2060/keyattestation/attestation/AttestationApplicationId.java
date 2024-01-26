@@ -70,13 +70,12 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
 
     public AttestationApplicationId(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Sequence)) {
+        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
             throw new CertificateParsingException(
                     "Expected sequence for AttestationApplicationId, found "
                             + asn1Encodable.getClass().getName());
         }
 
-        ASN1Sequence sequence = (ASN1Sequence) asn1Encodable;
         packageInfos = parseAttestationPackageInfos(sequence.getObjectAt(PACKAGE_INFOS_INDEX));
         // The infos must be sorted, the implementation of Comparable relies on it.
         packageInfos.sort(null);
@@ -140,13 +139,12 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
 
     private List<AttestationPackageInfo> parseAttestationPackageInfos(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Set)) {
+        if (!(asn1Encodable instanceof ASN1Set set)) {
             throw new CertificateParsingException(
                     "Expected set for AttestationApplicationsInfos, found "
                             + asn1Encodable.getClass().getName());
         }
 
-        ASN1Set set = (ASN1Set) asn1Encodable;
         List<AttestationPackageInfo> result = new ArrayList<AttestationPackageInfo>();
         for (ASN1Encodable e : set) {
             result.add(new AttestationPackageInfo(e));
@@ -156,12 +154,11 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
 
     private List<byte[]> parseSignatures(ASN1Encodable asn1Encodable)
             throws CertificateParsingException {
-        if (!(asn1Encodable instanceof ASN1Set)) {
+        if (!(asn1Encodable instanceof ASN1Set set)) {
             throw new CertificateParsingException("Expected set for Signature digests, found "
                     + asn1Encodable.getClass().getName());
         }
 
-        ASN1Set set = (ASN1Set) asn1Encodable;
         List<byte[]> result = new ArrayList<byte[]>();
 
         for (ASN1Encodable e : set) {

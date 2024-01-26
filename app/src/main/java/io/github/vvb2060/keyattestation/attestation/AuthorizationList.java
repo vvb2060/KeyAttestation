@@ -24,17 +24,12 @@ import android.util.Log;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1SequenceParser;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.text.DateFormat;
 import java.util.Collection;
@@ -47,9 +42,6 @@ import co.nstant.in.cbor.model.Number;
 import io.github.vvb2060.keyattestation.AppApplication;
 
 public class AuthorizationList {
-    // https://cs.android.com/android/platform/superproject/+/main:hardware/libhardware/include_all/hardware/keymaster_defs.h
-    // https://cs.android.com/android/platform/superproject/+/main:frameworks/base/core/java/android/security/keymaster/KeymasterDefs.java
-
     // Algorithm values.
     public static final int KM_ALGORITHM_RSA = 1;
     public static final int KM_ALGORITHM_EC = 3;
@@ -89,7 +81,6 @@ public class AuthorizationList {
     public static final int KM_ORIGIN_SECURELY_IMPORTED = 4;
 
     // Operation Purposes.
-    // https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyPurpose.aidl
     public static final int KM_PURPOSE_ENCRYPT = 0;
     public static final int KM_PURPOSE_DECRYPT = 1;
     public static final int KM_PURPOSE_SIGN = 2;
@@ -117,7 +108,6 @@ public class AuthorizationList {
     public static final int KEYMASTER_TAG_TYPE_MASK = 0x0FFFFFFF;
 
     // Keymaster tags
-    // https://cs.android.com/android/platform/superproject/+/main:hardware/interfaces/security/keymint/aidl/android/hardware/security/keymint/KeyCreationResult.aidl
     public static final int KM_TAG_PURPOSE = KM_ENUM_REP | 1;
     public static final int KM_TAG_ALGORITHM = KM_ENUM | 2;
     public static final int KM_TAG_KEY_SIZE = KM_UINT | 3;
@@ -169,24 +159,24 @@ public class AuthorizationList {
     // Map for converting padding values to strings
     private static final ImmutableMap<Integer, String> paddingMap = ImmutableMap
             .<Integer, String>builder()
-            .put(KM_PAD_NONE, "NONE")
-            .put(KM_PAD_RSA_OAEP, "OAEP")
-            .put(KM_PAD_RSA_PSS, "PSS")
-            .put(KM_PAD_RSA_PKCS1_1_5_ENCRYPT, "PKCS1 ENCRYPT")
-            .put(KM_PAD_RSA_PKCS1_1_5_SIGN, "PKCS1 SIGN")
-            .put(KM_PAD_PKCS7, "PKCS7")
+            .put(KM_PAD_NONE, KeyProperties.ENCRYPTION_PADDING_NONE)
+            .put(KM_PAD_RSA_OAEP, KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
+            .put(KM_PAD_RSA_PSS, KeyProperties.SIGNATURE_PADDING_RSA_PSS)
+            .put(KM_PAD_RSA_PKCS1_1_5_ENCRYPT, KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+            .put(KM_PAD_RSA_PKCS1_1_5_SIGN, KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+            .put(KM_PAD_PKCS7, KeyProperties.ENCRYPTION_PADDING_PKCS7)
             .build();
 
     // Map for converting digest values to strings
     private static final ImmutableMap<Integer, String> digestMap = ImmutableMap
             .<Integer, String>builder()
-            .put(KM_DIGEST_NONE, "NONE")
-            .put(KM_DIGEST_MD5, "MD5")
-            .put(KM_DIGEST_SHA1, "SHA1")
-            .put(KM_DIGEST_SHA_2_224, "SHA224")
-            .put(KM_DIGEST_SHA_2_256, "SHA256")
-            .put(KM_DIGEST_SHA_2_384, "SHA384")
-            .put(KM_DIGEST_SHA_2_512, "SHA512")
+            .put(KM_DIGEST_NONE, KeyProperties.DIGEST_NONE)
+            .put(KM_DIGEST_MD5, KeyProperties.DIGEST_MD5)
+            .put(KM_DIGEST_SHA1, KeyProperties.DIGEST_SHA1)
+            .put(KM_DIGEST_SHA_2_224, KeyProperties.DIGEST_SHA224)
+            .put(KM_DIGEST_SHA_2_256, KeyProperties.DIGEST_SHA256)
+            .put(KM_DIGEST_SHA_2_384, KeyProperties.DIGEST_SHA384)
+            .put(KM_DIGEST_SHA_2_512, KeyProperties.DIGEST_SHA512)
             .build();
 
     // Map for converting purpose values to strings
@@ -209,7 +199,8 @@ public class AuthorizationList {
     private Set<Integer> paddingModes;
     private Integer ecCurve;
     private Long rsaPublicExponent;
-    private Set<Integer> mgfDigest;
+    private Set<Integer> mgfDigests;
+    private Boolean rollbackResistance;
     private Boolean earlyBootOnly;
     private Date activeDateTime;
     private Date originationExpireDateTime;
@@ -219,45 +210,45 @@ public class AuthorizationList {
     private Integer userAuthType;
     private Integer authTimeout;
     private Boolean allowWhileOnBody;
+    private Boolean trustedUserPresenceReq;
+    private Boolean trustedConfirmationReq;
+    private Boolean unlockedDeviceReq;
     private Boolean allApplications;
     private String applicationId;
     private Date creationDateTime;
     private Integer origin;
     private Boolean rollbackResistant;
-    private Boolean rollbackResistance;
     private RootOfTrust rootOfTrust;
     private Integer osVersion;
     private Integer osPatchLevel;
-    private Integer vendorPatchLevel;
-    private Integer bootPatchLevel;
     private AttestationApplicationId attestationApplicationId;
     private String brand;
     private String device;
+    private String product;
     private String serialNumber;
     private String imei;
-    private String secondImei;
     private String meid;
-    private String product;
     private String manufacturer;
     private String model;
-    private Boolean userPresenceRequired;
-    private Boolean confirmationRequired;
-    private Boolean unlockedDeviceRequired;
+    private Integer vendorPatchLevel;
+    private Integer bootPatchLevel;
     private Boolean deviceUniqueAttestation;
     private Boolean identityCredentialKey;
+    private String secondImei;
 
-    public AuthorizationList(ASN1Encodable sequence) throws CertificateParsingException {
-        if (!(sequence instanceof ASN1Sequence)) {
+    public AuthorizationList(ASN1Encodable asn1Encodable) throws CertificateParsingException {
+        if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
             throw new CertificateParsingException("Expected sequence for authorization list, found "
-                    + sequence.getClass().getName());
+                    + asn1Encodable.getClass().getName());
         }
-
-        ASN1SequenceParser parser = ((ASN1Sequence) sequence).parser();
-        ASN1TaggedObject entry = parseAsn1TaggedObject(parser);
-        for (; entry != null; entry = parseAsn1TaggedObject(parser)) {
-            int tag = entry.getTagNo();
-            ASN1Primitive value = entry.getBaseObject().toASN1Primitive();
-            Log.d(AppApplication.TAG, "Parsing tag: [" + tag + "], value: [" + value + "]");
+        for (var entry : sequence) {
+            if (!(entry instanceof ASN1TaggedObject taggedObject)) {
+                throw new CertificateParsingException(
+                        "Expected tagged object, found " + entry.getClass().getName());
+            }
+            int tag = taggedObject.getTagNo();
+            var value = taggedObject.getBaseObject().toASN1Primitive();
+            Log.v(AppApplication.TAG, "Parsing tag: [" + tag + "], value: [" + value + "]");
             switch (tag) {
                 default:
                     throw new CertificateParsingException("Unknown tag " + tag + " found");
@@ -277,35 +268,20 @@ public class AuthorizationList {
                 case KM_TAG_PADDING & KEYMASTER_TAG_TYPE_MASK:
                     paddingModes = Asn1Utils.getIntegersFromAsn1Set(value);
                     break;
+                case KM_TAG_EC_CURVE & KEYMASTER_TAG_TYPE_MASK:
+                    ecCurve = Asn1Utils.getIntegerFromAsn1(value);
+                    break;
                 case KM_TAG_RSA_PUBLIC_EXPONENT & KEYMASTER_TAG_TYPE_MASK:
                     rsaPublicExponent = Asn1Utils.getLongFromAsn1(value);
                     break;
                 case KM_TAG_RSA_OAEP_MGF_DIGEST & KEYMASTER_TAG_TYPE_MASK:
-                    mgfDigest = Asn1Utils.getIntegersFromAsn1Set(value);
+                    mgfDigests = Asn1Utils.getIntegersFromAsn1Set(value);
+                    break;
+                case KM_TAG_ROLLBACK_RESISTANCE & KEYMASTER_TAG_TYPE_MASK:
+                    rollbackResistance = true;
                     break;
                 case KM_TAG_EARLY_BOOT_ONLY & KEYMASTER_TAG_TYPE_MASK:
                     earlyBootOnly = true;
-                    break;
-                case KM_TAG_NO_AUTH_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
-                    noAuthRequired = true;
-                    break;
-                case KM_TAG_CREATION_DATETIME & KEYMASTER_TAG_TYPE_MASK:
-                    creationDateTime = Asn1Utils.getDateFromAsn1(value);
-                    break;
-                case KM_TAG_ORIGIN & KEYMASTER_TAG_TYPE_MASK:
-                    origin = Asn1Utils.getIntegerFromAsn1(value);
-                    break;
-                case KM_TAG_OS_VERSION & KEYMASTER_TAG_TYPE_MASK:
-                    osVersion = Asn1Utils.getIntegerFromAsn1(value);
-                    break;
-                case KM_TAG_OS_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
-                    osPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
-                    break;
-                case KM_TAG_VENDOR_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
-                    vendorPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
-                    break;
-                case KM_TAG_BOOT_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
-                    bootPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
                     break;
                 case KM_TAG_ACTIVE_DATETIME & KEYMASTER_TAG_TYPE_MASK:
                     activeDateTime = Asn1Utils.getDateFromAsn1(value);
@@ -319,11 +295,11 @@ public class AuthorizationList {
                 case KM_TAG_USAGE_COUNT_LIMIT & KEYMASTER_TAG_TYPE_MASK:
                     usageCountLimit = Asn1Utils.getIntegerFromAsn1(value);
                     break;
-                case KM_TAG_ROLLBACK_RESISTANT & KEYMASTER_TAG_TYPE_MASK:
-                    rollbackResistant = true;
+                case KM_TAG_NO_AUTH_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    noAuthRequired = true;
                     break;
-                case KM_TAG_ROLLBACK_RESISTANCE & KEYMASTER_TAG_TYPE_MASK:
-                    rollbackResistance = true;
+                case KM_TAG_USER_AUTH_TYPE & KEYMASTER_TAG_TYPE_MASK:
+                    userAuthType = Asn1Utils.getIntegerFromAsn1(value);
                     break;
                 case KM_TAG_AUTH_TIMEOUT & KEYMASTER_TAG_TYPE_MASK:
                     authTimeout = Asn1Utils.getIntegerFromAsn1(value);
@@ -331,57 +307,72 @@ public class AuthorizationList {
                 case KM_TAG_ALLOW_WHILE_ON_BODY & KEYMASTER_TAG_TYPE_MASK:
                     allowWhileOnBody = true;
                     break;
-                case KM_TAG_EC_CURVE & KEYMASTER_TAG_TYPE_MASK:
-                    ecCurve = Asn1Utils.getIntegerFromAsn1(value);
+                case KM_TAG_TRUSTED_USER_PRESENCE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    trustedUserPresenceReq = true;
                     break;
-                case KM_TAG_USER_AUTH_TYPE & KEYMASTER_TAG_TYPE_MASK:
-                    userAuthType = Asn1Utils.getIntegerFromAsn1(value);
+                case KM_TAG_TRUSTED_CONFIRMATION_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    trustedConfirmationReq = true;
+                    break;
+                case KM_TAG_UNLOCKED_DEVICE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
+                    unlockedDeviceReq = true;
+                    break;
+                case KM_TAG_ALL_APPLICATIONS & KEYMASTER_TAG_TYPE_MASK:
+                    allApplications = true;
+                    break;
+                case KM_TAG_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
+                    applicationId = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
+                    break;
+                case KM_TAG_CREATION_DATETIME & KEYMASTER_TAG_TYPE_MASK:
+                    creationDateTime = Asn1Utils.getDateFromAsn1(value);
+                    break;
+                case KM_TAG_ORIGIN & KEYMASTER_TAG_TYPE_MASK:
+                    origin = Asn1Utils.getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_ROLLBACK_RESISTANT & KEYMASTER_TAG_TYPE_MASK:
+                    rollbackResistant = true;
                     break;
                 case KM_TAG_ROOT_OF_TRUST & KEYMASTER_TAG_TYPE_MASK:
                     rootOfTrust = new RootOfTrust(value);
+                    break;
+                case KM_TAG_OS_VERSION & KEYMASTER_TAG_TYPE_MASK:
+                    osVersion = Asn1Utils.getIntegerFromAsn1(value);
+                    break;
+                case KM_TAG_OS_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
+                    osPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
                     break;
                 case KM_TAG_ATTESTATION_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
                     attestationApplicationId = new AttestationApplicationId(Asn1Utils
                             .getAsn1EncodableFromBytes(Asn1Utils.getByteArrayFromAsn1(value)));
                     break;
                 case KM_TAG_ATTESTATION_ID_BRAND & KEYMASTER_TAG_TYPE_MASK:
-                    brand = getStringFromAsn1Value(value);
+                    brand = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_DEVICE & KEYMASTER_TAG_TYPE_MASK:
-                    device = getStringFromAsn1Value(value);
+                    device = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_PRODUCT & KEYMASTER_TAG_TYPE_MASK:
-                    product = getStringFromAsn1Value(value);
+                    product = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_SERIAL & KEYMASTER_TAG_TYPE_MASK:
-                    serialNumber = getStringFromAsn1Value(value);
+                    serialNumber = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_IMEI & KEYMASTER_TAG_TYPE_MASK:
-                    imei = getStringFromAsn1Value(value);
+                    imei = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_MEID & KEYMASTER_TAG_TYPE_MASK:
-                    meid = getStringFromAsn1Value(value);
+                    meid = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_MANUFACTURER & KEYMASTER_TAG_TYPE_MASK:
-                    manufacturer = getStringFromAsn1Value(value);
+                    manufacturer = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
                 case KM_TAG_ATTESTATION_ID_MODEL & KEYMASTER_TAG_TYPE_MASK:
-                    model = getStringFromAsn1Value(value);
+                    model = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
-                case KM_TAG_ALL_APPLICATIONS & KEYMASTER_TAG_TYPE_MASK:
-                    allApplications = true;
+                case KM_TAG_VENDOR_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
+                    vendorPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
                     break;
-                case KM_TAG_APPLICATION_ID & KEYMASTER_TAG_TYPE_MASK:
-                    applicationId = new String(Asn1Utils.getByteArrayFromAsn1(value));
-                    break;
-                case KM_TAG_TRUSTED_USER_PRESENCE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
-                    userPresenceRequired = true;
-                    break;
-                case KM_TAG_TRUSTED_CONFIRMATION_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
-                    confirmationRequired = true;
-                    break;
-                case KM_TAG_UNLOCKED_DEVICE_REQUIRED & KEYMASTER_TAG_TYPE_MASK:
-                    unlockedDeviceRequired = true;
+                case KM_TAG_BOOT_PATCHLEVEL & KEYMASTER_TAG_TYPE_MASK:
+                    bootPatchLevel = Asn1Utils.getIntegerFromAsn1(value);
                     break;
                 case KM_TAG_DEVICE_UNIQUE_ATTESTATION & KEYMASTER_TAG_TYPE_MASK:
                     deviceUniqueAttestation = true;
@@ -390,7 +381,7 @@ public class AuthorizationList {
                     identityCredentialKey = true;
                     break;
                 case KM_TAG_ATTESTATION_ID_SECOND_IMEI & KEYMASTER_TAG_TYPE_MASK:
-                    secondImei = getStringFromAsn1Value(value);
+                    secondImei = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
                     break;
             }
         }
@@ -428,7 +419,7 @@ public class AuthorizationList {
                     rsaPublicExponent = CborUtils.getLong(submodMap, key);
                     break;
                 case EatClaim.RSA_OAEP_MGF_DIGEST:
-                    mgfDigest = CborUtils.getIntSet(submodMap, key);
+                    mgfDigests = CborUtils.getIntSet(submodMap, key);
                     break;
                 case EatClaim.NO_AUTH_REQUIRED:
                     noAuthRequired = true;
@@ -510,13 +501,13 @@ public class AuthorizationList {
                     model = CborUtils.getString(submodMap, key);
                     break;
                 case EatClaim.USER_PRESENCE_REQUIRED:
-                    userPresenceRequired = CborUtils.getBoolean(submodMap, key);
+                    trustedUserPresenceReq = CborUtils.getBoolean(submodMap, key);
                     break;
                 case EatClaim.TRUSTED_CONFIRMATION_REQUIRED:
-                    confirmationRequired = true;
+                    trustedConfirmationReq = true;
                     break;
                 case EatClaim.UNLOCKED_DEVICE_REQUIRED:
-                    unlockedDeviceRequired = true;
+                    unlockedDeviceReq = true;
                     break;
                 case EatClaim.APPLICATION_ID:
                     applicationId = CborUtils.getString(submodMap, key);
@@ -530,41 +521,35 @@ public class AuthorizationList {
         }
     }
 
-    public static String algorithmToString(int algorithm) {
-        switch (algorithm) {
-            case KM_ALGORITHM_RSA:
-                return "RSA";
-            case KM_ALGORITHM_EC:
-                return "ECDSA";
-            case KM_ALGORITHM_AES:
-                return "AES";
-            case KM_ALGORITHM_3DES:
-                return "3DES";
-            case KM_ALGORITHM_HMAC:
-                return "HMAC";
-            default:
-                return "Unknown (" + algorithm + ")";
-        }
+    private static String joinStrings(Collection<String> collection) {
+        return "[" + Joiner.on(", ").join(collection) + "]";
+    }
+
+    public static String formatDate(Date date) {
+        return DateFormat.getDateTimeInstance().format(date);
     }
 
     public static String paddingModesToString(final Set<Integer> paddingModes) {
         return joinStrings(transform(paddingModes, forMap(paddingMap, "Unknown")));
     }
 
-    public static String paddingModeToString(int paddingMode) {
-        return forMap(paddingMap, "Unknown").apply(paddingMode);
-    }
-
     public static String digestsToString(Set<Integer> digests) {
         return joinStrings(transform(digests, forMap(digestMap, "Unknown")));
     }
 
-    public static String digestToString(int digest) {
-        return forMap(digestMap, "Unknown").apply(digest);
-    }
-
     public static String purposesToString(Set<Integer> purposes) {
         return joinStrings(transform(purposes, forMap(purposeMap, "Unknown")));
+    }
+
+    public static String algorithmToString(int algorithm) {
+        return switch (algorithm) {
+            case KM_ALGORITHM_RSA -> KeyProperties.KEY_ALGORITHM_RSA;
+            case KM_ALGORITHM_EC -> KeyProperties.KEY_ALGORITHM_EC;
+            case KM_ALGORITHM_AES -> KeyProperties.KEY_ALGORITHM_AES;
+            case KM_ALGORITHM_3DES -> KeyProperties.KEY_ALGORITHM_3DES;
+            case KM_ALGORITHM_HMAC -> "HMAC";
+            default -> "Unknown (" + algorithm + ")";
+        };
     }
 
     public static String userAuthTypeToString(int userAuthType) {
@@ -577,47 +562,25 @@ public class AuthorizationList {
     }
 
     public static String originToString(int origin) {
-        switch (origin) {
-            case KM_ORIGIN_GENERATED:
-                return "Generated";
-            case KM_ORIGIN_DERIVED:
-                return "Derived";
-            case KM_ORIGIN_IMPORTED:
-                return "Imported";
-            case KM_ORIGIN_UNKNOWN:
-                return "Unknown (KM0)";
-            case KM_ORIGIN_SECURELY_IMPORTED:
-                return "Securely Imported";
-            default:
-                return "Unknown (" + origin + ")";
-        }
+        return switch (origin) {
+            case KM_ORIGIN_GENERATED -> "Generated";
+            case KM_ORIGIN_DERIVED -> "Derived";
+            case KM_ORIGIN_IMPORTED -> "Imported";
+            case KM_ORIGIN_UNKNOWN -> "Unknown (KM0)";
+            case KM_ORIGIN_SECURELY_IMPORTED -> "Securely Imported";
+            default -> "Unknown (" + origin + ")";
+        };
     }
 
-    private static String joinStrings(Collection<String> collection) {
-        return "[" + Joiner.on(", ").join(collection) + "]";
-    }
-
-    public static String formatDate(Date date) {
-        return DateFormat.getDateTimeInstance().format(date);
-    }
-
-    private static ASN1TaggedObject parseAsn1TaggedObject(ASN1SequenceParser parser)
-            throws CertificateParsingException {
-        ASN1Encodable asn1Encodable = parseAsn1Encodable(parser);
-        if (asn1Encodable == null || asn1Encodable instanceof ASN1TaggedObject) {
-            return (ASN1TaggedObject) asn1Encodable;
-        }
-        throw new CertificateParsingException(
-                "Expected tagged object, found " + asn1Encodable.getClass().getName());
-    }
-
-    private static ASN1Encodable parseAsn1Encodable(ASN1SequenceParser parser)
-            throws CertificateParsingException {
-        try {
-            return parser.readObject();
-        } catch (IOException e) {
-            throw new CertificateParsingException("Failed to parse ASN1 sequence", e);
-        }
+    public static String ecCurveAsString(Integer ecCurve) {
+        return switch (ecCurve) {
+            case KM_EC_CURVE_P224 -> "secp224r1";
+            case KM_EC_CURVE_P256 -> "secp256r1";
+            case KM_EC_CURVE_P384 -> "secp384r1";
+            case KM_EC_CURVE_P521 -> "secp521r1";
+            case KM_EC_CURVE_CURVE_25519 -> "CURVE_25519";
+            default -> "unknown (" + ecCurve + ")";
+        };
     }
 
     public Integer getSecurityLevel() {
@@ -644,65 +607,24 @@ public class AuthorizationList {
         return paddingModes;
     }
 
-    public Set<String> getPaddingModesAsStrings() throws CertificateParsingException {
-        if (paddingModes == null) {
-            return ImmutableSet.of();
-        }
-
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (int paddingMode : paddingModes) {
-            switch (paddingMode) {
-                case KM_PAD_NONE:
-                    builder.add(KeyProperties.ENCRYPTION_PADDING_NONE);
-                    break;
-                case KM_PAD_RSA_OAEP:
-                    builder.add(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP);
-                    break;
-                case KM_PAD_RSA_PKCS1_1_5_ENCRYPT:
-                    builder.add(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1);
-                    break;
-                case KM_PAD_RSA_PKCS1_1_5_SIGN:
-                    builder.add(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1);
-                    break;
-                case KM_PAD_PKCS7:
-                    builder.add(KeyProperties.ENCRYPTION_PADDING_PKCS7);
-                    break;
-                case KM_PAD_RSA_PSS:
-                    builder.add(KeyProperties.SIGNATURE_PADDING_RSA_PSS);
-                    break;
-                default:
-                    throw new CertificateParsingException("Invalid padding mode " + paddingMode);
-            }
-        }
-        return builder.build();
-    }
-
     public Integer getEcCurve() {
         return ecCurve;
     }
 
-    public static String ecCurveAsString(Integer ecCurve) {
-        if (ecCurve == null)
-            return "NULL";
-
-        switch (ecCurve) {
-            case KM_EC_CURVE_P224:
-                return "secp224r1";
-            case KM_EC_CURVE_P256:
-                return "secp256r1";
-            case KM_EC_CURVE_P384:
-                return "secp384r1";
-            case KM_EC_CURVE_P521:
-                return "secp521r1";
-            case KM_EC_CURVE_CURVE_25519:
-                return "CURVE_25519";
-            default:
-                return "unknown (" + ecCurve + ")";
-        }
-    }
-
     public Long getRsaPublicExponent() {
         return rsaPublicExponent;
+    }
+
+    public Set<Integer> getMgfDigests() {
+        return mgfDigests;
+    }
+
+    public Boolean getRollbackResistance() {
+        return rollbackResistance;
+    }
+
+    public Boolean getEarlyBootOnly() {
+        return earlyBootOnly;
     }
 
     public Date getActiveDateTime() {
@@ -715,6 +637,10 @@ public class AuthorizationList {
 
     public Date getUsageExpireDateTime() {
         return usageExpireDateTime;
+    }
+
+    public Integer getUsageCountLimit() {
+        return usageCountLimit;
     }
 
     public Boolean getNoAuthRequired() {
@@ -731,6 +657,18 @@ public class AuthorizationList {
 
     public Boolean getAllowWhileOnBody() {
         return allowWhileOnBody;
+    }
+
+    public Boolean getTrustedUserPresenceReq() {
+        return trustedUserPresenceReq;
+    }
+
+    public Boolean getTrustedConfirmationReq() {
+        return trustedConfirmationReq;
+    }
+
+    public Boolean getUnlockedDeviceReq() {
+        return unlockedDeviceReq;
     }
 
     public Boolean getAllApplications() {
@@ -753,14 +691,6 @@ public class AuthorizationList {
         return rollbackResistant;
     }
 
-    public Boolean getRollbackResistance() {
-        return rollbackResistance;
-    }
-
-    public Boolean getUnlockedDeviceRequired() {
-        return unlockedDeviceRequired;
-    }
-
     public RootOfTrust getRootOfTrust() {
         return rootOfTrust;
     }
@@ -771,14 +701,6 @@ public class AuthorizationList {
 
     public Integer getOsPatchLevel() {
         return osPatchLevel;
-    }
-
-    public Integer getVendorPatchLevel() {
-        return vendorPatchLevel;
-    }
-
-    public Integer getBootPatchLevel() {
-        return bootPatchLevel;
     }
 
     public AttestationApplicationId getAttestationApplicationId() {
@@ -793,6 +715,10 @@ public class AuthorizationList {
         return device;
     }
 
+    public String getProduct() {
+        return product;
+    }
+
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -801,16 +727,8 @@ public class AuthorizationList {
         return imei;
     }
 
-    public String getSecondImei() {
-        return secondImei;
-    }
-
     public String getMeid() {
         return meid;
-    }
-
-    public String getProduct() {
-        return product;
     }
 
     public String getManufacturer() {
@@ -821,24 +739,12 @@ public class AuthorizationList {
         return model;
     }
 
-    public Boolean getUserPresenceRequired() {
-        return userPresenceRequired;
+    public Integer getVendorPatchLevel() {
+        return vendorPatchLevel;
     }
 
-    public Boolean getConfirmationRequired() {
-        return confirmationRequired;
-    }
-
-    public Set<Integer> getMgfDigest() {
-        return mgfDigest;
-    }
-
-    public Boolean getEarlyBootOnly() {
-        return earlyBootOnly;
-    }
-
-    public Integer getUsageCountLimit() {
-        return usageCountLimit;
+    public Integer getBootPatchLevel() {
+        return bootPatchLevel;
     }
 
     public Boolean getDeviceUniqueAttestation() {
@@ -849,12 +755,8 @@ public class AuthorizationList {
         return identityCredentialKey;
     }
 
-    private String getStringFromAsn1Value(ASN1Primitive value) throws CertificateParsingException {
-        try {
-            return Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
-        } catch (UnsupportedEncodingException e) {
-            throw new CertificateParsingException("Error parsing ASN.1 value", e);
-        }
+    public String getSecondImei() {
+        return secondImei;
     }
 
     @Override
@@ -889,8 +791,8 @@ public class AuthorizationList {
             s.append("\nRSA exponent: ").append(rsaPublicExponent);
         }
 
-        if (mgfDigest != null && !mgfDigest.isEmpty()) {
-            s.append("\nRsa Oaep Mgf Digest: ").append(digestsToString(mgfDigest));
+        if (mgfDigests != null && !mgfDigests.isEmpty()) {
+            s.append("\nRsa Oaep Mgf Digest: ").append(digestsToString(mgfDigests));
         }
 
         if (earlyBootOnly != null) {
@@ -978,15 +880,15 @@ public class AuthorizationList {
             s.append("\nAttestation Application Id:\n").append(attestationApplicationId);
         }
 
-        if (userPresenceRequired != null) {
+        if (trustedUserPresenceReq != null) {
             s.append("\nUser presence required");
         }
 
-        if (confirmationRequired != null) {
+        if (trustedConfirmationReq != null) {
             s.append("\nConfirmation required");
         }
 
-        if (unlockedDeviceRequired != null) {
+        if (unlockedDeviceReq != null) {
             s.append("\nUnlocked Device Required");
         }
 

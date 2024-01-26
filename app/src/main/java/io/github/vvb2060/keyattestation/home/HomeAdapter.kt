@@ -3,11 +3,7 @@ package io.github.vvb2060.keyattestation.home
 import com.google.common.base.CharMatcher
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
-import io.github.vvb2060.keyattestation.attestation.Attestation
-import io.github.vvb2060.keyattestation.attestation.AttestationResult
-import io.github.vvb2060.keyattestation.attestation.AuthorizationList
-import io.github.vvb2060.keyattestation.attestation.CertificateInfo
-import io.github.vvb2060.keyattestation.attestation.KnoxAttestation
+import io.github.vvb2060.keyattestation.attestation.*
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
@@ -65,10 +61,10 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
             }
             CertificateInfo.KEY_KNOX -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
-                    R.string.knox_root_cert,
-                    R.string.knox_root_cert_summary,
-                    R.drawable.ic_trustworthy_24,
-                    rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
+                        R.string.knox_root_cert,
+                        R.string.knox_root_cert_summary,
+                        R.drawable.ic_trustworthy_24,
+                        rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
             CertificateInfo.KEY_OEM -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
@@ -220,7 +216,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.paddingModes?.let { AuthorizationList.paddingModesToString(it) },
                     list.ecCurve?.let { AuthorizationList.ecCurveAsString(it) },
                     list.rsaPublicExponent?.toString(),
-                    list.mgfDigest?.let { AuthorizationList.digestsToString(it) },
+                    list.mgfDigests?.let { AuthorizationList.digestsToString(it) },
                     list.rollbackResistance?.toString(),
                     list.earlyBootOnly?.toString(),
                     list.activeDateTime?.let { AuthorizationList.formatDate(it) },
@@ -231,9 +227,9 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.userAuthType?.let { AuthorizationList.userAuthTypeToString(it) },
                     list.authTimeout?.toString(),
                     list.allowWhileOnBody?.toString(),
-                    list.userPresenceRequired?.toString(),
-                    list.confirmationRequired?.toString(),
-                    list.unlockedDeviceRequired?.toString(),
+                    list.trustedUserPresenceReq?.toString(),
+                    list.trustedConfirmationReq?.toString(),
+                    list.unlockedDeviceReq?.toString(),
                     list.allApplications?.toString(),
                     list.applicationId,
                     list.creationDateTime?.let { AuthorizationList.formatDate(it) },
