@@ -24,7 +24,7 @@ android {
         targetSdk = 34
         versionCode = gitCommitCount
         versionName = '1.6.0'
-        resourceConfigurations += ['en', 'zh-rCN']
+        resourceConfigurations += ['en', 'zh-rCN', 'pt-rBR']
     }
 
     signingConfigs {
