@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Key Attestation</string>
+    <string name="use_strongbox">Usar StrongBox</string>
+    <string name="use_attest_key">Usar chave de atestado gerada pelo app</string>
+    <string name="attest_device_props">Atestar props do dispositivo</string>
+    <string name="reset">Redefinir</string>
+    <string name="load_certs">Carregar do arquivo</string>
+    <string name="save_certs">Salvar em arquivo</string>
+    <string name="about">Sobre</string>
+    <string name="open_source_info">Este software é de código aberto sob %2$s (%1$s).</string>
+
+    <string name="bootloader_locked">Bootloader bloqueado</string>
+    <string name="bootloader_user">Root de confiança definida pelo usuário final</string>
+    <string name="bootloader_unlocked">Bootloader desbloqueado</string>
+    <string name="bootloader_unknown">Status do bootloader desconhecido</string>
+    <string name="bootloader_summary_sw_level">Este dispositivo não suporta atestado de chave em nível de hardware.</string>
+    <string name="cert_chain_not_trusted">A cadeia de certificados não é confiável</string>
+    <string name="cert_chain_not_trusted_summary">Um certificado foi revogado ou a verificação de assinatura falhou na cadeia de certificados.</string>
+    <string name="unknown_root_cert">Certificado root desconhecido</string>
+    <string name="unknown_root_cert_summary">O certificado root não é uma autoridade de certificação confiável conhecida.</string>
+    <string name="aosp_root_cert">Certificado root de atestado de software AOSP</string>
+    <string name="aosp_root_cert_summary">A chave privada da chave de atestado é bem conhecida, a cadeia de certificados pode ser adulterada.</string>
+    <string name="google_root_cert">Certificado root de atestado de hardware do Google</string>
+    <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar chaves de atestado assinadas pelo Google.</string>
+    <string name="knox_root_cert">Certificado root de atestado do Samsung Knox</string>
+    <string name="knox_root_cert_summary">O atestado Knox é assinado usando a chave de atestado Samsung.</string>
+    <string name="oem_root_cert">Certificado root OEM</string>
+    <string name="oem_root_cert_summary">Este dispositivo confia neste certificado root, mas pode não ser confiável para outras pessoas.</string>
+
+    <string name="cert_chain">Cadeia de certificados</string>
+    <string name="cert_chain_description">A cadeia de certificados é uma lista de certificados usados ​​para autenticar uma chave. A cadeia começa com o certificado dessa chave e cada certificado da cadeia é assinado pelo próximo certificado da cadeia. A cadeia termina com um certificado root. A confiabilidade do atestado depende do certificado root da cadeia.</string>
+    <string name="cert_info">Informações do certificado</string>
+    <string name="cert_subject">assunto: </string>
+    <string name="cert_not_before">não antes: </string>
+    <string name="cert_not_after">não após: </string>
+    <string name="cert_error_sign">erro de assinatura: </string>
+    <string name="cert_error_revoked">revogado: </string>
+    <string name="cert_error_expired">expirado: </string>
+    <string name="provisioning_info_certs_issued">número de certificados emitidos nos últimos 30 dias: </string>
+
+    <string name="error_message_subtitle">Mensagens detalhadas:</string>
+    <string name="error_unknown">Erro desconhecido</string>
+    <string name="error_unavailable">Não é possível atestar</string>
+    <string name="error_unavailable_summary">
+    O dispositivo não suporta o atestado ou a chave de atestado fornecida de fábrica foi perdida, possivelmente devido a uma configuração incorreta do OEM ou à gravação do usuário final na partição persist.
+    Recomenda-se tentar novamente após ajustar as opções do menu.
+    </string>
+    <string name="error_cant_parse_cert">Não foi possível analisar o certificado</string>
+    <string name="error_cant_parse_cert_summary">
+    O certificado está no formato errado ou há um recurso que ainda não é compatível.
+    </string>
+    <string name="error_strongbox_unavailable">StrongBox não disponível</string>
+    <string name="error_strongbox_unavailable_summary">
+    Este dispositivo foi declarado como tendo suporte para StrongBox, mas na verdade não está disponível.
+    </string>
+    <string name="error_deviceids_unavailable">Não foi possível atestar os IDs dos dispositivos</string>
+    <string name="error_deviceids_unavailable_summary">
+    Este dispositivo foi declarado como tendo suporte para atestado de ID, mas os IDs não correspondem ou o dispositivo não pode mais atestar seus IDs.
+    </string>
+    <string name="error_out_of_keys">Nenhuma chave provisionada remotamente para o atestado</string>
+    <string name="error_out_of_keys_summary">
+    Este dispositivo não está registrado no servidor de provisionamento de chaves ou o servidor recusa a emissão de chaves.
+    </string>
+    <string name="error_out_of_keys_transient">Atualmente não há chaves provisionadas remotamente para o atestado</string>
+    <string name="error_out_of_keys_transient_summary">
+    O conjunto de chaves provisionadas remotamente se esgotou. Tente novamente pela internet ou verifique se há atualizações do sistema.
+    </string>
+    <string name="error_unavailable_transient">Atualmente não é possível atestar</string>
+    <string name="error_unavailable_transient_summary">
+    Este problema é temporário. Tente redefinir no menu ou verifique se há atualizações do sistema.
+    </string>
+
+    <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Versão:</font><br>A versão do recurso de atestado principal.]]></string>
+    <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Versão:</font><br>A versão da camada de abstração de hardware Keymaster ou KeyMint (HAL).]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Nível de segurança:</font><br>Esta estrutura de dados indica até que ponto um recurso de software, como um par de chaves, é protegido com base em sua localização no dispositivo.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>A lógica de criação e gerenciamento do recurso está implementada no sistema Android. Para fins de criação e armazenamento de pares de chaves, esse local é menos seguro que o TEE, mas é mais seguro que o espaço de processo do seu app.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>A lógica para criar e gerenciar o recurso é implementada em hardware seguro, como um TEE. Para fins de criação e armazenamento de pares de chaves, esse local é mais seguro porque o hardware seguro é altamente resistente ao comprometimento remoto.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>A lógica para criar e gerenciar o recurso é implementada em um ambiente dedicado <a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">Módulo de segurança de hardware</a>. Para fins de criação e armazenamento de pares de chaves, esse local é mais seguro porque é altamente resistente a comprometimentos remotos e ataques de hardware contra o módulo.</li></ul>]]></string>
+    <string name="attestation_summary_format">Versão: %1$s\nNível de segurança: %2$s</string>
+    <string name="attestation_challenge_description">Contém o desafio fornecido no momento da criação da chave. Verifique se este valor corresponde ao valor fornecido pelo seu servidor. Caso contrário, seu serviço poderá ficar vulnerável à reprodução de certificados de atestado antigos.</string>
+    <string name="unique_id_description"><![CDATA[Este valor identifica o dispositivo, mas apenas por um período limitado de tempo. Ele é <a href="https://source.android.com/security/keystore/attestation#unique-id">computado</a> e usado apenas por apps do sistema. Em todos os outros apps, uniqueId está vazio.]]></string>
+
+    <string name="empty">(vazio)</string>
+    <string name="security_level_software">Software</string>
+    <string name="security_level_trusted_environment">TrustedEnvironment</string>
+    <string name="security_level_strongbox">StrongBox</string>
+
+    <string name="sw_enforced_description"><![CDATA[Este item é aplicado pelo sistema Android, não pelo TEE do dispositivo.]]></string>
+    <string name="tee_enforced_description"><![CDATA[Este item é aplicado pelo TEE do dispositivo.]]></string>
+
+    <string name="authorization_list">Lista de autorização</string>
+    <string name="authorization_list_purpose">Propósito</string>
+    <string name="authorization_list_algorithm">Algoritmo</string>
+    <string name="authorization_list_keySize">Tamanho da chave</string>
+    <string name="authorization_list_digest">Resumos</string>
+    <string name="authorization_list_padding">Preenchimento</string>
+    <string name="authorization_list_ecCurve">Curva EC</string>
+    <string name="authorization_list_rsaPublicExponent">Expoente público RSA</string>
+    <string name="authorization_list_rollbackResistance">Resistência à rollback</string>
+    <string name="authorization_list_activeDateTime">Data e hora ativa</string>
+    <string name="authorization_list_originationExpireDateTime">Data e hora de expiração da originação</string>
+    <string name="authorization_list_usageExpireDateTime">Data e hora de expiração de uso</string>
+    <string name="authorization_list_noAuthRequired">Não é necessária autenticação</string>
+    <string name="authorization_list_userAuthType">Tipo de autenticação do usuário</string>
+    <string name="authorization_list_authTimeout">Tempo limite de autenticação</string>
+    <string name="authorization_list_allowWhileOnBody">Permitir enquanto estiver no corpo</string>
+    <string name="authorization_list_trustedUserPresenceRequired">Presença de usuário confiável necessária</string>
+    <string name="authorization_list_trustedConfirmationRequired">Confirmação confiável necessária</string>
+    <string name="authorization_list_unlockedDeviceRequired">É necessário um dispositivo desbloqueado</string>
+    <string name="authorization_list_allApplications">Todos os apps</string>
+    <string name="authorization_list_applicationId">ID do app</string>
+    <string name="authorization_list_creationDateTime">Data e hora de criação</string>
+    <string name="authorization_list_origin">Origem</string>
+    <string name="authorization_list_rollbackResistant">Resistente à rollback</string>
+    <string name="authorization_list_rootOfTrust">Root de confiança</string>
+    <string name="authorization_list_osVersion">Versão do OS</string>
+    <string name="authorization_list_osPatchLevel">Nível de patch do OS</string>
+    <string name="authorization_list_attestationApplicationId">ID de atestado do app</string>
+    <string name="authorization_list_attestationIdBrand">ID de atestado da marca</string>
+    <string name="authorization_list_attestationIdDevice">ID de atestado do dispositivo</string>
+    <string name="authorization_list_attestationIdProduct">ID de atestado do produto</string>
+    <string name="authorization_list_attestationIdSerial">ID de atestado do número de série</string>
+    <string name="authorization_list_attestationIdImei">ID de atestado do IMEI</string>
+    <string name="authorization_list_attestationIdSecondImei">ID de atestado do segundo IMEI</string>
+    <string name="authorization_list_attestationIdMeid">ID de atestado do MEID</string>
+    <string name="authorization_list_attestationIdManufacturer">ID de atestado do fabricante</string>
+    <string name="authorization_list_attestationIdModel">ID de atestado do modelo</string>
+    <string name="authorization_list_vendorPatchLevel">Nível do patch do fornecedor</string>
+    <string name="authorization_list_bootPatchLevel">Nível do patch de inicialização</string>
+    <string name="authorization_list_mgfDigest">Rsa Oaep Mgf Digest</string>
+    <string name="authorization_list_earlyBootOnly">Somente inicialização antecipada</string>
+    <string name="authorization_list_usageCountLimit">Limite de contagem de uso</string>
+    <string name="authorization_list_deviceUniqueAttestation">Atestado exclusivo do dispositivo</string>
+    <string name="authorization_list_identityCredentialKey">Chave de credencial de identidade</string>
+
+    <string name="authorization_list_description"><![CDATA[
+    Essa estrutura de dados contém as próprias propriedades do par de chaves, conforme definido na camada de abstração de hardware (HAL) Keymaster ou KeyMint. Você compara esses valores com o estado atual do dispositivo ou com um conjunto de valores esperados para verificar se um par de chaves ainda é válido para uso no seu app.
+    ]]></string>
+    <string name="authorization_list_purpose_description"><![CDATA[
+    Especifica o conjunto de finalidades para as quais a chave pode ser usada.
+    ]]></string>
+    <string name="authorization_list_algorithm_description"><![CDATA[
+    Especifica o algoritmo criptográfico com o qual a chave é usada. Em um objeto AuthorizationList de atestado, o valor do algoritmo é sempre RSA ou EC.
+    ]]></string>
+    <string name="authorization_list_keySize_description"><![CDATA[
+    Especifica o tamanho, em bits, da chave, medindo da maneira normal para o algoritmo da chave.
+    ]]></string>
+    <string name="authorization_list_digest_description"><![CDATA[
+    Especifica os algoritmos de resumo que podem ser usados ​​com a chave para executar operações de assinatura e verificação. Esta tag é relevante para chaves RSA, ECDSA e HMAC.
+    ]]></string>
+    <string name="authorization_list_padding_description"><![CDATA[
+    Especifica os modos de preenchimento que podem ser usados ​​com a chave. Esta tag é relevante para chaves RSA e AES.
+    ]]></string>
+    <string name="authorization_list_ecCurve_description"><![CDATA[
+    O conjunto de parâmetros usados ​​para gerar um par de chaves de curva elíptica (EC), que usa ECDSA para assinatura e verificação, dentro do keystore do sistema Android.
+    ]]></string>
+    <string name="authorization_list_rsaPublicExponent_description"><![CDATA[
+    Especifica o valor do expoente público para um par de chaves RSA. Esta tag é relevante apenas para chaves RSA e necessária para todas as chaves RSA.
+    ]]></string>
+    <string name="authorization_list_rollbackResistance_description"><![CDATA[
+    Indica que a chave é resistente à rollback, o que significa que, quando excluída por deleteKey ou deleteAllKeys, a chave será excluída permanentemente e inutilizável. É possível que chaves sem esta tag sejam excluídas e restauradas do backup.
+    ]]></string>
+    <string name="authorization_list_activeDateTime_description"><![CDATA[
+    Especifica a data e hora em que a chave se torna ativa.
+    ]]></string>
+    <string name="authorization_list_originationExpireDateTime_description"><![CDATA[
+    Especifica a data e a hora em que a chave expira para fins de assinatura e criptografia.
+    ]]></string>
+    <string name="authorization_list_usageExpireDateTime_description"><![CDATA[
+    Especifica a data e hora em que a chave expira para fins de verificação e descriptografia.
+    ]]></string>
+    <string name="authorization_list_noAuthRequired_description"><![CDATA[
+    Especifica que nenhuma autenticação é necessária para usar esta chave.
+    ]]></string>
+    <string name="authorization_list_userAuthType_description"><![CDATA[
+    Especifica os tipos de autenticadores de usuário que podem ser usados ​​para autorizar esta chave.
+    ]]></string>
+    <string name="authorization_list_authTimeout_description"><![CDATA[
+    Especifica o tempo em segundos durante o qual a chave é autorizada para uso, após a autenticação.
+    ]]></string>
+    <string name="authorization_list_allowWhileOnBody_description"><![CDATA[
+    Permita que a chave seja usada após o período de tempo limite de autenticação se o usuário ainda estiver usando o dispositivo junto ao corpo. Observe que um sensor corporal seguro determina se o dispositivo está sendo usado no corpo do usuário.
+    ]]></string>
+    <string name="authorization_list_trustedUserPresenceRequired_description"><![CDATA[
+    Especifica que esta chave só poderá ser usada se o usuário tiver fornecido prova de presença física.
+    ]]></string>
+    <string name="authorization_list_trustedConfirmationRequired_description"><![CDATA[
+    Especifica que a chave só poderá ser usada se o usuário fornecer uma confirmação dos dados a serem assinados usando um token de aprovação.
+    ]]></string>
+    <string name="authorization_list_unlockedDeviceRequired_description"><![CDATA[
+    Exija que a tela do dispositivo seja desbloqueada se a chave for usada.
+    ]]></string>
+    <string name="authorization_list_allApplications_description"><![CDATA[
+    Indica se todos os apps em um dispositivo podem acessar o par de chaves.
+    ]]></string>
+    <string name="authorization_list_applicationId_description"><![CDATA[
+    Quando fornecida para generateKey ou importKey, esta tag especifica os dados necessários durante todos os usos da chave.
+    ]]></string>
+    <string name="authorization_list_creationDateTime_description"><![CDATA[
+    Especifica a data e hora em que a chave foi criada, em milissegundos, desde 1 de janeiro de 1970. Esta tag é opcional e apenas informativa.
+    ]]></string>
+    <string name="authorization_list_origin_description"><![CDATA[
+    Especifica onde a chave foi criada, se conhecida. Esta tag não pode ser especificada durante a geração ou importação da chave e deve ser adicionada às características da chave pelo trustlet.
+    ]]></string>
+    <string name="authorization_list_rollbackResistant_description"><![CDATA[
+    Indica que a chave é resistente à rollback, o que significa que, quando excluída por deleteKey ou deleteAllKeys, a chave será excluída permanentemente e inutilizável. É possível que chaves sem esta tag sejam excluídas e restauradas do backup.
+    ]]></string>
+    <string name="authorization_list_rootOfTrust_description"><![CDATA[
+    Esta coleção de valores define informações importantes sobre o status do dispositivo.<br/><p>
+    verifiedBootKey: <br/>Um hash seguro da chave que verifica a imagem do sistema.<br/><br/>
+    deviceLocked: <br/>True se o bootloader do dispositivo estiver bloqueado, o que permite a Inicialização verificada e evita que uma imagem de dispositivo não assinada seja flashada no dispositivo.<br/><br/>
+    verifiedBootState: <br/>Essa estrutura de dados fornece o estado de inicialização atual do dispositivo, que representa o nível de proteção fornecido ao usuário e aos apps após a inicialização do dispositivo.<br/><br/>
+    verifiedBootHash: <br/>Um resumo de todos os dados protegidos pela Inicialização verificada. Para dispositivos que usam a implementação da Inicialização verificada do Android, esse valor contém o resumo da estrutura VBMeta ou a estrutura de metadados da Inicialização verificada.
+    </p>]]></string>
+    <string name="authorization_list_osVersion_description"><![CDATA[
+    A versão do sistema operacional Android associada ao Keymaster, especificada como um número inteiro de seis dígitos. Por exemplo, a versão 8.1.0 é representada como 080100.
+    ]]></string>
+    <string name="authorization_list_osPatchLevel_description"><![CDATA[
+    O mês e o ano associados ao patch de segurança que está sendo usado no Keymaster, especificado como um número inteiro de seis dígitos. Por exemplo, o patch de agosto de 2018 é representado como 201808.
+    ]]></string>
+    <string name="authorization_list_attestationApplicationId_description"><![CDATA[
+    Essa estrutura de dados reflete a crença da plataforma Android sobre quais apps têm permissão para usar o material da chave secreta sob o atestado. O ID pode compreender vários pacotes se e somente se vários pacotes compartilharem o mesmo UID.
+    ]]></string>
+    <string name="authorization_list_attestationIdBrand_description"><![CDATA[
+    Fornece o nome da marca do dispositivo, conforme retornado por Build.BRAND no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdDevice_description"><![CDATA[
+    Fornece o nome do dispositivo do dispositivo, conforme retornado por Build.DEVICE no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdProduct_description"><![CDATA[
+    Fornece o nome do produto do dispositivo, conforme retornado por Build.PRODUCT no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdSerial_description"><![CDATA[
+    Fornece o número de série do dispositivo. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdImei_description"><![CDATA[
+    Fornece o IMEI de um dos rádios do aparelho para operações de geração/importação de chaves atestadas. Este campo deve ser definido somente ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
+    Fornece um IMEI adicional de um dos rádios do dispositivo para operações de geração/importação de chaves atestadas.
+    ]]></string>
+    <string name="authorization_list_attestationIdMeid_description"><![CDATA[
+    Fornece os MEIDs para todos os rádios do dispositivo. Este campo só será definido ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
+    Fornece o nome do fabricante do dispositivo, conforme retornado por Build.MANUFACTURER no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_attestationIdModel_description"><![CDATA[
+    Fornece o nome do modelo do dispositivo, conforme retornado por Build.MODEL no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    ]]></string>
+    <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
+    Especifica o nível do patch de segurança da imagem do fornecedor que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do fornecedor. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 1 de agosto de 2018 do fornecedor instalado, esse valor seria 20180801.
+    ]]></string>
+    <string name="authorization_list_bootPatchLevel_description"><![CDATA[
+    Especifica o nível do patch de segurança da imagem do kernel que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do sistema. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 5 de agosto de 2018 do sistema instalado, esse valor seria 20180805.
+    ]]></string>
+    <string name="authorization_list_mgfDigest_description"><![CDATA[
+    Especifica os algoritmos de resumo MGF1 que podem ser usados ​​com criptografia/descriptografia RSA com preenchimento OAEP. Os valores possíveis são definidos pela enumeração Digest.
+    ]]></string>
+    <string name="authorization_list_earlyBootOnly_description"><![CDATA[
+    Chaves marcadas com EARLY_BOOT_ONLY só podem ser usadas durante a inicialização inicial, até que IKeyMintDevice::earlyBootEnded() seja chamado.
+    ]]></string>
+    <string name="authorization_list_usageCountLimit_description"><![CDATA[
+    Especifica o número de vezes que uma chave pode ser usada. Isso pode ser usado para limitar o uso de uma chave. O valor é um número inteiro de 32 bits que representa o número atual de tentativas restantes.
+    ]]></string>
+    <string name="authorization_list_deviceUniqueAttestation_description"><![CDATA[
+    Indica que é solicitado o atestado usando uma chave exclusiva do dispositivo, em vez de uma chave em lote. Quando uma chave exclusiva do dispositivo é usada, a cadeia retornada deve conter dois ou três certificados.
+    ]]></string>
+    <string name="authorization_list_identityCredentialKey_description"><![CDATA[
+    Ele é usado em atestados produzidos pelo HAL IIdentityCredential quando esse HAL atesta chaves de credenciais. IIdentityCredential produz atestados estilo KeyMint.
+    ]]></string>
+
+    <string name="knox_description"><![CDATA[
+    Samsung Knox Attestation é um recurso que verifica a integridade dos dados de um dispositivo Samsung, verificando se o dispositivo não está rooteado ou executando firmware não oficial.
+    ]]></string>
+    <string name="knox_integrity">Status de integridade</string>
+    <string name="knox_integrity_description"><![CDATA[
+    O Keymaster Trusted Application (TA) no Secure World coleta esses dados:
+    <ul>
+    <li gap="8sp">O nome do pacote do app solicitante, o código da versão e a chave do desenvolvedor.</li>
+    <li gap="8sp">Informações assinadas sobre o estado atual do dispositivo e o ambiente esperado.</li>
+    <li gap="8sp">Leituras de fusíveis de hardware indicando se firmware não confiável foi carregado no dispositivo.</li>
+    </ul>
+    ]]></string>
+    <string name="knox_record_hash">Hash de registro do atestado</string>
+    <string name="knox_record_hash_description"><![CDATA[
+    Um resumo SHA256 do TA solicitando os dados de status de integridade do ICCC.
+    ]]></string>
+</resources>
