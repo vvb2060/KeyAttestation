@@ -114,7 +114,7 @@
     <string name="authorization_list_osVersion">Versão do OS</string>
     <string name="authorization_list_osPatchLevel">Nível de patch do OS</string>
     <string name="authorization_list_attestationApplicationId">ID de atestado do app</string>
-    <string name="authorization_list_attestationIdBrand">Marca do ID do atestado</string>
+    <string name="authorization_list_attestationIdBrand">ID de atestado da marca</string>
     <string name="authorization_list_attestationIdDevice">ID de atestado do dispositivo</string>
     <string name="authorization_list_attestationIdProduct">ID de atestado do produto</string>
     <string name="authorization_list_attestationIdSerial">ID de atestado do número de série</string>
