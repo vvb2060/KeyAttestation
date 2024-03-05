@@ -5,7 +5,7 @@
     <string name="use_attest_key">Usar chave de atestado gerada pelo app</string>
     <string name="attest_device_props">Atestar props do dispositivo</string>
     <string name="reset">Redefinir</string>
-    <string name="load_certs">Carregar em arquivo</string>
+    <string name="load_certs">Carregar do arquivo</string>
     <string name="save_certs">Salvar em arquivo</string>
     <string name="about">Sobre</string>
     <string name="open_source_info">Este software é de código aberto sob %2$s (%1$s).</string>
@@ -24,12 +24,12 @@
     <string name="google_root_cert">Certificado root de atestado de hardware do Google</string>
     <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar chaves de atestado assinadas pelo Google.</string>
     <string name="knox_root_cert">Certificado root de atestado do Samsung Knox</string>
-    <string name="knox_root_cert_summary">O atestado Knox é assinado usando a chave de atestado Samsung (SAK).</string>
+    <string name="knox_root_cert_summary">O atestado Knox é assinado usando a chave de atestado Samsung.</string>
     <string name="oem_root_cert">Certificado root OEM</string>
     <string name="oem_root_cert_summary">Este dispositivo confia neste certificado root, mas pode não ser confiável para outras pessoas.</string>
 
     <string name="cert_chain">Cadeia de certificados</string>
-    <string name="cert_chain_description">Cadeia de certificados é uma lista de certificados usados ​​para autenticar uma chave. A cadeia começa com o certificado dessa chave e cada certificado da cadeia é assinado pelo próximo certificado da cadeia. A cadeia termina com um certificado root. A confiabilidade do atestado depende do certificado root da cadeia.</string>
+    <string name="cert_chain_description">A cadeia de certificados é uma lista de certificados usados ​​para autenticar uma chave. A cadeia começa com o certificado dessa chave e cada certificado da cadeia é assinado pelo próximo certificado da cadeia. A cadeia termina com um certificado root. A confiabilidade do atestado depende do certificado root da cadeia.</string>
     <string name="cert_info">Informações do certificado</string>
     <string name="cert_subject">assunto: </string>
     <string name="cert_not_before">não antes: </string>
@@ -43,7 +43,7 @@
     <string name="error_unknown">Erro desconhecido</string>
     <string name="error_unavailable">Não é possível atestar</string>
     <string name="error_unavailable_summary">
-    O dispositivo não suporta atestado ou a chave de atestado fornecida de fábrica foi perdida, possivelmente devido a uma configuração incorreta do OEM ou à gravação do usuário final na partição persistente.
+    O dispositivo não suporta o atestado ou a chave de atestado fornecida de fábrica foi perdida, possivelmente devido a uma configuração incorreta do OEM ou à gravação do usuário final na partição persist.
     Recomenda-se tentar novamente após ajustar as opções do menu.
     </string>
     <string name="error_cant_parse_cert">Não foi possível analisar o certificado</string>
@@ -58,11 +58,11 @@
     <string name="error_deviceids_unavailable_summary">
     Este dispositivo foi declarado como tendo suporte para atestado de ID, mas os IDs não correspondem ou o dispositivo não pode mais atestar seus IDs.
     </string>
-    <string name="error_out_of_keys">Nenhuma chave provisionada remotamente para atestado</string>
+    <string name="error_out_of_keys">Nenhuma chave provisionada remotamente para o atestado</string>
     <string name="error_out_of_keys_summary">
     Este dispositivo não está registrado no servidor de provisionamento de chaves ou o servidor recusa a emissão de chaves.
     </string>
-    <string name="error_out_of_keys_transient">Atualmente não há chaves provisionadas remotamente para atestado</string>
+    <string name="error_out_of_keys_transient">Atualmente não há chaves provisionadas remotamente para o atestado</string>
     <string name="error_out_of_keys_transient_summary">
     O conjunto de chaves provisionadas remotamente se esgotou. Tente novamente pela internet ou verifique se há atualizações do sistema.
     </string>
@@ -110,7 +110,7 @@
     <string name="authorization_list_creationDateTime">Data e hora de criação</string>
     <string name="authorization_list_origin">Origem</string>
     <string name="authorization_list_rollbackResistant">Resistente à rollback</string>
-    <string name="authorization_list_rootOfTrust">Root da confiança</string>
+    <string name="authorization_list_rootOfTrust">Root de confiança</string>
     <string name="authorization_list_osVersion">Versão do OS</string>
     <string name="authorization_list_osPatchLevel">Nível de patch do OS</string>
     <string name="authorization_list_attestationApplicationId">ID de atestado do app</string>
@@ -118,9 +118,9 @@
     <string name="authorization_list_attestationIdDevice">ID de atestado do dispositivo</string>
     <string name="authorization_list_attestationIdProduct">ID de atestado do produto</string>
     <string name="authorization_list_attestationIdSerial">ID de atestado do número de série</string>
-    <string name="authorization_list_attestationIdImei">ID de atestado IMEI</string>
+    <string name="authorization_list_attestationIdImei">ID de atestado do IMEI</string>
     <string name="authorization_list_attestationIdSecondImei">ID de atestado do segundo IMEI</string>
-    <string name="authorization_list_attestationIdMeid">ID de atestado MEID</string>
+    <string name="authorization_list_attestationIdMeid">ID de atestado do MEID</string>
     <string name="authorization_list_attestationIdManufacturer">ID de atestado do fabricante</string>
     <string name="authorization_list_attestationIdModel">ID de atestado do modelo</string>
     <string name="authorization_list_vendorPatchLevel">Nível do patch do fornecedor</string>
@@ -206,9 +206,9 @@
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
     Esta coleção de valores define informações importantes sobre o status do dispositivo.<br/><p>
     verifiedBootKey: <br/>Um hash seguro da chave que verifica a imagem do sistema.<br/><br/>
-    deviceLocked: <br/>Verdadeiro se o bootloader do dispositivo estiver bloqueado, o que permite a Inicialização verificada e evita que uma imagem de dispositivo não assinada seja flashada no dispositivo.<br/><br/>
+    deviceLocked: <br/>True se o bootloader do dispositivo estiver bloqueado, o que permite a Inicialização verificada e evita que uma imagem de dispositivo não assinada seja flashada no dispositivo.<br/><br/>
     verifiedBootState: <br/>Essa estrutura de dados fornece o estado de inicialização atual do dispositivo, que representa o nível de proteção fornecido ao usuário e aos apps após a inicialização do dispositivo.<br/><br/>
-    verifiedBootHash: <br/>Um resumo de todos os dados protegidos pela Inicialização verificada. Para dispositivos que usam a implementação da Inicialização verificada do Android da Inicialização verificada, esse valor contém o resumo da estrutura VBMeta ou a estrutura de metadados da Inicialização verificada.
+    verifiedBootHash: <br/>Um resumo de todos os dados protegidos pela Inicialização verificada. Para dispositivos que usam a implementação da Inicialização verificada do Android, esse valor contém o resumo da estrutura VBMeta ou a estrutura de metadados da Inicialização verificada.
     </p>]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
     A versão do sistema operacional Android associada ao Keymaster, especificada como um número inteiro de seis dígitos. Por exemplo, a versão 8.1.0 é representada como 080100.
@@ -217,7 +217,7 @@
     O mês e o ano associados ao patch de segurança que está sendo usado no Keymaster, especificado como um número inteiro de seis dígitos. Por exemplo, o patch de agosto de 2018 é representado como 201808.
     ]]></string>
     <string name="authorization_list_attestationApplicationId_description"><![CDATA[
-    Essa estrutura de dados reflete a crença da plataforma Android sobre quais apps têm permissão para usar o material de chave secreta sob atestado. O ID pode compreender vários pacotes se e somente se vários pacotes compartilharem o mesmo UID.
+    Essa estrutura de dados reflete a crença da plataforma Android sobre quais apps têm permissão para usar o material da chave secreta sob o atestado. O ID pode compreender vários pacotes se e somente se vários pacotes compartilharem o mesmo UID.
     ]]></string>
     <string name="authorization_list_attestationIdBrand_description"><![CDATA[
     Fornece o nome da marca do dispositivo, conforme retornado por Build.BRAND no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
@@ -247,7 +247,7 @@
     Fornece o nome do modelo do dispositivo, conforme retornado por Build.MODEL no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
-    Especifica o nível de patch de segurança da imagem do fornecedor que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do fornecedor. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 1 de agosto de 2018 do fornecedor instalado, esse valor seria 20180801.
+    Especifica o nível do patch de segurança da imagem do fornecedor que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do fornecedor. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 1 de agosto de 2018 do fornecedor instalado, esse valor seria 20180801.
     ]]></string>
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
     Especifica o nível do patch de segurança da imagem do kernel que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do sistema. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 5 de agosto de 2018 do sistema instalado, esse valor seria 20180805.
@@ -275,13 +275,13 @@
     <string name="knox_integrity_description"><![CDATA[
     O Keymaster Trusted Application (TA) no Secure World coleta esses dados:
     <ul>
-    <li gap="8sp">o nome do pacote do app solicitante, o código da versão e a chave do desenvolvedor.</li>
-    <li gap="8sp">informações assinadas sobre o estado atual do dispositivo e o ambiente esperado.</li>
-    <li gap="8sp">leituras de fusíveis de hardware indicando se firmware não confiável foi carregado no dispositivo.</li>
+    <li gap="8sp">O nome do pacote do app solicitante, o código da versão e a chave do desenvolvedor.</li>
+    <li gap="8sp">Informações assinadas sobre o estado atual do dispositivo e o ambiente esperado.</li>
+    <li gap="8sp">Leituras de fusíveis de hardware indicando se firmware não confiável foi carregado no dispositivo.</li>
     </ul>
     ]]></string>
-    <string name="knox_record_hash">Hash de registro de atestado</string>
+    <string name="knox_record_hash">Hash de registro do atestado</string>
     <string name="knox_record_hash_description"><![CDATA[
-    um resumo SHA256 do TA solicitando os dados de status de integridade do ICCC.
+    Um resumo SHA256 do TA solicitando os dados de status de integridade do ICCC.
     ]]></string>
 </resources>
