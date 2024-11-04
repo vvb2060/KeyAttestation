@@ -79,6 +79,8 @@ configurations.configureEach {
 }
 
 dependencies {
+    compileOnly project(':stub')
+
     implementation 'org.bouncycastle:bcprov-jdk18on:1.76'
     implementation 'com.google.guava:guava:32.1.2-android'
     implementation 'co.nstant.in:cbor:0.9'
