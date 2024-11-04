@@ -2,6 +2,7 @@ package io.github.vvb2060.keyattestation
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -24,16 +25,16 @@ class AppApplication : Application() {
         DayNightDelegate.setApplicationContext(this)
         DayNightDelegate.setDefaultNightMode(DayNightDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         HtmlCompat.setContext(this)
-        install(this)
+        installProvider(this)
     }
 
-    private fun install(context: Context) = executor.execute {
+    private fun installProvider(context: Context) {
         if (BuildConfig.DEBUG) {
             Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
             Security.insertProviderAt(BouncyCastleProvider(), 1)
-            return@execute
-        }
-        runCatching {
+        } else runCatching {
+            context.packageManager.getApplicationInfo("com.google.android.gms",
+                    PackageManager.MATCH_SYSTEM_ONLY)
             val gms = context.createPackageContext("com.google.android.gms",
                     Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY)
             gms.classLoader
