@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
+import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import rikka.html.text.HtmlCompat
 import rikka.material.app.DayNightDelegate
@@ -20,12 +21,14 @@ class AppApplication : Application() {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
     }
 
-    init {
+    override fun onCreate() {
+        super.onCreate()
         app = this
         DayNightDelegate.setApplicationContext(this)
         DayNightDelegate.setDefaultNightMode(DayNightDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         HtmlCompat.setContext(this)
         installProvider(this)
+        KeyStoreManager.requestBinder(this)
     }
 
     private fun installProvider(context: Context) {
@@ -36,7 +39,7 @@ class AppApplication : Application() {
             context.packageManager.getApplicationInfo("com.google.android.gms",
                     PackageManager.MATCH_SYSTEM_ONLY)
             val gms = context.createPackageContext("com.google.android.gms",
-                    Context.CONTEXT_INCLUDE_CODE or Context.CONTEXT_IGNORE_SECURITY)
+                    CONTEXT_INCLUDE_CODE or CONTEXT_IGNORE_SECURITY)
             gms.classLoader
                     .loadClass("com.google.android.gms.common.security.ProviderInstallerImpl")
                     .getMethod("insertProvider", Context::class.java)

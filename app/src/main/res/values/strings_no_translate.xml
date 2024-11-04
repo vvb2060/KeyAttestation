@@ -2,5 +2,6 @@
 <resources>
     <string name="copyright" translatable="false">Copyright © vvb2060, Rikka</string>
     <string name="github_url" translatable="false">https://github.com/vvb2060/KeyAttestation</string>
+    <string name="shizuku_url" translatable="false">https://shizuku.rikka.app</string>
     <string name="license" translatable="false">Apache License 2.0</string>
 </resources>

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Key Attestation</string>
+    <string name="use_shizuku">Use Shizuku</string>
     <string name="use_strongbox">Use StrongBox</string>
     <string name="use_attest_key">Use app generated attest key</string>
-    <string name="attest_device_props">Attest device props</string>
+    <string name="attest_device_props">Attest device model</string>
+    <string name="id_type_serial">Attest device serial number</string>
+    <string name="id_type_imei">Attest device IMEI</string>
+    <string name="id_type_meid">Attest device MEID</string>
+    <string name="include_unique_id">Include unique ID</string>
     <string name="reset">Reset</string>
     <string name="load_certs">Load from file</string>
     <string name="save_certs">Save to file</string>
     <string name="about">About</string>
     <string name="open_source_info">This software is open source under %2$s (%1$s).</string>
+    <string name="install_shizuku">Install Shizuku to use ID Attestation (%s).</string>
+    <string name="start_shizuku">Shizuku is not running.</string>
 
     <string name="bootloader_locked">Bootloader is locked</string>
     <string name="bootloader_user">Root of trust set by end user</string>
@@ -56,7 +63,7 @@
     </string>
     <string name="error_deviceids_unavailable">Unable to attest device ids</string>
     <string name="error_deviceids_unavailable_summary">
-    This device is declared to have ID attestation support, but IDs do not match or the device can no longer attest its IDs.
+    This device is declared to have ID attestation support, but IDs do not exist, do not match, or the device can no longer attest its IDs.
     </string>
     <string name="error_out_of_keys">No remotely provisioned keys for attestation</string>
     <string name="error_out_of_keys_summary">

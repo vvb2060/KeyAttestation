@@ -2,22 +2,54 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_use_strongbox"
-        android:showAsAction="never"
+        android:id="@+id/menu_use_shizuku"
         android:checkable="true"
+        android:showAsAction="never"
+        android:title="@string/use_shizuku" />
+
+    <item
+        android:id="@+id/menu_use_strongbox"
+        android:checkable="true"
+        android:showAsAction="never"
         android:title="@string/use_strongbox" />
 
     <item
         android:id="@+id/menu_use_attest_key"
-        android:showAsAction="never"
         android:checkable="true"
+        android:showAsAction="never"
         android:title="@string/use_attest_key" />
 
     <item
-        android:id="@+id/menu_incluid_props"
-        android:showAsAction="never"
+        android:id="@+id/menu_include_props"
         android:checkable="true"
+        android:showAsAction="never"
         android:title="@string/attest_device_props" />
+
+    <group android:id="@+id/menu_id_type_group">
+        <item
+            android:id="@+id/menu_id_type_serial"
+            android:checkable="true"
+            android:showAsAction="never"
+            android:title="@string/id_type_serial" />
+
+        <item
+            android:id="@+id/menu_id_type_imei"
+            android:checkable="true"
+            android:showAsAction="never"
+            android:title="@string/id_type_imei" />
+
+        <item
+            android:id="@+id/menu_id_type_meid"
+            android:checkable="true"
+            android:showAsAction="never"
+            android:title="@string/id_type_meid" />
+    </group>
+
+    <item
+        android:id="@+id/menu_include_unique_id"
+        android:checkable="true"
+        android:showAsAction="never"
+        android:title="@string/include_unique_id" />
 
     <item
         android:id="@+id/menu_reset"

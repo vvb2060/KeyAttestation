@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">密钥认证</string>
+    <string name="use_shizuku">使用 Shizuku</string>
     <string name="use_strongbox">使用 StrongBox</string>
     <string name="use_attest_key">使用应用生成的认证密钥</string>
-    <string name="attest_device_props">认证设备属性</string>
+    <string name="attest_device_props">认证设备型号</string>
+    <string name="id_type_serial">认证设备序列号</string>
+    <string name="id_type_imei">认证设备 IMEI</string>
+    <string name="id_type_meid">认证设备 MEID</string>
+    <string name="include_unique_id">包含唯一 ID</string>
     <string name="reset">重置</string>
     <string name="load_certs">从文件加载</string>
     <string name="save_certs">保存到文件</string>
     <string name="about">关于</string>
     <string name="open_source_info">此软件是 %2$s 下的开源软件（%1$s）。</string>
+    <string name="install_shizuku">安装 Shizuku 使用 ID 认证（%s）。</string>
+    <string name="start_shizuku">Shizuku 未运行。</string>
 
     <string name="bootloader_locked">Bootloader 已锁定</string>
     <string name="bootloader_user">信任根由最终用户设置</string>
@@ -55,7 +62,7 @@
     </string>
     <string name="error_deviceids_unavailable">无法认证设备 ID</string>
     <string name="error_deviceids_unavailable_summary">
-    设备声明支持 ID 认证，但 ID 不匹配或设备已无法再证明其 ID。
+    设备声明支持 ID 认证，但 ID 不存在，不匹配或设备已无法再证明其 ID。
     </string>
     <string name="error_out_of_keys">没有远程提供的认证密钥</string>
     <string name="error_out_of_keys_summary">
@@ -72,7 +79,7 @@
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 或 KeyMint 硬件抽象层 (HAL) 的版本。]]></string>
-    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示软件功能（例如密钥对）受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>用于创建和管理功能的逻辑在 Android 系统中实现。如果用于创建和存储密钥对，此位置没有 TEE 安全，但比应用的进程空间安全。</li><li gap="8sp"><font face="sans-serif-medium">可信环境</font><br>用于创建和管理在安全硬件（如 TEE）中实现的功能的逻辑。如果用于创建和存储密钥对，此位置比较安全，因为安全硬件更能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">保险箱</font><br>用于创建和管理功能的逻辑在专用<a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">硬件安全模块</a>中实现。对于创建和存储密钥对，此位置更安全，因为它更能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>用于创建和管理功能的逻辑在 Android 系统中实现。如果用于创建和存储密钥对，此位置没有可信环境安全，但比应用的进程空间安全。</li><li gap="8sp"><font face="sans-serif-medium">可信环境</font><br>用于创建和管理功能的逻辑在可信执行环境中实现。如果用于创建和存储密钥对，此位置比较安全，因为安全硬件更能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">保险箱</font><br>用于创建和管理功能的逻辑在专用<a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">硬件安全模块</a>中实现。对于创建和存储密钥对，此位置更安全，因为它更能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
     <string name="attestation_summary_format">版本：%1$s\n安全等级：%2$s</string>
     <string name="attestation_challenge_description">包含创建密钥时提供的质询。检查此值是否与您的服务器提供的值匹配。否则，您的服务可能容易受到旧认证证书重放的攻击。</string>
     <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过<a href="https://source.android.com/security/keystore/attestation#unique-id">计算</a>得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>

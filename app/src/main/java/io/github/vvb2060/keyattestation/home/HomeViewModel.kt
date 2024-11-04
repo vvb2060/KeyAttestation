@@ -1,5 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
+import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -9,8 +10,7 @@ import android.provider.OpenableColumns
 import android.security.KeyStoreException
 import android.security.KeyStoreException.ERROR_ATTESTATION_KEYS_UNAVAILABLE
 import android.security.KeyStoreException.ERROR_ID_ATTESTATION_FAILURE
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
+import android.security.keystore.DeviceIdAttestationException
 import android.security.keystore.StrongBoxUnavailableException
 import android.util.Log
 import android.widget.Toast
@@ -20,6 +20,9 @@ import androidx.lifecycle.ViewModel
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.attestation.AttestationResult
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo.parseCertificateChain
+import io.github.vvb2060.keyattestation.keystore.AndroidKeyStore
+import io.github.vvb2060.keyattestation.keystore.IAndroidKeyStore
+import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_CANT_PARSE_CERT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_DEVICEIDS_UNAVAILABLE
@@ -30,24 +33,20 @@ import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNAVAILABLE_TRANSIENT
 import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_UNKNOWN
 import io.github.vvb2060.keyattestation.util.Resource
-import java.io.BufferedInputStream
+import rikka.shizuku.Shizuku
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.security.GeneralSecurityException
-import java.security.KeyPairGenerator
-import java.security.KeyStore
+import java.io.ObjectInputStream
 import java.security.ProviderException
 import java.security.cert.Certificate
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import java.security.spec.ECGenParameterSpec
-import java.util.Date
-import javax.security.auth.x500.X500Principal
 
 class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : ViewModel() {
 
-    private val keyStore = KeyStore.getInstance("AndroidKeyStore")
+    private val localKeyStore = AndroidKeyStore()
+    private var keyStore: IAndroidKeyStore = localKeyStore
     private val certificateFactory = CertificateFactory.getInstance("X.509")
 
     val attestationResult = MutableLiveData<Resource<AttestationResult>>()
@@ -69,80 +68,108 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             sp.edit { putBoolean("prefer_attest_key", value) }
         }
 
-    val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+    val hasDeviceIds = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature("android.software.device_id_attestation")
-    var preferIncludeProps = sp.getBoolean("prefer_including_props", true)
+    var preferIncludeProps = sp.getBoolean("prefer_include_props", true)
         set(value) {
             field = value
-            sp.edit { putBoolean("prefer_including_props", value) }
+            sp.edit { putBoolean("prefer_include_props", value) }
+        }
+
+    var preferShizuku = false
+        set(value) {
+            field = value
+            keyStore = if (value) KeyStoreManager.getRemoteKeyStore() else localKeyStore
+        }
+
+    var preferIdAttestationSerial = sp.getBoolean("prefer_id_attestation_serial", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_id_attestation_serial", value) }
+        }
+
+    val hasIMEI = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY_GSM)
+    var preferIdAttestationIMEI = sp.getBoolean("prefer_id_attestation_IMEI", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_id_attestation_IMEI", value) }
+        }
+
+    val hasMEID = pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY_CDMA)
+    var preferIdAttestationMEID = sp.getBoolean("prefer_id_attestation_MEID", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_id_attestation_MEID", value) }
+        }
+
+    val canIncludeUniqueId: Boolean
+        get() {
+            if (KeyStoreManager.getRemoteKeyStore() == null) return false
+            val name = "android.permission.REQUEST_UNIQUE_ID_ATTESTATION"
+            return Shizuku.checkRemotePermission(name) == PackageManager.PERMISSION_GRANTED
+        }
+    var preferIncludeUniqueId = sp.getBoolean("prefer_include_unique_id", true)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_include_unique_id", value) }
         }
 
     init {
-        keyStore.load(null)
         load()
     }
 
-    @Throws(GeneralSecurityException::class)
-    private fun generateKey(alias: String,
-                            useStrongBox: Boolean,
-                            includeProps: Boolean,
-                            attestKeyAlias: String?) {
-        val now = Date()
-        val attestKey = alias == attestKeyAlias
-        val purposes = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && attestKey) {
-            KeyProperties.PURPOSE_ATTEST_KEY
+    private fun generateKey(alias: String, attestKeyAlias: String?,
+                            useStrongBox: Boolean, includeProps: Boolean,
+                            uniqueIdIncluded: Boolean, idAttestationFlags: Int) {
+        val e = keyStore.generateKeyPair(alias, attestKeyAlias, useStrongBox, includeProps,
+                uniqueIdIncluded, idAttestationFlags)
+        if (e != null) {
+            ObjectInputStream(ByteArrayInputStream(e)).use {
+                val exception = it.readObject() as Exception
+                throw exception
+            }
+        }
+    }
+
+    private fun attestDeviceIds(idAttestationFlags: Int, certs: ArrayList<Certificate>) {
+        val data = keyStore.attestDeviceIds(idAttestationFlags)
+        val s = ByteArrayInputStream(data)
+        if (s.read() == 1) {
+            certs.addAll(certificateFactory.generateCertificates(s))
         } else {
-            KeyProperties.PURPOSE_SIGN
-        }
-        val builder = KeyGenParameterSpec.Builder(alias, purposes)
-                .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
-                .setDigests(KeyProperties.DIGEST_SHA256)
-                .setCertificateNotBefore(now)
-                .setAttestationChallenge(now.toString().toByteArray())
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && useStrongBox) {
-            builder.setIsStrongBoxBacked(true)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (includeProps) {
-                builder.setDevicePropertiesAttestationIncluded(true)
-            }
-            if (attestKey) {
-                builder.setCertificateSubject(X500Principal("CN=App Attest Key"))
-            } else {
-                builder.setAttestKeyAlias(attestKeyAlias)
+            ObjectInputStream(s).use {
+                val exception = it.readObject() as Exception
+                throw ProviderException(exception)
             }
         }
-        val keyPairGenerator = KeyPairGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
-        keyPairGenerator.initialize(builder.build())
-        keyPairGenerator.generateKeyPair()
     }
 
     @Throws(AttestationException::class)
-    private fun doAttestation(useStrongBox: Boolean,
-                              includeProps: Boolean,
-                              useAttestKey: Boolean): AttestationResult {
+    private fun doAttestation(useAttestKey: Boolean, useStrongBox: Boolean,
+                              includeProps: Boolean, uniqueIdIncluded: Boolean,
+                              idAttestationFlags: Int): AttestationResult {
         val certs = ArrayList<Certificate>()
         val alias = if (useStrongBox) "${AppApplication.TAG}_strongbox" else AppApplication.TAG
         val attestKeyAlias = if (useAttestKey) "${alias}_persistent" else null
         try {
-            if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
-                generateKey(attestKeyAlias!!, useStrongBox, includeProps, attestKeyAlias)
-            }
-            generateKey(alias, useStrongBox, includeProps, attestKeyAlias)
-
-            val certChain = keyStore.getCertificateChain(alias)
-                    ?: throw CertificateException("Unable to get certificate chain")
-            for (cert in certChain) {
-                val buf = ByteArrayInputStream(cert.encoded)
-                certs.add(certificateFactory.generateCertificate(buf))
-            }
-            if (useAttestKey) {
-                val persistChain = keyStore.getCertificateChain(attestKeyAlias)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && idAttestationFlags != 0) {
+                attestDeviceIds(idAttestationFlags, certs)
+            } else {
+                if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
+                    generateKey(attestKeyAlias!!, attestKeyAlias, useStrongBox,
+                            includeProps, uniqueIdIncluded, idAttestationFlags)
+                }
+                generateKey(alias, attestKeyAlias, useStrongBox,
+                        includeProps, uniqueIdIncluded, idAttestationFlags)
+                val certChain = keyStore.getCertificateChain(alias)
                         ?: throw CertificateException("Unable to get certificate chain")
-                for (cert in persistChain) {
-                    val buf = ByteArrayInputStream(cert.encoded)
-                    certs.add(certificateFactory.generateCertificate(buf))
+                val buffer = ByteArrayInputStream(certChain)
+                certs.addAll(certificateFactory.generateCertificates(buffer))
+                if (useAttestKey) {
+                    val persistChain = keyStore.getCertificateChain(attestKeyAlias)
+                            ?: throw CertificateException("Unable to get certificate chain")
+                    val buf = ByteArrayInputStream(persistChain)
+                    certs.addAll(certificateFactory.generateCertificates(buf))
                 }
             }
         } catch (e: ProviderException) {
@@ -166,6 +193,8 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 }
             } else if (cause?.message?.contains("device ids") == true) {
                 throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
+            } else if (cause is DeviceIdAttestationException) {
+                throw AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e)
             } else {
                 throw AttestationException(CODE_UNAVAILABLE, e)
             }
@@ -173,7 +202,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             throw AttestationException(CODE_UNKNOWN, e)
         }
         @Suppress("UNCHECKED_CAST")
-        currentCerts = certs as List<X509Certificate>
+        currentCerts = certs as ArrayList<X509Certificate>
         return parseCertificateChain(certs)
     }
 
@@ -233,17 +262,25 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
     fun load(reset: Boolean = false) = AppApplication.executor.execute {
         currentCerts = null
         attestationResult.postValue(Resource.loading(null))
-        if (reset) {
-            for (alias in keyStore.aliases()) {
-                keyStore.deleteEntry(alias)
+
+        val useAttestKey = hasAttestKey && preferAttestKey
+        val useStrongBox = hasStrongBox && preferStrongBox
+        val includeProps = hasDeviceIds && preferIncludeProps && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        var uniqueIdIncluded = false
+        var flags = 0
+        if (preferShizuku) {
+            uniqueIdIncluded = canIncludeUniqueId && preferIncludeUniqueId
+            if (hasDeviceIds) {
+                if (preferIdAttestationSerial) flags = DevicePolicyManager.ID_TYPE_SERIAL
+                if (hasIMEI && preferIdAttestationIMEI) flags = flags or DevicePolicyManager.ID_TYPE_IMEI
+                if (hasMEID && preferIdAttestationMEID) flags = flags or DevicePolicyManager.ID_TYPE_MEID
             }
         }
 
-        val useStrongBox = hasStrongBox && preferStrongBox
-        val includeProps = hasDeviceIds && preferIncludeProps
-        val useAttestKey = hasAttestKey && preferAttestKey
         val result = try {
-            val attestationResult = doAttestation(useStrongBox, includeProps, useAttestKey)
+            if (reset) keyStore.deleteAllEntry()
+            val attestationResult = doAttestation(useAttestKey, useStrongBox, includeProps,
+                    uniqueIdIncluded, flags)
             Resource.success(attestationResult)
         } catch (e: Throwable) {
             val cause = if (e is AttestationException) e.cause else e
