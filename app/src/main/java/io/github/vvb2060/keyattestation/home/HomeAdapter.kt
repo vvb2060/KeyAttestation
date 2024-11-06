@@ -1,6 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
-import com.google.common.base.CharMatcher
+import android.util.Base64
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
@@ -104,14 +104,14 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.attestation_challenge_description,
                 attestation.attestationChallenge?.let {
                     val stringChallenge = String(it)
-                    if (CharMatcher.ascii().matchesAllOf(stringChallenge)) stringChallenge
-                    else BaseEncoding.base64().encode(it) + " (base64)"
+                    if (stringChallenge.toByteArray().contentEquals(it)) stringChallenge
+                    else Base64.encodeToString(it, 0) + " (base64)"
                 }), id++)
 
         addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                 R.string.unique_id,
                 R.string.unique_id_description,
-                attestation.uniqueId?.let { BaseEncoding.base64().encode(it) }), id)
+                attestation.uniqueId?.let { BaseEncoding.base16().lowerCase().encode(it) }), id)
 
         id = ID_AUTHORIZATION_LIST_START
         addItem(SubtitleViewHolder.CREATOR, SubtitleData(
@@ -159,7 +159,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
             addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                     R.string.knox_record_hash,
                     R.string.knox_record_hash_description,
-                    BaseEncoding.base16().encode(attestation.recordHash)), id++)
+                    BaseEncoding.base16().lowerCase().encode(attestation.recordHash)), id++)
         }
 
         notifyDataSetChanged()

@@ -98,14 +98,14 @@ public class RootOfTrust {
     public String toString() {
         StringBuilder sb = new StringBuilder()
                 .append("verifiedBootKey: ")
-                .append(BaseEncoding.base16().encode(verifiedBootKey))
+                .append(BaseEncoding.base16().lowerCase().encode(verifiedBootKey))
                 .append("\ndeviceLocked: ")
                 .append(deviceLocked)
                 .append("\nverifiedBootState: ")
                 .append(verifiedBootStateToString(verifiedBootState));
         if (verifiedBootHash != null) {
             sb.append("\nverifiedBootHash: ")
-                    .append(BaseEncoding.base16().encode(verifiedBootHash));
+                    .append(BaseEncoding.base16().lowerCase().encode(verifiedBootHash));
         }
         return sb.toString();
     }

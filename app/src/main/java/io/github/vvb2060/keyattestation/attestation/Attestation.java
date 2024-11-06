@@ -16,14 +16,15 @@
 
 package io.github.vvb2060.keyattestation.attestation;
 
+import android.util.Base64;
 import android.util.Log;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Set;
 
 import co.nstant.in.cbor.CborException;
@@ -178,14 +179,14 @@ public abstract class Attestation {
 
         s.append("\nChallenge");
         String stringChallenge =
-                attestationChallenge != null ? new String(attestationChallenge) : "null";
-        if (CharMatcher.ascii().matchesAllOf(stringChallenge)) {
+                attestationChallenge != null ? new String(attestationChallenge) : "";
+        if (Arrays.equals(attestationChallenge, stringChallenge.getBytes())) {
             s.append(": [" + stringChallenge + "]");
-        } else {
-            s.append(" (base64): [" + BaseEncoding.base64().encode(attestationChallenge) + "]");
+        } else if (attestationChallenge != null) {
+            s.append(" (base64): [" + Base64.encodeToString(attestationChallenge, 0) + "]");
         }
         if (uniqueId != null) {
-            s.append("\nUnique ID (base64): [" + BaseEncoding.base64().encode(uniqueId) + "]");
+            s.append("\nUnique ID: [" + BaseEncoding.base16().lowerCase().encode(uniqueId) + "]");
         }
 
         s.append("\n-- SW enforced --");

@@ -107,7 +107,7 @@ public class AttestationApplicationId implements java.lang.Comparable<Attestatio
         int noOfSigs = signatureDigests.size();
         for (byte[] sig : signatureDigests) {
             sb.append("Certificate sha256 digest " + i++ + "/" + noOfSigs + ":\n");
-            sb.append(BaseEncoding.base16().encode(sig));
+            sb.append(BaseEncoding.base16().lowerCase().encode(sig));
             sb.append('\n');
         }
         return sb.toString();

@@ -64,6 +64,6 @@ public class KnoxAttestation extends Asn1Attestation {
                 "\n\nExtension type: " + getClass().getSimpleName() +
                 "\nChallenge: " + challenge +
                 "\nIntegrity status: " + knoxIntegrity +
-                "\nAttestation record hash: " + BaseEncoding.base16().encode(recordHash);
+                "\nAttestation record hash: " + BaseEncoding.base16().lowerCase().encode(recordHash);
     }
 }
