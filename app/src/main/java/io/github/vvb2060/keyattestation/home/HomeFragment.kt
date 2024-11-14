@@ -76,7 +76,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
 
-        viewModel.attestationResult.observe(viewLifecycleOwner) { res ->
+        viewModel.getAttestationResult().observe(viewLifecycleOwner) { res ->
             when (res.status) {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
@@ -97,7 +97,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onAttestationInfoClick(data: Attestation) {
-        val result = viewModel.attestationResult.value!!.data!!
+        val result = viewModel.getAttestationResult().value!!.data!!
         result.showAttestation = data
         adapter.updateData(result)
     }
@@ -162,7 +162,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         menu.setGroupVisible(R.id.menu_id_type_group, viewModel.preferShizuku)
         menu.findItem(R.id.menu_include_unique_id).isVisible =
                 viewModel.preferShizuku && viewModel.canIncludeUniqueId
-        menu.findItem(R.id.menu_save).isVisible = viewModel.currentCerts != null
+        menu.findItem(R.id.menu_save).isVisible = viewModel.hasCertificates()
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

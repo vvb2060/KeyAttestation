@@ -36,4 +36,6 @@ class AttestationException(code: Int, cause: Throwable) : RuntimeException(cause
         CODE_UNAVAILABLE_TRANSIENT -> R.string.error_unavailable_transient_summary
         else -> R.string.error_unknown
     }
+
+    override fun fillInStackTrace() = this
 }
