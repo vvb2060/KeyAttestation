@@ -3,7 +3,8 @@
     <string name="app_name">Key Attestation</string>
     <string name="use_shizuku">Use Shizuku</string>
     <string name="use_strongbox">Use StrongBox</string>
-    <string name="use_attest_key">Use app generated attest key</string>
+    <string name="use_attest_key">Use attest key</string>
+    <string name="import_attest_key">Import attest key</string>
     <string name="attest_device_props">Attest device model</string>
     <string name="id_type_serial">Attest device serial number</string>
     <string name="id_type_imei">Attest device IMEI</string>

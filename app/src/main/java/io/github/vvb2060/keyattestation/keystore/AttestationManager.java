@@ -215,4 +215,12 @@ public final class AttestationManager {
             out.write(certPath.getEncoded("PKCS7"));
         }
     }
+
+    public void importKeyBox(boolean useStrongBox, ContentResolver cr, Uri uri) throws Exception {
+        var base = useStrongBox ? AppApplication.TAG + "_strongbox" : AppApplication.TAG;
+        var alias = base + "_persistent";
+        try (var pfd = cr.openFileDescriptor(uri, "r")) {
+            keyStore.importKeyBox(alias, useStrongBox, pfd);
+        }
+    }
 }

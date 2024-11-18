@@ -111,7 +111,10 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
-            Log.e(AppApplication.TAG, "saveCerts: ", e)
+            Log.e(AppApplication.TAG, "save: ", e)
+            AppApplication.mainHandler.post {
+                Toast.makeText(AppApplication.app, e.message, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -142,5 +145,19 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         val result = attestationManager.attest(reset, useAttestKey, useStrongBox,
                 includeProps, uniqueIdIncluded, idFlags)
         attestationResult.postValue(result)
+    }
+
+    fun import(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
+        if (uri == null || !hasAttestKey) return@execute
+        val useStrongBox = hasStrongBox && preferStrongBox
+        try {
+            attestationManager.importKeyBox(useStrongBox, cr, uri)
+            load()
+        } catch (e: Exception) {
+            Log.e(AppApplication.TAG, "import: ", e)
+            AppApplication.mainHandler.post {
+                Toast.makeText(AppApplication.app, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

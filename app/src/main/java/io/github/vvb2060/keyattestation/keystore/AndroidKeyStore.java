@@ -6,11 +6,13 @@ import android.app.Instrumentation;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
 import android.os.Process;
 import android.security.keystore.AttestationUtils;
 import android.security.keystore.DeviceIdAttestationException;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.security.keystore.KeyProtection;
 import android.system.Os;
 import android.util.Log;
 
@@ -125,6 +127,28 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
             }
         } catch (KeyStoreException e) {
             Log.e(AppApplication.TAG, "deleteAllEntry", e);
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void importKeyBox(String alias, boolean useStrongBox, ParcelFileDescriptor pfd) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            throw new IllegalStateException();
+        }
+        try (var in = new ParcelFileDescriptor.AutoCloseInputStream(pfd)) {
+            var key = KeyBoxXmlParser.getInstance().parse(in);
+            var builder = new KeyProtection.Builder(KeyProperties.PURPOSE_ATTEST_KEY)
+                    .setDigests(KeyProperties.DIGEST_SHA256);
+            if (useStrongBox) {
+                builder.setIsStrongBoxBacked(true);
+            }
+            keyStore.setEntry(alias, key, builder.build());
+            if (keyStore.getCertificate(alias) == null) {
+                throw new IllegalStateException("import failed");
+            }
+        } catch (IOException | KeyStoreException e) {
+            Log.e(AppApplication.TAG, "importKeyBox", e);
             throw new IllegalStateException(e.getMessage());
         }
     }

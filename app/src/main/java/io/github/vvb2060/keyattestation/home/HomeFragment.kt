@@ -9,7 +9,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
-import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -48,8 +48,12 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         viewModel.save(requireContext().contentResolver, it)
     }
 
-    private val load = registerForActivityResult(OpenDocument()) {
+    private val load = registerForActivityResult(GetContent()) {
         viewModel.load(requireContext().contentResolver, it)
+    }
+
+    private val import = registerForActivityResult(GetContent()) {
+        viewModel.import(requireContext().contentResolver, it)
     }
 
     private val adapter by lazy {
@@ -159,6 +163,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isEnabled = received
             isChecked = viewModel.preferShizuku
         }
+        menu.findItem(R.id.menu_import_attest_key)?.isVisible = viewModel.preferAttestKey
         menu.setGroupVisible(R.id.menu_id_type_group, viewModel.preferShizuku)
         menu.findItem(R.id.menu_include_unique_id).isVisible =
                 viewModel.preferShizuku && viewModel.canIncludeUniqueId
@@ -179,6 +184,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         }
         if (!viewModel.hasAttestKey) {
             menu.removeItem(R.id.menu_use_attest_key)
+            menu.removeItem(R.id.menu_import_attest_key)
         }
         if (!viewModel.hasDeviceIds) {
             menu.removeItem(R.id.menu_include_props)
@@ -254,7 +260,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.p7b")
             }
             R.id.menu_load -> {
-                load.launch(arrayOf("application/*"))
+                load.launch("application/*")
+            }
+            R.id.menu_import_attest_key -> {
+                import.launch("text/xml")
             }
             R.id.menu_about -> {
                 showAboutDialog()
