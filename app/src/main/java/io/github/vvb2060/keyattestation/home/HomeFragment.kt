@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.R
@@ -77,6 +78,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         val context = view.context
 
         binding.list.borderVisibilityChangedListener = BorderView.OnBorderVisibilityChangedListener { top: Boolean, _: Boolean, _: Boolean, _: Boolean -> appActivity?.appBar?.setRaised(!top) }
+        binding.list.layoutManager = LinearLayoutManager(context)
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
 

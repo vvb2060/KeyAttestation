@@ -23,7 +23,6 @@
         app:borderTopDrawable="@null"
         app:borderTopVisibility="whenTop"
         app:fitsSystemWindowsInsets="top|bottom"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/home_header"
         tools:visibility="visible" />
 
