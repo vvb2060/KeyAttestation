@@ -1,13 +1,17 @@
 package io.github.vvb2060.keyattestation.keystore;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityThread;
 import android.app.Application;
 import android.app.Instrumentation;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
+import android.os.RemoteException;
 import android.security.keystore.AttestationUtils;
 import android.security.keystore.DeviceIdAttestationException;
 import android.security.keystore.KeyGenParameterSpec;
@@ -31,14 +35,19 @@ import java.util.Objects;
 import javax.security.auth.x500.X500Principal;
 
 import io.github.vvb2060.keyattestation.AppApplication;
+import io.github.vvb2060.keyattestation.BuildConfig;
+import rikka.shizuku.ShizukuApiConstants;
 
 public class AndroidKeyStore extends IAndroidKeyStore.Stub {
     private final KeyStore keyStore;
     private final KeyPairGenerator keyPairGenerator;
+    private int clientUid = -1;
 
     public AndroidKeyStore() throws Exception {
         if (Os.geteuid() < Process.FIRST_APPLICATION_UID) {
             fixEnv();
+            var pm = ActivityThread.currentApplication().getPackageManager();
+            clientUid = pm.getApplicationInfo(BuildConfig.APPLICATION_ID, 0).uid;
         }
         keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
@@ -87,6 +96,22 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
         var mInitialApplication = ActivityThread.class.getDeclaredField("mInitialApplication");
         mInitialApplication.setAccessible(true);
         mInitialApplication.set(activityThread, application);
+    }
+
+    @Override
+    @SuppressLint("RestrictedApi")
+    public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+        var callingUid = Binder.getCallingUid();
+        if (callingUid != clientUid
+                && callingUid != Process.SHELL_UID
+                && callingUid != Process.ROOT_UID
+                && callingUid != Process.SYSTEM_UID) {
+            return false;
+        }
+        if (code == ShizukuApiConstants.USER_SERVICE_TRANSACTION_destroy) {
+            System.exit(0);
+        }
+        return super.onTransact(code, data, reply, flags);
     }
 
     @Override
