@@ -5,8 +5,8 @@
     <string name="use_strongbox">Use StrongBox</string>
     <string name="use_attest_key">Use attest key</string>
     <string name="import_attest_key">Import attest key</string>
-    <string name="attest_device_props">Attest device model</string>
-    <string name="id_type_serial">Attest device serial number</string>
+    <string name="attest_device_props">Attest device props</string>
+    <string name="id_type_serial">Attest device serial</string>
     <string name="id_type_imei">Attest device IMEI</string>
     <string name="id_type_meid">Attest device MEID</string>
     <string name="include_unique_id">Include unique ID</string>
@@ -28,11 +28,11 @@
     <string name="unknown_root_cert">Unknown root certificate</string>
     <string name="unknown_root_cert_summary">Root certificate is not a known trusted certificate authority.</string>
     <string name="aosp_root_cert">AOSP software attestation root certificate</string>
-    <string name="aosp_root_cert_summary">Private key of attest key is well known, the certificate chain can be tampered with.</string>
+    <string name="aosp_root_cert_summary">Private key of attestation key is well known, the certificate chain can be tampered with.</string>
     <string name="google_root_cert">Google hardware attestation root certificate</string>
-    <string name="google_root_cert_summary">GMS compatible devices can use attest keys signed by Google.</string>
+    <string name="google_root_cert_summary">GMS compatible devices can use attestation key signed by Google.</string>
     <string name="google_root_cert_rkp">Google remote key provisioning</string>
-    <string name="google_root_cert_rkp_summary">Remotely provisioned attest keys have stronger security and higher availability.</string>
+    <string name="google_root_cert_rkp_summary">Remotely provisioned attestation key have stronger security and higher availability.</string>
     <string name="knox_root_cert">Samsung Knox attestation root certificate</string>
     <string name="knox_root_cert_summary">Knox attestation is signed using Samsung attestation key (SAK).</string>
     <string name="oem_root_cert">OEM root certificate</string>
@@ -53,8 +53,9 @@
     <string name="error_unknown">Unknown error</string>
     <string name="error_unavailable">Unable to attest</string>
     <string name="error_unavailable_summary">
-    The device does not support attestation or the factory provisioned attest key is lost, possibly due to an OEM misconfiguration or the end user writing to the persist partition.
-    It is recommended to try again after adjusting the menu options.
+    Attest failed, adjust options in the menu and try again.
+    A common reason for consistently failing to attest is the inability to use the factory provisioned attestation key,
+    possibly due to a misconfigured device or a corrupt persist partition.
     </string>
     <string name="error_cant_parse_cert">Unable to parse certificate</string>
     <string name="error_cant_parse_cert_summary">
@@ -66,34 +67,36 @@
     </string>
     <string name="error_deviceids_unavailable">Unable to attest device ids</string>
     <string name="error_deviceids_unavailable_summary">
-    This device is declared to have ID attestation support, but IDs do not exist, do not match, or the device can no longer attest its IDs.
+    This device is declared to have ID attestation support, but IDs do not exist, do not match,
+    or the device can no longer attest its IDs. Adjust options in the menu and try again.
     </string>
     <string name="error_out_of_keys">No remotely provisioned keys for attestation</string>
     <string name="error_out_of_keys_summary">
-    This device is not registered with the key provisioning server, or the server refuses key issuance.
+    This device is not registered with the key provisioning server, or the server permanently refuses to issue keys.
     </string>
     <string name="error_out_of_keys_transient">Currently no remotely provisioned keys for attestation</string>
     <string name="error_out_of_keys_transient_summary">
-    The pool of remotely provisioned keys has been exhausted, please try again with Internet or checking for system updates.
+    The key pool is exhausted, please retry after networking.
+    If the server temporarily refuses to issue keys, check for system updates.
     </string>
     <string name="error_unavailable_transient">Currently unable to attest</string>
     <string name="error_unavailable_transient_summary">
-    This issue is transient, try to reset in the menu, or check for system updates.
+    The problem is temporary, adjust options in the menu or try again later.
     </string>
     <string name="error_keys_not_provisioned">No attestation keys</string>
     <string name="error_keys_not_provisioned_summary">
     Unable to fetch remotely provisioned attestation keys, and no factory provisioned attestation keys.
     </string>
 
-    <string name="attestation" translatable="false">Attestation</string>
+    <string name="attestation">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>
     <string name="keymaster" translatable="false">Keymaster / KeyMint</string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the Keymaster or KeyMint hardware abstraction layer (HAL).]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Security level:</font><br>This data structure indicates the extent to which a software feature, such as a key pair, is protected based on its location within the device.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>The logic for creating and managing the feature is implemented in the Android system. For the purposes of creating and storing key pairs, this location is less secure than the TEE but is more secure than your app\'s process space.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>The logic for creating and managing the feature is implemented in secure hardware, such as a TEE. For the purposes of creating and storing key pairs, this location is more secure because secure hardware is highly resistant to remote compromise.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>The logic for creating and managing the feature is implemented in a dedicated <a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">hardware security module</a>. For the purposes of creating and storing key pairs, this location is more secure because it is highly resistant to remote compromise and hardware attacks against the module.</li></ul>]]></string>
     <string name="attestation_summary_format">Version: %1$s\nSecurity level: %2$s</string>
-    <string name="attestation_challenge" translatable="false">Attestation challenge</string>
+    <string name="attestation_challenge">Attestation challenge</string>
     <string name="attestation_challenge_description">Contains the challenge that was provided at key creation time. Check whether this value matches the value your server provided. Otherwise, your service might be vulnerable to replaying of old attestation certificates.</string>
-    <string name="unique_id" translatable="false">Unique ID</string>
+    <string name="unique_id">Unique ID</string>
     <string name="unique_id_description"><![CDATA[This value identifies the device—but only for a limited period of time. It is <a href="https://source.android.com/security/keystore/attestation#unique-id">computed</a> and is only used by system apps. In all other apps, uniqueId is empty.]]></string>
 
     <string name="empty">(empty)</string>
@@ -102,9 +105,9 @@
     <string name="security_level_strongbox">StrongBox</string>
 
     <string name="sw_enforced" translatable="false">SW</string>
-    <string name="sw_enforced_description"><![CDATA[This item is enforced by the Android system, not by the device\'s TEE.]]></string>
-    <string name="tee_enforced" translatable="false">TEE</string>
-    <string name="tee_enforced_description"><![CDATA[This item is enforced by the device\'s TEE.]]></string>
+    <string name="sw_enforced_description"><![CDATA[This item is enforced by the Android system, not by the device\'s hardware.]]></string>
+    <string name="tee_enforced" translatable="false">HW</string>
+    <string name="tee_enforced_description"><![CDATA[This item is enforced by the device\'s hardware.]]></string>
 
     <string name="authorization_list">Authorization list</string>
     <string name="authorization_list_purpose">Purpose</string>
@@ -133,16 +136,16 @@
     <string name="authorization_list_rootOfTrust">Root of trust</string>
     <string name="authorization_list_osVersion">OS version</string>
     <string name="authorization_list_osPatchLevel">OS patch level</string>
-    <string name="authorization_list_attestationApplicationId">Attestation application ID</string>
-    <string name="authorization_list_attestationIdBrand">Attestation ID brand</string>
-    <string name="authorization_list_attestationIdDevice">Attestation ID device</string>
-    <string name="authorization_list_attestationIdProduct">Attestation ID product</string>
-    <string name="authorization_list_attestationIdSerial">Attestation ID serial</string>
-    <string name="authorization_list_attestationIdImei">Attestation ID IMEI</string>
-    <string name="authorization_list_attestationIdSecondImei">Attestation ID second IMEI</string>
-    <string name="authorization_list_attestationIdMeid">Attestation ID MEID</string>
-    <string name="authorization_list_attestationIdManufacturer">Attestation ID manufacturer</string>
-    <string name="authorization_list_attestationIdModel">Attestation ID model</string>
+    <string name="authorization_list_attestationApplicationId">application ID</string>
+    <string name="authorization_list_attestationIdBrand">brand</string>
+    <string name="authorization_list_attestationIdDevice">device</string>
+    <string name="authorization_list_attestationIdProduct">product</string>
+    <string name="authorization_list_attestationIdSerial">serial</string>
+    <string name="authorization_list_attestationIdImei">IMEI</string>
+    <string name="authorization_list_attestationIdSecondImei">second IMEI</string>
+    <string name="authorization_list_attestationIdMeid">MEID</string>
+    <string name="authorization_list_attestationIdManufacturer">manufacturer</string>
+    <string name="authorization_list_attestationIdModel">model</string>
     <string name="authorization_list_vendorPatchLevel">Vendor patch level</string>
     <string name="authorization_list_bootPatchLevel">Boot patch level</string>
     <string name="authorization_list_mgfDigest">Rsa Oaep Mgf Digest</string>
@@ -252,13 +255,13 @@
     Provides the device\'s serial number. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    Provides the IMEI one of the radios on the device to attested key generation/import operations.  This field must be set only when requesting attestation of the device\'s identifiers.
+    Provides the IMEI one of the radios on the device to attested key generation/import operations.  This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
-    Provides an additional IMEI of one of the radios on the device to attested key generation/import operations.
+    Provides an additional IMEI of one of the radios on the device to attested key generation/import operations. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdMeid_description"><![CDATA[
-    Provides the MEIDs for all radios on the device. This field will only be set when requesting attestation of the device\'s identifiers.
+    Provides the MEIDs for all radios on the device. This field is set only when requesting attestation of the device\'s identifiers.
     ]]></string>
     <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
     Provides the device\'s manufacturer name, as returned by Build.MANUFACTURER in Android. This field is set only when requesting attestation of the device\'s identifiers.
@@ -288,7 +291,7 @@
     It is used in attestations produced by the IIdentityCredential HAL when that HAL attests to Credential Keys. IIdentityCredential produces KeyMint-style attestations.
     ]]></string>
 
-    <string name="knox" translatable="false">Samsung Knox Attestation</string>
+    <string name="knox">Samsung Knox Attestation</string>
     <string name="knox_description"><![CDATA[
     Samsung Knox Attestation is a feature that verifies a Samsung device’s data integrity by checking that the device isn’t rooted or running unofficial firmware.
     ]]></string>

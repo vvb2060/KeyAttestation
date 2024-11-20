@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">密钥认证</string>
     <string name="use_shizuku">使用 Shizuku</string>
-    <string name="use_strongbox">使用 StrongBox</string>
+    <string name="use_strongbox">使用安全模块</string>
     <string name="use_attest_key">使用认证密钥</string>
     <string name="import_attest_key">导入认证密钥</string>
     <string name="attest_device_props">认证设备型号</string>
@@ -18,32 +18,32 @@
     <string name="install_shizuku">安装 Shizuku 使用 ID 认证（%s）。</string>
     <string name="start_shizuku">Shizuku 未运行。</string>
 
-    <string name="bootloader_locked">Bootloader 已锁定</string>
+    <string name="bootloader_locked">引导加载程序已锁定</string>
     <string name="bootloader_user">信任根由最终用户设置</string>
-    <string name="bootloader_unlocked">Bootloader 已解锁</string>
-    <string name="bootloader_unknown">Bootloader 状态未知</string>
+    <string name="bootloader_unlocked">引导加载程序已解锁</string>
+    <string name="bootloader_unknown">引导加载程序状态未知</string>
     <string name="bootloader_summary_sw_level">该设备不支持硬件级别的密钥认证。</string>
     <string name="cert_chain_not_trusted">证书链不受信任</string>
     <string name="cert_chain_not_trusted_summary">证书链中有证书被吊销或签名验证失败。</string>
-    <string name="unknown_root_cert">由未知根证书签名</string>
+    <string name="unknown_root_cert">未知根证书</string>
     <string name="unknown_root_cert_summary">根证书不是已知可信的证书颁发机构。</string>
-    <string name="aosp_root_cert">由 AOSP 软件认证根证书签名</string>
+    <string name="aosp_root_cert">AOSP 软件认证根证书</string>
     <string name="aosp_root_cert_summary">认证密钥的私钥众所周知，证书链可以被篡改。</string>
-    <string name="google_root_cert">由 Google 硬件认证根证书签名</string>
+    <string name="google_root_cert">Google 硬件认证根证书</string>
     <string name="google_root_cert_summary">兼容 GMS 的设备可以使用由 Google 签名的认证密钥。</string>
-    <string name="google_root_cert_rkp">由 Google 远程配置的密钥签名</string>
-    <string name="google_root_cert_rkp_summary">远程提供的认证密钥有更强的安全性和更高的可用性。</string>
-    <string name="knox_root_cert">由三星 Knox 认证根证书签名</string>
+    <string name="google_root_cert_rkp">Google 远程密钥配置</string>
+    <string name="google_root_cert_rkp_summary">远程配置的认证密钥有更强的安全性和更高的可用性。</string>
+    <string name="knox_root_cert">三星 Knox 认证根证书</string>
     <string name="knox_root_cert_summary">Knox 认证使用三星认证密钥（SAK）签名。</string>
-    <string name="oem_root_cert">由设备制造商的根证书签名</string>
+    <string name="oem_root_cert">设备制造商的根证书</string>
     <string name="oem_root_cert_summary">此设备信任该根证书，但它可能不被其它人信任。</string>
 
     <string name="cert_chain">证书链</string>
     <string name="cert_chain_description">证书链是用于验证密钥的证书列表。从该密钥的证书开始，每个证书均由链中下一个证书签名，到根证书为止。认证的可信度取决于证书链的根证书。</string>
     <string name="cert_info">证书信息</string>
     <string name="cert_subject">使用者：</string>
-    <string name="cert_not_before">有效期从：</string>
-    <string name="cert_not_after">有效期至：</string>
+    <string name="cert_not_before">不早于：</string>
+    <string name="cert_not_after">不晚于：</string>
     <string name="cert_error_sign">签名错误：</string>
     <string name="cert_error_revoked">已吊销：</string>
     <string name="cert_error_expired">已过期：</string>
@@ -53,51 +53,100 @@
     <string name="error_unknown">未知错误</string>
     <string name="error_unavailable">无法认证</string>
     <string name="error_unavailable_summary">
-    设备不支持认证或工厂提供的认证密钥丢失，可能因为 OEM 配置有误或用户不当写入 persist 分区。建议在菜单调整选项后再试。
+    认证出现错误，在菜单调整选项后再试。始终无法认证的常见原因是无法使用工厂配置的认证密钥，
+    可能因为设备配置有误或 persist 分区损坏。
     </string>
     <string name="error_cant_parse_cert">无法解析证书</string>
     <string name="error_cant_parse_cert_summary">
     证书格式错误或存在尚未支持的功能。
     </string>
-    <string name="error_strongbox_unavailable">StrongBox 不可用</string>
+    <string name="error_strongbox_unavailable">安全模块不可用</string>
     <string name="error_strongbox_unavailable_summary">
-    设备声明具有 StrongBox 支持，但实际上不可用。
+    设备声明支持安全模块，但实际上不可用。
     </string>
     <string name="error_deviceids_unavailable">无法认证设备 ID</string>
     <string name="error_deviceids_unavailable_summary">
-    设备声明支持 ID 认证，但 ID 不存在，不匹配或设备已无法再证明其 ID。
+    设备声明支持 ID 认证，但有 ID 不存在，不匹配或设备已无法再证明其 ID。在菜单调整选项后再试。
     </string>
-    <string name="error_out_of_keys">没有远程提供的认证密钥</string>
+    <string name="error_out_of_keys">没有远程配置的认证密钥</string>
     <string name="error_out_of_keys_summary">
-    设备未向密钥提供服务器注册，或者服务器拒绝颁发密钥。
+    设备未向密钥配置服务器注册，或者服务器永久拒绝颁发密钥。
     </string>
-    <string name="error_out_of_keys_transient">暂无远程提供的认证密钥</string>
+    <string name="error_out_of_keys_transient">暂无远程配置的认证密钥</string>
     <string name="error_out_of_keys_transient_summary">
-    远程提供的密钥池已用完，请在联网环境下重试或检查系统更新。
+    密钥池已用完，请在联网环境下重试。如果服务器暂时拒绝颁发密钥，请检查系统更新。
     </string>
     <string name="error_unavailable_transient">暂时无法认证</string>
     <string name="error_unavailable_transient_summary">
-    问题是暂时的，尝试在菜单重置，或者检查系统更新。
+    问题是暂时的，尝试在菜单调整选项，或者稍后再试。
     </string>
     <string name="error_keys_not_provisioned">没有认证密钥</string>
     <string name="error_keys_not_provisioned_summary">
     无法获取远程配置的认证密钥，也没有工厂配置的认证密钥。
     </string>
 
+    <string name="attestation">认证</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 或 KeyMint 硬件抽象层 (HAL) 的版本。]]></string>
-    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>用于创建和管理功能的逻辑在 Android 系统中实现。如果用于创建和存储密钥对，此位置没有可信环境安全，但比应用的进程空间安全。</li><li gap="8sp"><font face="sans-serif-medium">可信环境</font><br>用于创建和管理功能的逻辑在可信执行环境中实现。如果用于创建和存储密钥对，此位置比较安全，因为安全硬件更能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">保险箱</font><br>用于创建和管理功能的逻辑在专用<a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">硬件安全模块</a>中实现。对于创建和存储密钥对，此位置更安全，因为它更能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
+    <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">安全等级：</font><br>表示功能受保护的程度基于其在设备中的位置。<p><ul><li gap="8sp"><font face="sans-serif-medium">软件</font><br>用于创建和管理功能的逻辑在 Android 系统中实现。如果用于创建和存储密钥对，此位置没有可信环境安全，但比应用的进程空间安全。</li><li gap="8sp"><font face="sans-serif-medium">可信环境</font><br>用于创建和管理功能的逻辑在可信执行环境中实现。如果用于创建和存储密钥对，此位置比较安全，因为安全硬件更能抵御远程攻击。</li><li gap="8sp"><font face="sans-serif-medium">安全模块</font><br>用于创建和管理功能的逻辑在专用<a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">硬件安全模块</a>中实现。对于创建和存储密钥对，此位置更安全，因为它更能抵御远程攻击和针对模块的硬件攻击。</li></ul>]]></string>
     <string name="attestation_summary_format">版本：%1$s\n安全等级：%2$s</string>
+    <string name="attestation_challenge">认证质询</string>
     <string name="attestation_challenge_description">包含创建密钥时提供的质询。检查此值是否与您的服务器提供的值匹配。否则，您的服务可能容易受到旧认证证书重放的攻击。</string>
-    <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过<a href="https://source.android.com/security/keystore/attestation#unique-id">计算</a>得出，而且只能由系统应用使用。在所有其他应用中，uniqueId 为空。]]></string>
+    <string name="unique_id">唯一 ID</string>
+    <string name="unique_id_description"><![CDATA[此值用于标识设备，但只能在限定时间段内使用。此值通过<a href="https://source.android.com/security/keystore/attestation#unique-id">计算</a>得出，而且只能由系统应用使用。在所有其他应用中，唯一 ID 为空。]]></string>
 
     <string name="empty">（空）</string>
     <string name="security_level_software">软件</string>
     <string name="security_level_trusted_environment">可信环境</string>
-    <string name="security_level_strongbox">保险箱</string>
+    <string name="security_level_strongbox">安全模块</string>
 
-    <string name="sw_enforced_description"><![CDATA[此项目由 Android 系统（而非设备的 TEE）强制执行。]]></string>
-    <string name="tee_enforced_description"><![CDATA[此项目由设备的 TEE 强制执行。]]></string>
+    <string name="sw_enforced_description"><![CDATA[此项目由 Android 系统强制执行，而非设备的硬件。]]></string>
+    <string name="tee_enforced_description"><![CDATA[此项目由设备的硬件强制执行。]]></string>
+
+    <string name="authorization_list">授权列表</string>
+    <string name="authorization_list_purpose">用途</string>
+    <string name="authorization_list_algorithm">算法</string>
+    <string name="authorization_list_keySize">密钥大小</string>
+    <string name="authorization_list_digest">摘要</string>
+    <string name="authorization_list_padding">填充</string>
+    <string name="authorization_list_ecCurve">椭圆曲线</string>
+    <string name="authorization_list_rsaPublicExponent">RSA 公钥指数</string>
+    <string name="authorization_list_rollbackResistance">抗回滚</string>
+    <string name="authorization_list_activeDateTime">激活时间</string>
+    <string name="authorization_list_originationExpireDateTime">生成失效时间</string>
+    <string name="authorization_list_usageExpireDateTime">使用失效时间</string>
+    <string name="authorization_list_noAuthRequired">不需要身份验证</string>
+    <string name="authorization_list_userAuthType">身份验证类型</string>
+    <string name="authorization_list_authTimeout">身份验证超时</string>
+    <string name="authorization_list_allowWhileOnBody">贴身时允许</string>
+    <string name="authorization_list_trustedUserPresenceRequired">需要用户存在证明</string>
+    <string name="authorization_list_trustedConfirmationRequired">需要确认证明</string>
+    <string name="authorization_list_unlockedDeviceRequired">需要已解锁设备</string>
+    <string name="authorization_list_allApplications">全部应用</string>
+    <string name="authorization_list_applicationId">应用 ID</string>
+    <string name="authorization_list_creationDateTime">创建时间</string>
+    <string name="authorization_list_origin">来源</string>
+    <string name="authorization_list_rollbackResistant">抗回滚</string>
+    <string name="authorization_list_rootOfTrust">信任根</string>
+    <string name="authorization_list_osVersion">系统版本</string>
+    <string name="authorization_list_osPatchLevel">系统补丁版本</string>
+    <string name="authorization_list_attestationApplicationId">应用 ID</string>
+    <string name="authorization_list_attestationIdBrand">品牌</string>
+    <string name="authorization_list_attestationIdDevice">设备</string>
+    <string name="authorization_list_attestationIdProduct">产品</string>
+    <string name="authorization_list_attestationIdSerial">序列号</string>
+    <string name="authorization_list_attestationIdImei">IMEI</string>
+    <string name="authorization_list_attestationIdSecondImei">第二 IMEI</string>
+    <string name="authorization_list_attestationIdMeid">MEID</string>
+    <string name="authorization_list_attestationIdManufacturer">制造商</string>
+    <string name="authorization_list_attestationIdModel">型号</string>
+    <string name="authorization_list_vendorPatchLevel">Vendor 补丁版本</string>
+    <string name="authorization_list_bootPatchLevel">Boot 补丁版本</string>
+    <string name="authorization_list_mgfDigest">Rsa Oaep Mgf 摘要</string>
+    <string name="authorization_list_earlyBootOnly">仅早期启动</string>
+    <string name="authorization_list_usageCountLimit">使用次数限制</string>
+    <string name="authorization_list_deviceUniqueAttestation">设备唯一认证</string>
+    <string name="authorization_list_identityCredentialKey">身份凭据密钥</string>
 
     <string name="authorization_list_description"><![CDATA[
     此数据结构包含密钥对的属性本身，如 Keymaster 或 KeyMint 硬件抽象层 (HAL) 中所定义。将这些值与设备的当前状态或一组预期值进行比较，以验证密钥对是否仍适用于您的应用。
@@ -173,7 +222,7 @@
     ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
     这个值集合可以定义与设备状态有关的密钥信息。<br/><p>
-    verifiedBootKey: <br/>验证系统映像的密钥的安全哈希值。<br/><br/>
+    verifiedBootKey: <br/>验证系统映像的密钥的安全散列值。<br/><br/>
     deviceLocked: <br/>在设备的引导加载程序处于锁定状态时为 true，这将启用启动时验证检查，并防止将未签名的设备映像刷写到设备上。<br/><br/>
     verifiedBootState: <br/>此数据结构提供设备的当前启动状态，表示在设备完成启动后为用户和应用提供的保护级别。<br/><br/>
     verifiedBootHash: <br/>受启动时验证保护的所有数据的摘要。对于使用 Android 启动时验证功能实现（针对启动时验证功能）的设备，此值包含 VBMeta 结构或启动时验证元数据结构的摘要。
@@ -200,10 +249,13 @@
     提供设备的序列号。仅在请求认证该设备的标识符时才会设置此字段。
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    为设备上的所有无线装置提供 IMEI。仅在请求认证该设备的标识符时才会设置此字段。
+    提供设备的无线装置 IMEI。仅在请求认证该设备的标识符时才会设置此字段。
+    ]]></string>
+    <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
+    提供设备的无线装置附加 IMEI。仅在请求认证该设备的标识符时才会设置此字段。
     ]]></string>
     <string name="authorization_list_attestationIdMeid_description"><![CDATA[
-    为设备上的所有无线装置提供 MEID。仅在请求认证该设备的标识符时才会设置此字段。
+    提供设备的无线装置 MEID。仅在请求认证该设备的标识符时才会设置此字段。
     ]]></string>
     <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
     提供设备的制造商名称（由 Android 中的 Build.MANUFACTURER 返回）。仅在请求认证该设备的标识符时才会设置此字段。
@@ -217,10 +269,27 @@
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
     规定为了使用此密钥而必须在设备上安装的内核映像安全补序级别。此值以 YYYYMMDD 的形式显示，表示系统安全补丁的日期。例如，如果密钥在 Android 设备上生成，且相应设备安装了系统于 2018 年 8 月 5 日提供的安全补丁，其值将表示为 20180805。
     ]]></string>
+    <string name="authorization_list_mgfDigest_description"><![CDATA[
+    指定可与带有 OAEP 填充的 RSA 加密/解密一起使用的 MGF1 摘要算法。可能的值由 Digest 枚举定义。
+    ]]></string>
+    <string name="authorization_list_earlyBootOnly_description"><![CDATA[
+    标记为 EARLY_BOOT_ONLY 的密钥只能在早期启动时使用，直到调用 IKeyMintDevice::earlyBootEnded() 为止。
+    ]]></string>
+    <string name="authorization_list_usageCountLimit_description"><![CDATA[
+    指定密钥的使用次数。这可用于限制密钥的使用。该值是一个 32 位整数，代表当前剩余的尝试次数。
+    ]]></string>
+    <string name="authorization_list_deviceUniqueAttestation_description"><![CDATA[
+    它表示请求使用设备唯一密钥而非批量密钥进行验证。使用设备唯一密钥时，返回的链应包含两个或三个证书。
+    ]]></string>
+    <string name="authorization_list_identityCredentialKey_description"><![CDATA[
+    当 IIdentityCredential HAL 对凭据密钥进行认证时，它将被用于该 HAL 生成的认证中。IIdentityCredential 生成 KeyMint 样式的证明。
+    ]]></string>
 
+    <string name="knox">三星 Knox 认证</string>
     <string name="knox_description"><![CDATA[
     三星 Knox 认证通过检查设备是否被 Root 或运行非官方固件来验证三星设备的数据完整性。
     ]]></string>
+    <string name="knox_integrity">完整性状态</string>
     <string name="knox_integrity_description"><![CDATA[
     安全世界中的密钥管理可信应用（TA）收集这些数据：
     <ul>
@@ -229,6 +298,7 @@
     <li gap="8sp">硬件保险丝读数显示设备上是否加载过不受信任的固件。</li>
     </ul>
     ]]></string>
+    <string name="knox_record_hash">认证记录散列</string>
     <string name="knox_record_hash_description"><![CDATA[
     向 ICCC 请求完整性状态数据的 TA 的 SHA256 散列。
     ]]></string>
