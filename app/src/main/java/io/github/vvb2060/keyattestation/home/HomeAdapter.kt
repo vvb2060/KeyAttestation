@@ -59,6 +59,13 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                         R.drawable.ic_trustworthy_24,
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
+            CertificateInfo.KEY_GOOGLE_RKP -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.google_root_cert_rkp,
+                        R.string.google_root_cert_rkp_summary,
+                        R.drawable.ic_trustworthy_24,
+                        rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
+            }
             CertificateInfo.KEY_KNOX -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.knox_root_cert,

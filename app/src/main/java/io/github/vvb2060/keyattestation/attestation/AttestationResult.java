@@ -52,6 +52,17 @@ public class AttestationResult {
         } else {
             throw new AttestationException(CODE_CANT_PARSE_CERT, info.getCertException());
         }
+        if (result.status == CertificateInfo.KEY_GOOGLE) {
+            for (int i = 1; i < certs.size(); i++) {
+                if (certs.get(i).getCert().getSubjectX500Principal().getName().contains("Google LLC")) {
+                    continue;
+                }
+                if (certs.get(i).getCertsIssued() != null) {
+                    result.status = CertificateInfo.KEY_GOOGLE_RKP;
+                }
+                break;
+            }
+        }
         return result;
     }
 }

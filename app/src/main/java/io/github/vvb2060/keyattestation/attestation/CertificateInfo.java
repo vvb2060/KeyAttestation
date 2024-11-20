@@ -31,8 +31,9 @@ public class CertificateInfo {
     public static final int KEY_UNKNOWN = 0;
     public static final int KEY_AOSP = 1;
     public static final int KEY_GOOGLE = 2;
-    public static final int KEY_KNOX = 3;
-    public static final int KEY_OEM = 4;
+    public static final int KEY_GOOGLE_RKP = 3;
+    public static final int KEY_KNOX = 4;
+    public static final int KEY_OEM = 5;
 
     public static final int CERT_UNKNOWN = 0;
     public static final int CERT_SIGN = 1;
