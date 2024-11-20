@@ -78,6 +78,10 @@
     <string name="error_unavailable_transient_summary">
     This issue is transient, try to reset in the menu, or check for system updates.
     </string>
+    <string name="error_keys_not_provisioned">No attestation keys</string>
+    <string name="error_keys_not_provisioned_summary">
+    Unable to fetch remotely provisioned attestation keys, and no factory provisioned attestation keys.
+    </string>
 
     <string name="attestation" translatable="false">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>

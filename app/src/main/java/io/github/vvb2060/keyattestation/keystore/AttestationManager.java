@@ -2,6 +2,7 @@ package io.github.vvb2060.keyattestation.keystore;
 
 import static android.security.KeyStoreException.ERROR_ATTESTATION_KEYS_UNAVAILABLE;
 import static android.security.KeyStoreException.ERROR_ID_ATTESTATION_FAILURE;
+import static android.security.KeyStoreException.ERROR_KEYMINT_FAILURE;
 import static io.github.vvb2060.keyattestation.lang.AttestationException.*;
 
 import android.annotation.SuppressLint;
@@ -95,11 +96,17 @@ public final class AttestationManager {
         int code = exception.getNumericErrorCode();
         if (code == ERROR_ID_ATTESTATION_FAILURE) {
             return new AttestationException(CODE_DEVICEIDS_UNAVAILABLE, e);
-        } else if (code == ERROR_ATTESTATION_KEYS_UNAVAILABLE) {
+        }
+        if (code >= ERROR_ATTESTATION_KEYS_UNAVAILABLE) {
             if (exception.isTransientFailure()) {
                 return new AttestationException(CODE_OUT_OF_KEYS_TRANSIENT, e);
             } else {
                 return new AttestationException(CODE_OUT_OF_KEYS, e);
+            }
+        }
+        if (code == ERROR_KEYMINT_FAILURE) {
+            if (exception.toString().contains("ATTESTATION_KEYS_NOT_PROVISIONED")) {
+                return new AttestationException(CODE_KEYS_NOT_PROVISIONED, e);
             }
         }
         if (exception.isTransientFailure()) {

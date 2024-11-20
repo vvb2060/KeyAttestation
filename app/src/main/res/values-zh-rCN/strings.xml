@@ -77,6 +77,10 @@
     <string name="error_unavailable_transient_summary">
     问题是暂时的，尝试在菜单重置，或者检查系统更新。
     </string>
+    <string name="error_keys_not_provisioned">没有认证密钥</string>
+    <string name="error_keys_not_provisioned_summary">
+    无法获取远程配置的认证密钥，也没有工厂配置的认证密钥。
+    </string>
 
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>Keymaster 或 KeyMint 硬件抽象层 (HAL) 的版本。]]></string>

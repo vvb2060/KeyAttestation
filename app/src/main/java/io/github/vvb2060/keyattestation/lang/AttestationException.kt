@@ -13,6 +13,7 @@ class AttestationException(code: Int, cause: Throwable) : RuntimeException(cause
         const val CODE_OUT_OF_KEYS = 5
         const val CODE_OUT_OF_KEYS_TRANSIENT = 6
         const val CODE_UNAVAILABLE_TRANSIENT = 7
+        const val CODE_KEYS_NOT_PROVISIONED = 8
     }
 
     val titleResId: Int = when (code) {
@@ -23,6 +24,7 @@ class AttestationException(code: Int, cause: Throwable) : RuntimeException(cause
         CODE_OUT_OF_KEYS -> R.string.error_out_of_keys
         CODE_OUT_OF_KEYS_TRANSIENT -> R.string.error_out_of_keys_transient
         CODE_UNAVAILABLE_TRANSIENT -> R.string.error_unavailable_transient
+        CODE_KEYS_NOT_PROVISIONED -> R.string.error_keys_not_provisioned
         else -> R.string.error_unknown
     }
 
@@ -34,6 +36,7 @@ class AttestationException(code: Int, cause: Throwable) : RuntimeException(cause
         CODE_OUT_OF_KEYS -> R.string.error_out_of_keys_summary
         CODE_OUT_OF_KEYS_TRANSIENT -> R.string.error_out_of_keys_transient_summary
         CODE_UNAVAILABLE_TRANSIENT -> R.string.error_unavailable_transient_summary
+        CODE_KEYS_NOT_PROVISIONED -> R.string.error_keys_not_provisioned_summary
         else -> R.string.error_unknown
     }
 
