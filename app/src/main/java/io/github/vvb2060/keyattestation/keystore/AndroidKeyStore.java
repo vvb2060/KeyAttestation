@@ -93,6 +93,7 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
         var makeApplication = loadedApk.getClass().getDeclaredMethod("makeApplication",
                 boolean.class, Instrumentation.class);
         var application = (Application) makeApplication.invoke(loadedApk, true, null);
+        ContextHook.hook(application);
         var mInitialApplication = ActivityThread.class.getDeclaredField("mInitialApplication");
         mInitialApplication.setAccessible(true);
         mInitialApplication.set(activityThread, application);
