@@ -1,4 +1,4 @@
-package io.github.vvb2060.keyattestation.keystore;
+package io.github.vvb2060.keyattestation.repository;
 
 import static android.security.KeyStoreException.ERROR_ATTESTATION_KEYS_UNAVAILABLE;
 import static android.security.KeyStoreException.ERROR_ID_ATTESTATION_FAILURE;
@@ -6,9 +6,9 @@ import static android.security.KeyStoreException.ERROR_KEYMINT_FAILURE;
 import static io.github.vvb2060.keyattestation.lang.AttestationException.*;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.net.Uri;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
 import android.security.KeyStoreException;
 import android.security.keystore.DeviceIdAttestationException;
 import android.security.keystore.StrongBoxUnavailableException;
@@ -17,10 +17,10 @@ import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.security.ProviderException;
-import java.security.cert.CertPath;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -28,20 +28,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.vvb2060.keyattestation.AppApplication;
-import io.github.vvb2060.keyattestation.attestation.AttestationResult;
-import io.github.vvb2060.keyattestation.attestation.CertificateInfo;
+import io.github.vvb2060.keyattestation.keystore.AndroidKeyStore;
+import io.github.vvb2060.keyattestation.keystore.IAndroidKeyStore;
+import io.github.vvb2060.keyattestation.keystore.KeyStoreManager;
 import io.github.vvb2060.keyattestation.lang.AttestationException;
 import io.github.vvb2060.keyattestation.util.Resource;
 
-public final class AttestationManager {
+public class AttestationRepository {
     private final AndroidKeyStore localKeyStore;
-    private final CertificateFactory certificateFactory;
+    private final CertificateFactory factory;
     private final List<X509Certificate> currentCerts;
     private IAndroidKeyStore keyStore;
 
-    public AttestationManager() throws Exception {
+    public AttestationRepository() throws Exception {
         localKeyStore = new AndroidKeyStore();
-        certificateFactory = CertificateFactory.getInstance("X.509");
+        factory = CertificateFactory.getInstance("X.509");
         currentCerts = new ArrayList<>();
         keyStore = localKeyStore;
     }
@@ -59,8 +60,20 @@ public final class AttestationManager {
     }
 
     @SuppressWarnings("unchecked")
-    private void addToCurrentCerts(ByteArrayInputStream in) throws CertificateException {
-        var list = (List<X509Certificate>) certificateFactory.generateCertificates(in);
+    private void generateCertificates(InputStream in) throws CertificateException {
+        var list = (List<X509Certificate>) factory.generateCertificates(in);
+        if (list.isEmpty()) {
+            throw new CertificateException("No certificate");
+        }
+        currentCerts.addAll(list);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void generateCertPath(InputStream in) throws CertificateException {
+        var list = (List<X509Certificate>) factory.generateCertPath(in).getCertificates();
+        if (list.isEmpty()) {
+            throw new CertificateException("No certificate");
+        }
         currentCerts.addAll(list);
     }
 
@@ -80,7 +93,7 @@ public final class AttestationManager {
         var data = keyStore.attestDeviceIds(idFlags);
         var in = new ByteArrayInputStream(data);
         if (in.read() == 1) {
-            addToCurrentCerts(in);
+            generateCertificates(in);
         } else {
             try (var it = new ObjectInputStream((in))) {
                 var exception = (Exception) it.readObject();
@@ -116,15 +129,23 @@ public final class AttestationManager {
         }
     }
 
-    private AttestationResult doAttestation(boolean useAttestKey, boolean useStrongBox,
-                                            boolean includeProps, boolean uniqueIdIncluded,
-                                            int idFlags) throws AttestationException {
+    private void getCertChain(String alias) throws RemoteException, CertificateException {
+        var certChain = keyStore.getCertificateChain(alias);
+        if (certChain == null) {
+            throw new ProviderException("Unable to get certificate chain");
+        }
+        generateCertificates(new ByteArrayInputStream(certChain));
+    }
+
+    private void doAttestation(boolean useAttestKey, boolean useStrongBox,
+                               boolean includeProps, boolean uniqueIdIncluded,
+                               int idFlags) throws AttestationException {
         var alias = useStrongBox ? AppApplication.TAG + "_strongbox" : AppApplication.TAG;
         var attestKeyAlias = useAttestKey ? alias + "_persistent" : null;
         try {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && idFlags != 0) {
                 attestDeviceIds(idFlags);
-                return CertificateInfo.parseCertificateChain(currentCerts);
+                return;
             }
 
             if (useAttestKey && !keyStore.containsAlias(attestKeyAlias)) {
@@ -134,17 +155,10 @@ public final class AttestationManager {
             generateKeyPair(alias, attestKeyAlias, useStrongBox,
                     includeProps, uniqueIdIncluded, idFlags);
 
-            var certChain = keyStore.getCertificateChain(alias);
-            if (certChain == null)
-                throw new CertificateException("Unable to get certificate chain");
-            addToCurrentCerts(new ByteArrayInputStream(certChain));
+            getCertChain(alias);
             if (useAttestKey) {
-                var persistChain = keyStore.getCertificateChain(attestKeyAlias);
-                if (persistChain == null)
-                    throw new CertificateException("Unable to get certificate chain");
-                addToCurrentCerts(new ByteArrayInputStream(persistChain));
+                getCertChain(attestKeyAlias);
             }
-            return CertificateInfo.parseCertificateChain(currentCerts);
         } catch (ProviderException e) {
             var cause = e.getCause();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
@@ -166,15 +180,14 @@ public final class AttestationManager {
         }
     }
 
-    public Resource<AttestationResult> attest(boolean reset, boolean useAttestKey,
-                                              boolean useStrongBox, boolean includeProps,
-                                              boolean uniqueIdIncluded, int idFlags) {
+    public Resource<AttestationData> attest(boolean reset, boolean useAttestKey,
+                                            boolean useStrongBox, boolean includeProps,
+                                            boolean uniqueIdIncluded, int idFlags) {
         currentCerts.clear();
         try {
             if (reset) keyStore.deleteAllEntry();
-            var attestationResult = doAttestation(useAttestKey, useStrongBox, includeProps,
-                    uniqueIdIncluded, idFlags);
-            return Resource.Companion.success(attestationResult);
+            doAttestation(useAttestKey, useStrongBox, includeProps, uniqueIdIncluded, idFlags);
+            return Resource.Companion.success(AttestationData.parseCertificateChain(currentCerts));
         } catch (Exception e) {
             var cause = e instanceof AttestationException ? e.getCause() : e;
             Log.w(AppApplication.TAG, "Do attestation error.", cause);
@@ -187,20 +200,22 @@ public final class AttestationManager {
         }
     }
 
-    public Resource<AttestationResult> loadCerts(ContentResolver cr, Uri uri) {
+    public Resource<AttestationData> loadCerts(ParcelFileDescriptor pfd) {
         currentCerts.clear();
         try {
-            CertPath certPath;
-            try {
-                try (var it = cr.openInputStream(uri)) {
-                    certPath = certificateFactory.generateCertPath(it, "PKCS7");
-                }
-            } catch (CertificateException e) {
-                try (var it = cr.openInputStream(uri)) {
-                    certPath = certificateFactory.generateCertPath(it);
+            AttestationData data;
+            try (var in = new ParcelFileDescriptor.AutoCloseInputStream(pfd);
+                 var channel = in.getChannel()) {
+                try {
+                    generateCertificates(in);
+                    data = AttestationData.parseCertificateChain(currentCerts);
+                } catch (CertificateException e) {
+                    channel.position(0);
+                    generateCertPath(in);
+                    data = AttestationData.parseCertificateChain(currentCerts);
                 }
             }
-            return Resource.Companion.success(CertificateInfo.parseCertificateChain(certPath));
+            return Resource.Companion.success(data);
         } catch (Exception e) {
             var cause = e instanceof AttestationException ? e.getCause() : e;
             Log.w(AppApplication.TAG, "Load attestation error.", cause);
@@ -215,19 +230,14 @@ public final class AttestationManager {
         }
     }
 
-    public void saveCerts(ContentResolver cr, Uri uri) throws Exception {
-        var certPath = certificateFactory.generateCertPath(currentCerts);
-        try (var out = cr.openOutputStream(uri)) {
-            if (out == null) throw new IOException("openOutputStream failed: " + uri);
-            out.write(certPath.getEncoded("PKCS7"));
-        }
+    public void saveCerts(OutputStream out) throws Exception {
+        var certPath = factory.generateCertPath(currentCerts);
+        out.write(certPath.getEncoded("PKCS7"));
     }
 
-    public void importKeyBox(boolean useStrongBox, ContentResolver cr, Uri uri) throws Exception {
+    public void importKeyBox(boolean useStrongBox, ParcelFileDescriptor pfd) throws Exception {
         var base = useStrongBox ? AppApplication.TAG + "_strongbox" : AppApplication.TAG;
         var alias = base + "_persistent";
-        try (var pfd = cr.openFileDescriptor(uri, "r")) {
-            keyStore.importKeyBox(alias, useStrongBox, pfd);
-        }
+        keyStore.importKeyBox(alias, useStrongBox, pfd);
     }
 }

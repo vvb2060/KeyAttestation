@@ -4,18 +4,17 @@ import android.content.res.ColorStateList
 import android.view.View
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
-import io.github.vvb2060.keyattestation.attestation.AttestationResult
+import io.github.vvb2060.keyattestation.repository.AttestationData
 import io.github.vvb2060.keyattestation.attestation.RootOfTrust
 import io.github.vvb2060.keyattestation.databinding.HomeHeaderBinding
 import rikka.core.res.resolveColor
-import rikka.recyclerview.BaseViewHolder.Creator
 
 class BootStateViewHolder(itemView: View, binding: HomeHeaderBinding) :
-        HomeViewHolder<AttestationResult, HomeHeaderBinding>(itemView, binding) {
+        HomeViewHolder<AttestationData, HomeHeaderBinding>(itemView, binding) {
 
     companion object {
 
-        val CREATOR = Creator<AttestationResult> { inflater, parent ->
+        val CREATOR = Creator<AttestationData> { inflater, parent ->
             val binding = HomeHeaderBinding.inflate(inflater, parent, false)
             BootStateViewHolder(binding.root, binding)
         }

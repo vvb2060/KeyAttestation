@@ -2,28 +2,45 @@ package io.github.vvb2060.keyattestation.home
 
 import android.app.admin.DevicePolicyManager
 import android.content.ContentResolver
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.vvb2060.keyattestation.AppApplication
-import io.github.vvb2060.keyattestation.attestation.AttestationResult
-import io.github.vvb2060.keyattestation.keystore.AttestationManager
+import io.github.vvb2060.keyattestation.repository.AttestationData
+import io.github.vvb2060.keyattestation.repository.AttestationRepository
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import io.github.vvb2060.keyattestation.util.Resource
 import rikka.shizuku.Shizuku
 
-class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : ViewModel() {
+class HomeViewModel(
+        pm: PackageManager,
+        private val cr: ContentResolver,
+        private val sp: SharedPreferences,
+) : ViewModel() {
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val app = this[APPLICATION_KEY]!!
+                val sp = app.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                HomeViewModel(app.packageManager, app.contentResolver, sp)
+            }
+        }
+    }
 
-    private val attestationManager = AttestationManager()
-    private val attestationResult = MutableLiveData<Resource<AttestationResult>>()
+    private val attestationRepository = AttestationRepository()
+    private val attestationData = MutableLiveData<Resource<AttestationData>>()
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
@@ -52,7 +69,7 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
     var preferShizuku = false
         set(value) {
             field = value
-            attestationManager.useRemoteKeyStore(value)
+            attestationRepository.useRemoteKeyStore(value)
         }
 
     var preferIdAttestationSerial = sp.getBoolean("prefer_id_attestation_serial", true)
@@ -91,12 +108,13 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
         load()
     }
 
-    fun hasCertificates() = attestationManager.hasCertificates()
+    fun hasCertificates() = attestationRepository.hasCertificates()
 
-    fun getAttestationResult(): LiveData<Resource<AttestationResult>> = attestationResult
+    fun getAttestationData(): LiveData<Resource<AttestationData>> = attestationData
 
-    fun save(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
-        if (uri == null || !attestationManager.hasCertificates()) return@execute
+    fun save(uri: Uri?) = AppApplication.executor.execute {
+        if (uri == null || !attestationRepository.hasCertificates()) return@execute
+
         var name = uri.toString()
         val projection = arrayOf(OpenableColumns.DISPLAY_NAME)
         cr.query(uri, projection, null, null, null)?.use { cursor ->
@@ -105,28 +123,32 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
                 name = cursor.getString(displayNameColumn)
             }
         }
+
         try {
-            attestationManager.saveCerts(cr, uri)
-            AppApplication.mainHandler.post {
-                Toast.makeText(AppApplication.app, name, Toast.LENGTH_SHORT).show()
+            cr.openOutputStream(uri).use {
+                attestationRepository.saveCerts(it)
             }
+            AppApplication.toast(name)
         } catch (e: Exception) {
             Log.e(AppApplication.TAG, "save: ", e)
-            AppApplication.mainHandler.post {
-                Toast.makeText(AppApplication.app, e.message, Toast.LENGTH_LONG).show()
-            }
+            AppApplication.toast(e.message)
         }
     }
 
-    fun load(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
+    fun load(uri: Uri?) = AppApplication.executor.execute {
         if (uri == null) return@execute
-        attestationResult.postValue(Resource.loading(null))
-        val result = attestationManager.loadCerts(cr, uri)
-        attestationResult.postValue(result)
+
+        attestationData.postValue(Resource.loading(null))
+
+        val result = cr.openFileDescriptor(uri, "r").use {
+            attestationRepository.loadCerts(it)
+        }
+
+        attestationData.postValue(result)
     }
 
     fun load(reset: Boolean = false) = AppApplication.executor.execute {
-        attestationResult.postValue(Resource.loading(null))
+        attestationData.postValue(Resource.loading(null))
 
         val useAttestKey = hasAttestKey && preferAttestKey
         val useStrongBox = hasStrongBox && preferStrongBox
@@ -142,22 +164,24 @@ class HomeViewModel(pm: PackageManager, private val sp: SharedPreferences) : Vie
             }
         }
 
-        val result = attestationManager.attest(reset, useAttestKey, useStrongBox,
+        val result = attestationRepository.attest(reset, useAttestKey, useStrongBox,
                 includeProps, uniqueIdIncluded, idFlags)
-        attestationResult.postValue(result)
+
+        attestationData.postValue(result)
     }
 
-    fun import(cr: ContentResolver, uri: Uri?) = AppApplication.executor.execute {
+    fun import(uri: Uri?) = AppApplication.executor.execute {
         if (uri == null || !hasAttestKey) return@execute
+
         val useStrongBox = hasStrongBox && preferStrongBox
         try {
-            attestationManager.importKeyBox(useStrongBox, cr, uri)
+            cr.openFileDescriptor(uri, "r").use {
+                attestationRepository.importKeyBox(useStrongBox, it)
+            }
             load()
         } catch (e: Exception) {
             Log.e(AppApplication.TAG, "import: ", e)
-            AppApplication.mainHandler.post {
-                Toast.makeText(AppApplication.app, e.message, Toast.LENGTH_LONG).show()
-            }
+            AppApplication.toast(e.message)
         }
     }
 }

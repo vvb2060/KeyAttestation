@@ -152,11 +152,11 @@ open class AlertDialogFragment : DialogFragment() {
         }
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
-            dest.writeString(title.toString())
-            dest.writeString(message.toString())
-            dest.writeString(positiveButtonText.toString())
-            dest.writeString(negativeButtonText.toString())
-            dest.writeString(neutralButtonText.toString())
+            dest.writeString(title?.toString())
+            dest.writeString(message?.toString())
+            dest.writeString(positiveButtonText?.toString())
+            dest.writeString(negativeButtonText?.toString())
+            dest.writeString(neutralButtonText?.toString())
             dest.writeParcelable(positiveButtonIntent, flags)
             dest.writeParcelable(negativeButtonIntent, flags)
             dest.writeParcelable(neutralButtonIntent, flags)

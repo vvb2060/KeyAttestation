@@ -1,10 +1,11 @@
 package io.github.vvb2060.keyattestation
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
+import android.widget.Toast
+import androidx.arch.core.executor.ArchTaskExecutor
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import rikka.html.text.HtmlCompat
@@ -17,8 +18,14 @@ class AppApplication : Application() {
     companion object {
         const val TAG = "KeyAttestation"
         lateinit var app: AppApplication
-        val mainHandler: Handler = Handler(Looper.getMainLooper())
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
+
+        @SuppressLint("RestrictedApi")
+        fun toast(text: String?) {
+            ArchTaskExecutor.getInstance().postToMainThread {
+                Toast.makeText(app, text, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onCreate() {

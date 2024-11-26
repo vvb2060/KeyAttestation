@@ -27,7 +27,7 @@ class ErrorViewHolder(itemView: View, binding: HomeErrorBinding) : HomeViewHolde
             sb.append("<font face=\"monospace\">")
             var tr = data.cause
             while (tr != null) {
-                sb.append("${tr::class.java.name}: ${tr.message}").append("<br>")
+                sb.append(tr).append("<br>")
                 tr = tr.cause
             }
             sb.append("</font>")

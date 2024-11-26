@@ -9,15 +9,12 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import java.io.ByteArrayInputStream;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
-import java.security.cert.CertPath;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -151,6 +148,7 @@ public class CertificateInfo {
             cert.checkValidity();
             status = CERT_NORMAL;
         } catch (GeneralSecurityException e) {
+            Log.e(AppApplication.TAG, "checkStatus", e);
             securityException = e;
         }
     }
@@ -196,9 +194,7 @@ public class CertificateInfo {
         }
     }
 
-    public static AttestationResult parseCertificateChain(List<X509Certificate> certs) {
-        var infoList = new ArrayList<CertificateInfo>();
-
+    public static void parse(List<X509Certificate> certs, List<CertificateInfo> infoList) {
         var parent = certs.get(certs.size() - 1);
         for (int i = certs.size() - 1; i >= 0; i--) {
             var parentKey = parent.getPublicKey();
@@ -214,76 +210,6 @@ public class CertificateInfo {
                 break;
             }
         }
-
-        return AttestationResult.form(infoList);
-    }
-
-    private static List<X509Certificate> sortCerts(List<X509Certificate> certs) {
-        if (certs.size() < 2) {
-            return certs;
-        }
-
-        var issuer = certs.get(0).getIssuerX500Principal();
-        boolean okay = true;
-        for (var cert : certs) {
-            var subject = cert.getSubjectX500Principal();
-            if (issuer.equals(subject)) {
-                issuer = subject;
-            } else {
-                okay = false;
-                break;
-            }
-        }
-        if (okay) {
-            return certs;
-        }
-
-        var newList = new ArrayList<X509Certificate>(certs.size());
-        for (var cert : certs) {
-            boolean found = false;
-            var subject = cert.getSubjectX500Principal();
-            for (var c : certs) {
-                if (c == cert) continue;
-                if (c.getIssuerX500Principal().equals(subject)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                newList.add(cert);
-            }
-        }
-        if (newList.size() != 1) {
-            return certs;
-        }
-
-        var oldList = new LinkedList<>(certs);
-        oldList.remove(newList.get(0));
-        for (int i = 0; i < newList.size(); i++) {
-            issuer = newList.get(i).getIssuerX500Principal();
-            for (var it = oldList.iterator(); it.hasNext(); ) {
-                var cert = it.next();
-                if (cert.getSubjectX500Principal().equals(issuer)) {
-                    newList.add(cert);
-                    it.remove();
-                    break;
-                }
-            }
-        }
-        if (!oldList.isEmpty()) {
-            return certs;
-        }
-        return newList;
-    }
-
-    public static AttestationResult parseCertificateChain(CertPath certPath)
-            throws CertificateParsingException {
-        // noinspection unchecked
-        var certs = (List<X509Certificate>) certPath.getCertificates();
-        if (certs.isEmpty()) {
-            throw new CertificateParsingException("No certificate found");
-        }
-        return parseCertificateChain(sortCerts(certs));
     }
 
     private static Set<PublicKey> getOemPublicKey() {

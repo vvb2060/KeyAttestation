@@ -1,7 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.app.Dialog
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -11,15 +10,14 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.BuildConfig
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
-import io.github.vvb2060.keyattestation.app.AppActivity
 import io.github.vvb2060.keyattestation.app.AppFragment
 import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo
@@ -29,7 +27,6 @@ import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
 import rikka.html.text.toHtml
-import rikka.lifecycle.activityViewModels
 import rikka.shizuku.Shizuku
 import rikka.widget.borderview.BorderView
 
@@ -39,22 +36,18 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     private val binding: HomeBinding get() = _binding!!
 
-    private val viewModel by activityViewModels {
-        val context = requireContext()
-        val sp = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        HomeViewModel(context.packageManager, sp)
-    }
+    private val viewModel: HomeViewModel by viewModels { HomeViewModel.Factory }
 
     private val save = registerForActivityResult(CreateDocument("application/x-pkcs7-certificates")) {
-        viewModel.save(requireContext().contentResolver, it)
+        viewModel.save(it)
     }
 
     private val load = registerForActivityResult(GetContent()) {
-        viewModel.load(requireContext().contentResolver, it)
+        viewModel.load(it)
     }
 
     private val import = registerForActivityResult(GetContent()) {
-        viewModel.import(requireContext().contentResolver, it)
+        viewModel.import(it)
     }
 
     private val adapter by lazy {
@@ -73,7 +66,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as MenuHost).addMenuProvider(this, viewLifecycleOwner)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner)
 
         val context = view.context
 
@@ -82,7 +75,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         binding.list.adapter = adapter
         binding.list.addItemDecoration(HomeItemDecoration(context))
 
-        viewModel.getAttestationResult().observe(viewLifecycleOwner) { res ->
+        viewModel.getAttestationData().observe(viewLifecycleOwner) { res ->
             when (res.status) {
                 Status.SUCCESS -> {
                     binding.progress.isVisible = false
@@ -103,46 +96,46 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onAttestationInfoClick(data: Attestation) {
-        val result = viewModel.getAttestationResult().value!!.data!!
+        val result = viewModel.getAttestationData().value!!.data!!
         result.showAttestation = data
         adapter.updateData(result)
     }
 
     override fun onCertInfoClick(data: CertificateInfo) {
-        val context = requireContext()
+        val context = requireActivity()
 
         AlertDialogFragment.Builder(context)
                 .title(context.getString(R.string.cert_info))
                 .message(data.cert.toString())
                 .positiveButton(android.R.string.ok)
                 .build()
-                .show(requireActivity().supportFragmentManager)
+                .show(context.supportFragmentManager)
     }
 
     override fun onCommonDataClick(data: Data) {
-        val context = requireContext()
+        val context = requireActivity()
 
         AlertDialogFragment.Builder(context)
                 .title(data.title)
                 .message(context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
                 .positiveButton(android.R.string.ok)
                 .build()
-                .show(requireActivity().supportFragmentManager)
+                .show(context.supportFragmentManager)
     }
 
     override fun onSecurityLevelDataClick(data: SecurityLevelData) {
-        val context = requireContext()
+        val context = requireActivity()
 
         AlertDialogFragment.Builder(context)
                 .title(data.title)
                 .message("${context.getString(data.description)}<p>${context.getString(data.securityLevelDescription)}".toHtml(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM or HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
                 .positiveButton(android.R.string.ok)
                 .build()
-                .show((context as AppActivity).supportFragmentManager)
+                .show(context.supportFragmentManager)
     }
 
     override fun onAuthorizationItemDataClick(data: AuthorizationItemData) {
-        val context = requireContext()
+        val context = requireActivity()
 
         val message = if (!data.data.isNullOrBlank()) "${context.getString(data.description)}<p>* ${context.getString(if (data.tee) R.string.tee_enforced_description else R.string.sw_enforced_description)}"
                 .toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
@@ -154,7 +147,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 .message(message)
                 .positiveButton(android.R.string.ok)
                 .build()
-                .show(requireActivity().supportFragmentManager)
+                .show(context.supportFragmentManager)
     }
 
     override fun onPrepareMenu(menu: Menu) {
@@ -165,10 +158,13 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isEnabled = received
             isChecked = viewModel.preferShizuku
         }
+
         menu.findItem(R.id.menu_import_attest_key)?.isVisible = viewModel.preferAttestKey
+
         menu.setGroupVisible(R.id.menu_id_type_group, viewModel.preferShizuku)
         menu.findItem(R.id.menu_include_unique_id).isVisible =
                 viewModel.preferShizuku && viewModel.canIncludeUniqueId
+
         menu.findItem(R.id.menu_save).isVisible = viewModel.hasCertificates()
     }
 
@@ -206,52 +202,38 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onMenuItemSelected(item: MenuItem): Boolean {
+        val status = !item.isChecked
+        item.isChecked = status
         when (item.itemId) {
             R.id.menu_use_shizuku -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferShizuku = status
                 viewModel.load()
             }
             R.id.menu_use_strongbox -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferStrongBox = status
                 viewModel.load()
             }
             R.id.menu_use_attest_key -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferAttestKey = status
                 viewModel.load()
             }
             R.id.menu_include_props -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferIncludeProps = status
                 viewModel.load()
             }
             R.id.menu_id_type_serial -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferIdAttestationSerial = status
                 viewModel.load()
             }
             R.id.menu_id_type_imei -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferIdAttestationIMEI = status
                 viewModel.load()
             }
             R.id.menu_id_type_meid -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferIdAttestationMEID = status
                 viewModel.load()
             }
             R.id.menu_include_unique_id -> {
-                val status = !item.isChecked
-                item.isChecked = status
                 viewModel.preferIncludeUniqueId = status
                 viewModel.load()
             }
@@ -262,7 +244,7 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
                 save.launch("${Build.PRODUCT}-${AppApplication.TAG}.p7b")
             }
             R.id.menu_load -> {
-                load.launch("application/*")
+                load.launch("*/*")
             }
             R.id.menu_import_attest_key -> {
                 import.launch("text/xml")

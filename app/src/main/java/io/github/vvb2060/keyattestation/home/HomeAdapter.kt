@@ -5,6 +5,7 @@ import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
 import io.github.vvb2060.keyattestation.lang.AttestationException
+import io.github.vvb2060.keyattestation.repository.AttestationData
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
 class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
@@ -26,11 +27,9 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         setListener(listener)
     }
 
-    fun updateData(attestationResult: AttestationResult) {
-        val attestation = attestationResult.showAttestation
-
+    fun updateData(attestationData: AttestationData) {
         clear()
-        when (attestationResult.status) {
+        when (attestationData.status) {
             CertificateInfo.KEY_FAILED -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.cert_chain_not_trusted,
@@ -81,17 +80,18 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
         }
-        addItem(BootStateViewHolder.CREATOR, attestationResult, ID_BOOT_STATUS)
+        addItem(BootStateViewHolder.CREATOR, attestationData, ID_BOOT_STATUS)
 
         var id = ID_CERT_INFO_START
         addItem(SubtitleViewHolder.CREATOR, SubtitleData(
                 R.string.cert_chain,
                 R.string.cert_chain_description), id++)
-        attestationResult.certs.forEach { certInfo ->
+        attestationData.certs.forEach { certInfo ->
             addItem(CommonItemViewHolder.CERT_INFO_CREATOR, certInfo, id++)
         }
 
         id = ID_DESCRIPTION_START
+        val attestation = attestationData.showAttestation ?: return
         addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, SecurityLevelData(
                 R.string.attestation,
                 R.string.attestation_version_description,
