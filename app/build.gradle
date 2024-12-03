@@ -142,11 +142,15 @@ androidComponents {
 abstract class ClassVisitorFactory implements AsmClassVisitorFactory<InstrumentationParameters.None> {
     ClassVisitor createClassVisitor(ClassContext classContext, ClassVisitor classVisitor) {
         return new ClassRemapper(classVisitor, new Remapper() {
-            String map(String internalName) {
-                if (internalName.endsWith("_rename")) {
-                    return internalName.substring(0, internalName.length() - 7)
+            String map(String name) {
+                var index = name.indexOf('$')
+                if (index != -1) {
+                    return map(name.substring(0, index)) + name.substring(index)
                 }
-                return internalName
+                if (name.endsWith("_rename")) {
+                    return name.substring(0, name.length() - 7)
+                }
+                return name
             }
         })
     }

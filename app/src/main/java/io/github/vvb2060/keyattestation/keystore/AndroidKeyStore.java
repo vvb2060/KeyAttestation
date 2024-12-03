@@ -15,6 +15,7 @@ import android.os.RemoteException;
 import android.security.keystore.AttestationUtils;
 import android.security.keystore.DeviceIdAttestationException;
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyGenParameterSpec_rename;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.KeyProtection;
 import android.system.Os;
@@ -194,17 +195,17 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
         return Arrays.copyOf(array, i);
     }
 
-    private static KeyGenParameterSpec genParameter(String alias,
-                                                    String attestKeyAlias,
-                                                    boolean useStrongBox,
-                                                    boolean includeProps,
-                                                    boolean uniqueIdIncluded,
-                                                    int[] attestationIds) {
+    private static Object genParameter(String alias,
+                                       String attestKeyAlias,
+                                       boolean useStrongBox,
+                                       boolean includeProps,
+                                       boolean uniqueIdIncluded,
+                                       int[] attestationIds) {
         var now = new Date();
         boolean attestKey = Objects.equals(alias, attestKeyAlias);
         var purposes = attestKey ? KeyProperties.PURPOSE_ATTEST_KEY : KeyProperties.PURPOSE_SIGN;
 
-        var builder = new KeyGenParameterSpec.Builder(alias, purposes)
+        var builder = new KeyGenParameterSpec_rename.Builder(alias, purposes)
                 .setAlgorithmParameterSpec(new ECGenParameterSpec("secp256r1"))
                 .setDigests(KeyProperties.DIGEST_SHA256)
                 .setCertificateNotBefore(now)
@@ -217,12 +218,7 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
                 builder.setDevicePropertiesAttestationIncluded(true);
             }
             if (attestationIds != null) {
-                try {
-                    var method = builder.getClass().getMethod("setAttestationIds", int[].class);
-                    method.invoke(builder, attestationIds);
-                } catch (ReflectiveOperationException e) {
-                    Log.w(AppApplication.TAG, "setAttestationIds not found", e);
-                }
+                builder.setAttestationIds(attestationIds);
             }
             if (attestKey) {
                 builder.setCertificateSubject(new X500Principal("CN=App Attest Key"));
@@ -231,12 +227,7 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
             }
         }
         if (uniqueIdIncluded) {
-            try {
-                var method = builder.getClass().getMethod("setUniqueIdIncluded", boolean.class);
-                method.invoke(builder, true);
-            } catch (ReflectiveOperationException e) {
-                Log.w(AppApplication.TAG, "setUniqueIdIncluded not found", e);
-            }
+            builder.setUniqueIdIncluded(true);
         }
         return builder.build();
     }
@@ -251,7 +242,7 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
         var params = genParameter(alias, attestKeyAlias, useStrongBox,
                 includeProps, uniqueIdIncluded, flagsToArray(idFlags));
         try {
-            keyPairGenerator.initialize(params);
+            keyPairGenerator.initialize((KeyGenParameterSpec) params);
             keyPairGenerator.generateKeyPair();
             return null;
         } catch (Exception exception) {
