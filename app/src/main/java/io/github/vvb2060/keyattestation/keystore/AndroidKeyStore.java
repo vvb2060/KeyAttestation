@@ -6,12 +6,15 @@ import android.app.Application;
 import android.app.Instrumentation;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.hardware.security.keymint.DeviceInfo;
+import android.hardware.security.keymint.RpcHardwareInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.security.keystore.AttestationUtils;
 import android.security.keystore.DeviceIdAttestationException;
 import android.security.keystore.KeyGenParameterSpec;
@@ -285,6 +288,61 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
             }
             return buf.toByteArray();
         } catch (CertificateEncodingException | IOException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void setRkpHostname(String hostname) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            throw new IllegalStateException();
+        }
+        SystemProperties.set(RemoteProvisioning.PROP_NAME, hostname);
+    }
+
+    @Override
+    public String getRkpHostname() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            throw new IllegalStateException();
+        }
+        return SystemProperties.get(RemoteProvisioning.PROP_NAME);
+    }
+
+    @Override
+    public boolean canRemoteProvisioning(boolean useStrongBox) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            throw new IllegalStateException();
+        }
+        var rkp = RemoteProvisioning.getInstance(useStrongBox);
+        return rkp.isSupported();
+    }
+
+    @Override
+    public RpcHardwareInfo getHardwareInfo(boolean useStrongBox, DeviceInfo deviceInfo) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            throw new IllegalStateException();
+        }
+        try {
+            var rkp = RemoteProvisioning.getInstance(useStrongBox);
+            rkp.localCsr();
+            deviceInfo.deviceInfo = rkp.getDeviceInfo();
+            return rkp.getHardwareInfo();
+        } catch (Exception e) {
+            Log.e(AppApplication.TAG, "getHardwareInfo", e);
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    @Override
+    public byte[] checkRemoteProvisioning(boolean useStrongBox) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            throw new IllegalStateException();
+        }
+        try {
+            var rkp = RemoteProvisioning.getInstance(useStrongBox);
+            return rkp.check();
+        } catch (Exception e) {
+            Log.e(AppApplication.TAG, "checkRemoteProvisioning", e);
             throw new IllegalStateException(e.getMessage());
         }
     }
