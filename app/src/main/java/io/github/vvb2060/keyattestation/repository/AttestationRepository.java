@@ -6,6 +6,7 @@ import static android.security.KeyStoreException.ERROR_KEYMINT_FAILURE;
 import static io.github.vvb2060.keyattestation.lang.AttestationException.*;
 
 import android.annotation.SuppressLint;
+import android.hardware.security.keymint.DeviceInfo;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
@@ -239,5 +240,52 @@ public class AttestationRepository {
         var base = useStrongBox ? AppApplication.TAG + "_strongbox" : AppApplication.TAG;
         var alias = base + "_persistent";
         keyStore.importKeyBox(alias, useStrongBox, pfd);
+    }
+
+    public boolean canRkp(boolean useStrongBox) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return false;
+        }
+        try {
+            return keyStore.canRemoteProvisioning(useStrongBox);
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
+
+    public Resource<RemoteProvisioningData> checkRkp(boolean useStrongBox) {
+        currentCerts.clear();
+        try {
+            var name = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                    ? keyStore.getRkpHostname() : null;
+            var deviceInfo = new DeviceInfo();
+            var hw = keyStore.getHardwareInfo(useStrongBox, deviceInfo);
+            var info = new RemoteProvisioningData(name, hw, deviceInfo);
+            try {
+                var data = keyStore.checkRemoteProvisioning(useStrongBox);
+                info.setCerts(factory.generateCertificates(new ByteArrayInputStream(data)));
+            } catch (IllegalStateException e) {
+                info.setError(e);
+            }
+            return Resource.Companion.success(info);
+        } catch (Exception e) {
+            var cause = e instanceof AttestationException ? e.getCause() : e;
+            Log.w(AppApplication.TAG, "Check RKP error.", cause);
+
+            if (e instanceof IllegalStateException) {
+                return Resource.Companion.error(new AttestationException(CODE_RKP, e), null);
+            } else {
+                return Resource.Companion.error(new AttestationException(CODE_UNKNOWN, e), null);
+            }
+        }
+    }
+
+    public void setHostname(String hostname) {
+        if (hostname == null) return;
+        try {
+            keyStore.setRkpHostname(hostname);
+        } catch (RemoteException e) {
+            Log.w(AppApplication.TAG, "Set RKP hostname error.", e);
+        }
     }
 }

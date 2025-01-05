@@ -13,23 +13,13 @@ import io.github.vvb2060.keyattestation.attestation.CertificateInfo;
 import io.github.vvb2060.keyattestation.attestation.RootOfTrust;
 import io.github.vvb2060.keyattestation.lang.AttestationException;
 
-public class AttestationData {
-    private final List<CertificateInfo> certs;
+public class AttestationData extends BaseData {
     private final RootOfTrust rootOfTrust;
-    private final int status;
     private final boolean sw;
     public Attestation showAttestation;
 
-    public List<CertificateInfo> getCerts() {
-        return certs;
-    }
-
     public RootOfTrust getRootOfTrust() {
         return rootOfTrust;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public boolean isSoftwareLevel() {
@@ -37,7 +27,7 @@ public class AttestationData {
     }
 
     private AttestationData(List<CertificateInfo> certs) {
-        this.certs = certs;
+        init(certs);
 
         var info = certs.get(certs.size() - 1);
         var attestation = info.getAttestation();
@@ -48,26 +38,6 @@ public class AttestationData {
         } else {
             throw new AttestationException(CODE_CANT_PARSE_CERT, info.getCertException());
         }
-
-        var status = certs.get(0).getIssuer();
-        for (var cert : certs) {
-            if (cert.getStatus() < CertificateInfo.CERT_EXPIRED) {
-                status = CertificateInfo.KEY_FAILED;
-                break;
-            }
-        }
-        if (status == CertificateInfo.KEY_GOOGLE) {
-            for (int i = 1; i < certs.size(); i++) {
-                if (certs.get(i).getCert().getSubjectX500Principal().getName().contains("Google LLC")) {
-                    continue;
-                }
-                if (certs.get(i).getCertsIssued() != null) {
-                    status = CertificateInfo.KEY_GOOGLE_RKP;
-                }
-                break;
-            }
-        }
-        this.status = status;
     }
 
     private static List<X509Certificate> sortCerts(List<X509Certificate> certs) {
@@ -129,7 +99,7 @@ public class AttestationData {
     }
 
     static AttestationData parseCertificateChain(List<X509Certificate> certs) {
-        var infoList = new ArrayList<CertificateInfo>();
+        var infoList = new ArrayList<CertificateInfo>(certs.size());
         CertificateInfo.parse(sortCerts(certs), infoList);
         return new AttestationData(infoList);
     }
