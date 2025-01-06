@@ -49,6 +49,7 @@
     <string name="cert_error_revoked">已吊销：</string>
     <string name="cert_error_expired">已过期：</string>
     <string name="provisioning_info_certs_issued">过去 30 天证书颁发数量：</string>
+    <string name="provisioning_info_manufacturer">制造商：</string>
 
     <string name="error_message_subtitle">详细信息：</string>
     <string name="error_unknown">未知错误</string>

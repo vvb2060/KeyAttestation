@@ -16,6 +16,9 @@
 
 package io.github.vvb2060.keyattestation.attestation;
 
+import co.nstant.in.cbor.CborDecoder;
+import co.nstant.in.cbor.CborEncoder;
+import co.nstant.in.cbor.CborException;
 import co.nstant.in.cbor.model.Array;
 import co.nstant.in.cbor.model.ByteString;
 import co.nstant.in.cbor.model.DataItem;
@@ -24,8 +27,10 @@ import co.nstant.in.cbor.model.NegativeInteger;
 import co.nstant.in.cbor.model.Number;
 import co.nstant.in.cbor.model.SimpleValue;
 import co.nstant.in.cbor.model.SimpleValueType;
+import co.nstant.in.cbor.model.UnicodeString;
 import co.nstant.in.cbor.model.UnsignedInteger;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
@@ -102,5 +107,14 @@ class CborUtils {
     public static String getString(Map map, DataItem index) {
         byte[] bytes = getBytes(map, index);
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    public static String getUnicodeString(Map map, DataItem index) {
+        DataItem item = map.get(index);
+        return ((UnicodeString) item).getString();
+    }
+
+    public static DataItem decodeCbor(byte[] encodedBytes) throws CborException {
+        return CborDecoder.decode(encodedBytes).get(0);
     }
 }

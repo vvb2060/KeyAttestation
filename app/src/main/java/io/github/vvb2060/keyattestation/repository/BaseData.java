@@ -28,7 +28,7 @@ public abstract class BaseData {
                 if (certs.get(i).getCert().getSubjectX500Principal().getName().contains("Google LLC")) {
                     continue;
                 }
-                if (certs.get(i).getCertsIssued() != null) {
+                if (certs.get(i).getProvisioningInfo() != null) {
                     status = RootPublicKey.Status.GOOGLE_RKP;
                 }
                 break;

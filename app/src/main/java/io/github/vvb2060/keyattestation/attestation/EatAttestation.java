@@ -139,8 +139,7 @@ public class EatAttestation extends Attestation {
         }
         ASN1Encodable asn1 = Asn1Utils.getAsn1EncodableFromBytes(attestationExtensionBytes);
         byte[] cborBytes = Asn1Utils.getByteArrayFromAsn1(asn1);
-        List<DataItem> cbor = CborDecoder.decode(cborBytes);
-        return (Map) cbor.get(0);
+        return (Map) CborUtils.decodeCbor(cborBytes);
     }
 
     static int eatSecurityLevelToKeymintSecurityLevel(int eatSecurityLevel) {

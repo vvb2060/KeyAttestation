@@ -219,10 +219,17 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                             .append(res.getString(R.string.cert_not_after))
                             .append(AuthorizationList.formatDate(cert.notAfter))
 
-                    if (data.certsIssued != null) {
-                        sb.append("\n")
+                    data.provisioningInfo?.apply {
+                        certsIssued?.let {
+                            sb.append("\n")
                                 .append(res.getString(R.string.provisioning_info_certs_issued))
-                                .append(data.certsIssued)
+                                .append(it)
+                        }
+                        manufacturer?.let {
+                            sb.append("\n")
+                                .append(res.getString(R.string.provisioning_info_manufacturer))
+                                .append(it)
+                        }
                     }
 
                     val resId = when (data.status) {

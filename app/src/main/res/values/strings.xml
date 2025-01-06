@@ -49,6 +49,7 @@
     <string name="cert_error_revoked">revoked: </string>
     <string name="cert_error_expired">expired: </string>
     <string name="provisioning_info_certs_issued">number of certs issued in last 30 days: </string>
+    <string name="provisioning_info_manufacturer">manufacturer: </string>
 
     <string name="error_message_subtitle">Detailed messages:</string>
     <string name="error_unknown">Unknown error</string>
