@@ -7,6 +7,7 @@ import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVE
 import io.github.vvb2060.keyattestation.attestation.Attestation.KM_SECURITY_LEVEL_TRUSTED_ENVIRONMENT
 import io.github.vvb2060.keyattestation.attestation.AuthorizationList
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo
+import io.github.vvb2060.keyattestation.attestation.RootPublicKey
 import io.github.vvb2060.keyattestation.databinding.HomeCommonItemBinding
 import rikka.core.res.resolveColorStateList
 import rikka.recyclerview.BaseViewHolder.Creator
@@ -135,12 +136,12 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         setOnClickListener {
                             data.attestation?.let { listener.onAttestationInfoClick(it) }
                         }
-                        if (data.issuer == CertificateInfo.KEY_AOSP) {
+                        if (data.issuer == RootPublicKey.Status.AOSP) {
                             isVisible = true
                             isClickable = false
                             iconRes = R.drawable.ic_untrustworthy_24
                             colorAttr = rikka.material.R.attr.colorWarning
-                        } else if (data.issuer == CertificateInfo.KEY_GOOGLE) {
+                        } else if (data.issuer == RootPublicKey.Status.GOOGLE) {
                             isVisible = true
                             isClickable = false
                             iconRes = R.drawable.ic_trustworthy_24

@@ -30,49 +30,49 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     fun updateData(attestationData: AttestationData) {
         clear()
         when (attestationData.status) {
-            CertificateInfo.KEY_FAILED -> {
+            RootPublicKey.Status.FAILED -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.cert_chain_not_trusted,
                         R.string.cert_chain_not_trusted_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorAlert), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_UNKNOWN -> {
+            RootPublicKey.Status.UNKNOWN -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.unknown_root_cert,
                         R.string.unknown_root_cert_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorWarning), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_AOSP -> {
+            RootPublicKey.Status.AOSP -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.aosp_root_cert,
                         R.string.aosp_root_cert_summary,
                         R.drawable.ic_error_outline_24,
                         rikka.material.R.attr.colorWarning), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_GOOGLE -> {
+            RootPublicKey.Status.GOOGLE -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.google_root_cert,
                         R.string.google_root_cert_summary,
                         R.drawable.ic_trustworthy_24,
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_GOOGLE_RKP -> {
+            RootPublicKey.Status.GOOGLE_RKP -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.google_root_cert_rkp,
                         R.string.google_root_cert_rkp_summary,
                         R.drawable.ic_trustworthy_24,
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_KNOX -> {
+            RootPublicKey.Status.KNOX -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.knox_root_cert,
                         R.string.knox_root_cert_summary,
                         R.drawable.ic_trustworthy_24,
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
-            CertificateInfo.KEY_OEM -> {
+            RootPublicKey.Status.OEM -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.oem_root_cert,
                         R.string.oem_root_cert_summary,
