@@ -101,53 +101,15 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         adapter.updateData(result)
     }
 
-    override fun onCertInfoClick(data: CertificateInfo) {
-        val context = requireActivity()
-
-        AlertDialogFragment.Builder(context)
-                .title(context.getString(R.string.cert_info))
-                .message(data.cert.toString())
-                .positiveButton(android.R.string.ok)
-                .build()
-                .show(context.supportFragmentManager)
-    }
-
     override fun onCommonDataClick(data: Data) {
         val context = requireActivity()
 
         AlertDialogFragment.Builder(context)
-                .title(data.title)
-                .message(context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
-                .positiveButton(android.R.string.ok)
-                .build()
-                .show(context.supportFragmentManager)
-    }
-
-    override fun onSecurityLevelDataClick(data: SecurityLevelData) {
-        val context = requireActivity()
-
-        AlertDialogFragment.Builder(context)
-                .title(data.title)
-                .message("${context.getString(data.description)}<p>${context.getString(data.securityLevelDescription)}".toHtml(HtmlCompat.FROM_HTML_SEPARATOR_LINE_BREAK_LIST_ITEM or HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE))
-                .positiveButton(android.R.string.ok)
-                .build()
-                .show(context.supportFragmentManager)
-    }
-
-    override fun onAuthorizationItemDataClick(data: AuthorizationItemData) {
-        val context = requireActivity()
-
-        val message = if (!data.data.isNullOrBlank()) "${context.getString(data.description)}<p>* ${context.getString(if (data.tee) R.string.tee_enforced_description else R.string.sw_enforced_description)}"
-                .toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
-        else
-            context.getString(data.description).toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
-
-        AlertDialogFragment.Builder(context)
-                .title(data.title)
-                .message(message)
-                .positiveButton(android.R.string.ok)
-                .build()
-                .show(context.supportFragmentManager)
+            .title(data.title)
+            .message(data.getMessage(context))
+            .positiveButton(android.R.string.ok)
+            .build()
+            .show(context.supportFragmentManager)
     }
 
     override fun onPrepareMenu(menu: Menu) {

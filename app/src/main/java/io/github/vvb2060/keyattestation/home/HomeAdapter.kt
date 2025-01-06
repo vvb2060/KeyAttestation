@@ -12,13 +12,6 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
     interface Listener {
         fun onCommonDataClick(data: Data)
-
-        fun onSecurityLevelDataClick(data: SecurityLevelData)
-
-        fun onAuthorizationItemDataClick(data: AuthorizationItemData)
-
-        fun onCertInfoClick(data: CertificateInfo)
-
         fun onAttestationInfoClick(data: Attestation)
     }
 
@@ -83,7 +76,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         addItem(BootStateViewHolder.CREATOR, attestationData, ID_BOOT_STATUS)
 
         var id = ID_CERT_INFO_START
-        addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+        addItem(SubtitleViewHolder.CREATOR, CommonData(
                 R.string.cert_chain,
                 R.string.cert_chain_description), id++)
         attestationData.certs.forEach { certInfo ->
@@ -121,7 +114,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 attestation.uniqueId?.let { BaseEncoding.base16().lowerCase().encode(it) }), id)
 
         id = ID_AUTHORIZATION_LIST_START
-        addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+        addItem(SubtitleViewHolder.CREATOR, CommonData(
                 R.string.authorization_list,
                 R.string.authorization_list_description), id++)
 
@@ -149,7 +142,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
 
         if (attestation is KnoxAttestation) {
             id = ID_KNOX_START
-            addItem(SubtitleViewHolder.CREATOR, SubtitleData(
+            addItem(SubtitleViewHolder.CREATOR, CommonData(
                     R.string.knox,
                     R.string.knox_description), id++)
 

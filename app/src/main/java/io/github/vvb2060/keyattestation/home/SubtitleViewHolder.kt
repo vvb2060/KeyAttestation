@@ -2,13 +2,13 @@ package io.github.vvb2060.keyattestation.home
 
 import android.view.View
 import io.github.vvb2060.keyattestation.databinding.HomeSubtitleBinding
-import rikka.recyclerview.BaseViewHolder.Creator
 
-class SubtitleViewHolder(itemView: View, binding: HomeSubtitleBinding) : HomeViewHolder<SubtitleData, HomeSubtitleBinding>(itemView, binding) {
+class SubtitleViewHolder(itemView: View, binding: HomeSubtitleBinding) :
+    HomeViewHolder<Data, HomeSubtitleBinding>(itemView, binding) {
 
     companion object {
 
-        val CREATOR = Creator<SubtitleData> { inflater, parent ->
+        val CREATOR = Creator<Data> { inflater, parent ->
             val binding = HomeSubtitleBinding.inflate(inflater, parent, false)
             SubtitleViewHolder(binding.root, binding)
         }

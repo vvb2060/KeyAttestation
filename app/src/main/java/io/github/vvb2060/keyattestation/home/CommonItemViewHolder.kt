@@ -10,9 +10,9 @@ import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.attestation.RootPublicKey
 import io.github.vvb2060.keyattestation.databinding.HomeCommonItemBinding
 import rikka.core.res.resolveColorStateList
-import rikka.recyclerview.BaseViewHolder.Creator
 
-open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBinding) : HomeViewHolder<T, HomeCommonItemBinding>(itemView, binding) {
+open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBinding) :
+    HomeViewHolder<T, HomeCommonItemBinding>(itemView, binding) {
 
     companion object {
 
@@ -47,7 +47,7 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                 init {
                     this.binding.apply {
                         root.setOnClickListener {
-                            listener.onAuthorizationItemDataClick(data)
+                            listener.onCommonDataClick(data)
                         }
                         icon.isVisible = false
                     }
@@ -78,7 +78,7 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         text1.isVisible = false
                         icon.background = null
                         root.setOnClickListener {
-                            listener.onSecurityLevelDataClick(data)
+                            listener.onCommonDataClick(data)
                         }
                     }
                 }
@@ -126,6 +126,13 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         title.isVisible = false
                         text1.isVisible = false
                         icon.background = null
+                        icon.setOnClickListener {
+                            data.attestation?.let { listener.onAttestationInfoClick(it) }
+                        }
+                        root.setOnClickListener {
+                            val stringData = StringData(R.string.cert_info, data.cert.toString())
+                            listener.onCommonDataClick(stringData)
+                        }
                     }
                 }
 
@@ -133,9 +140,6 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                     val iconRes: Int?
                     val colorAttr: Int?
                     binding.icon.apply {
-                        setOnClickListener {
-                            data.attestation?.let { listener.onAttestationInfoClick(it) }
-                        }
                         if (data.issuer == RootPublicKey.Status.AOSP) {
                             isVisible = true
                             isClickable = false
@@ -159,10 +163,6 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                         }
                         iconRes?.let { setImageDrawable(context.getDrawable(it)) }
                         colorAttr?.let { imageTintList = context.theme.resolveColorStateList(it) }
-                    }
-
-                    binding.root.setOnClickListener {
-                        listener.onCertInfoClick(data)
                     }
 
                     val sb = StringBuilder()
