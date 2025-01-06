@@ -10,6 +10,7 @@
     <string name="id_type_imei">认证设备 IMEI</string>
     <string name="id_type_meid">认证设备 MEID</string>
     <string name="include_unique_id">包含唯一 ID</string>
+    <string name="rkp_test">远程密钥配置测试</string>
     <string name="reset">重置</string>
     <string name="load_certs">从文件加载</string>
     <string name="save_certs">保存到文件</string>
@@ -84,6 +85,34 @@
     <string name="error_keys_not_provisioned_summary">
     无法获取远程配置的认证密钥，也没有工厂配置的认证密钥。
     </string>
+    <string name="error_remote_key_provisioning">远程密钥配置失败</string>
+    <string name="error_remote_key_provisioning_summary">
+    无法从密钥配置服务器获取认证密钥。
+    </string>
+
+    <string name="rpc_hardware_info">硬件信息</string>
+    <string name="rpc_hardware_info_description">
+    远程配置组件的硬件信息。
+    </string>
+    <string name="rpc_version_number">版本</string>
+    <string name="rpc_version_number_description">
+    远程配置组件硬件的实现版本。此处提供的版本必须与证书签名请求中报告的版本相匹配。
+    </string>
+    <string name="rpc_author_name">供应商</string>
+    <string name="rpc_author_name_description">
+    远程配置组件实现的作者的组织名称。
+    </string>
+    <string name="rpc_unique_id">标识符</string>
+    <string name="rpc_unique_id_description">
+    远程配置组件实现的不透明标识符。每个实现必须具有与所有其他实现不同的标识符，并且在所有设备上保持一致。
+    </string>
+    <string name="rkp_device_info">设备信息</string>
+    <string name="rkp_device_info_description">
+    由远程配置组件签名的设备相关信息。服务器将检查这些值，与工厂制造设备时上传的值对比，
+    来验证远程配置组件实例生成的证书签名请求是否来自预期的设备。
+    </string>
+    <string name="rkp_hostname">远程配置服务器主机名</string>
+    <string name="rkp_hostname_empty">远程密钥配置已禁用</string>
 
     <string name="attestation">认证</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">版本：</font><br>密钥认证功能的版本。]]></string>

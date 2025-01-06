@@ -1,5 +1,6 @@
 package io.github.vvb2060.keyattestation.home
 
+import android.util.Pair
 import android.view.View
 import androidx.core.view.isVisible
 import io.github.vvb2060.keyattestation.R
@@ -15,6 +16,47 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
     HomeViewHolder<T, HomeCommonItemBinding>(itemView, binding) {
 
     companion object {
+        val SIMPLE_CREATOR = Creator<Pair<String, String>> { inflater, parent ->
+            val binding = HomeCommonItemBinding.inflate(inflater, parent, false)
+            object : CommonItemViewHolder<Pair<String, String>>(binding.root, binding) {
+
+                init {
+                    this.binding.apply {
+                        text1.isVisible = false
+                        icon.isVisible = false
+                    }
+                }
+
+                override fun onBind() {
+                    binding.title.text = data.first
+                    binding.summary.text = data.second
+                }
+            }
+        }
+
+        val HOSTNAME_CREATOR = Creator<StringData> { inflater, parent ->
+            val binding = HomeCommonItemBinding.inflate(inflater, parent, false)
+            object : CommonItemViewHolder<StringData>(binding.root, binding) {
+
+                init {
+                    this.binding.apply {
+                        icon.isVisible = false
+                        root.setOnClickListener {
+                            listener.onRkpHostnameClick(data.data)
+                        }
+                    }
+                }
+
+                override fun onBind() {
+                    binding.title.setText(data.title)
+                    if (data.data.isNotBlank()) {
+                        binding.summary.text = data.data
+                    } else {
+                        binding.summary.setText(R.string.rkp_hostname_empty)
+                    }
+                }
+            }
+        }
 
         val COMMON_CREATOR = Creator<CommonData> { inflater, parent ->
             val binding = HomeCommonItemBinding.inflate(inflater, parent, false)

@@ -10,6 +10,7 @@
     <string name="id_type_imei">Attest device IMEI</string>
     <string name="id_type_meid">Attest device MEID</string>
     <string name="include_unique_id">Include unique ID</string>
+    <string name="rkp_test">RKP test</string>
     <string name="reset">Reset</string>
     <string name="load_certs">Load from file</string>
     <string name="save_certs">Save to file</string>
@@ -87,6 +88,38 @@
     <string name="error_keys_not_provisioned_summary">
     Unable to fetch remotely provisioned attestation keys, and no factory provisioned attestation keys.
     </string>
+    <string name="error_remote_key_provisioning">Remote Key Provisioning Error</string>
+    <string name="error_remote_key_provisioning_summary">
+    Unable to fetch attestation key from key provisioning server.
+    </string>
+
+    <string name="rpc_hardware_info">Hardware info</string>
+    <string name="rpc_hardware_info_description">
+    The hardware information of remotely provisioned component.
+    </string>
+    <string name="rpc_version_number">Version</string>
+    <string name="rpc_version_number_description">
+    Implementation version of the remotely provisioned component hardware.
+    The version provided here must match the version reported in the CsrPayload produced by the HAL interface.
+    </string>
+    <string name="rpc_author_name">Vendor</string>
+    <string name="rpc_author_name_description">
+    The organization name of the author of the IRemotelyProvisionedComponent implementation.
+    </string>
+    <string name="rpc_unique_id">Identifier</string>
+    <string name="rpc_unique_id_description">
+    an opaque identifier for this IRemotelyProvisionedComponent implementation.
+    Each implementation must have a distinct identifier from all other implementations, and it must be consistent across all devices.
+    </string>
+    <string name="rkp_device_info">Device info</string>
+    <string name="rkp_device_info_description">
+    Device info contains information about the device that\'s signed by the IRemotelyProvisionedComponent HAL.
+    These values are intended to be checked by the server to verify that the certificate signing request
+    crafted by an IRemotelyProvisionedComponent HAL instance is coming from the expected device
+    based on values initially uploaded during device manufacture in the factory.
+    </string>
+    <string name="rkp_hostname">Remote provisioning hostname</string>
+    <string name="rkp_hostname_empty">Remote key provisioning disabled</string>
 
     <string name="attestation">Attestation</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Version:</font><br>The version of the key attestation feature.]]></string>

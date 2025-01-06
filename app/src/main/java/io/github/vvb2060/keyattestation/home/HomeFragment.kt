@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts.CreateDocument
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -20,10 +21,10 @@ import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.app.AlertDialogFragment
 import io.github.vvb2060.keyattestation.app.AppFragment
 import io.github.vvb2060.keyattestation.attestation.Attestation
-import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.databinding.HomeBinding
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import io.github.vvb2060.keyattestation.lang.AttestationException
+import io.github.vvb2060.keyattestation.repository.AttestationData
 import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
 import rikka.html.text.toHtml
@@ -96,9 +97,29 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
     }
 
     override fun onAttestationInfoClick(data: Attestation) {
-        val result = viewModel.getAttestationData().value!!.data!!
+        val result = viewModel.getAttestationData().value!!.data!! as AttestationData
         result.showAttestation = data
         adapter.updateData(result)
+    }
+
+    override fun onRkpHostnameClick(data: String) {
+        val context = requireContext()
+        val dp24 = Math.round(24 * context.resources.displayMetrics.density)
+        val dp18 = Math.round(18 * context.resources.displayMetrics.density)
+        val editText = AppCompatEditText(context)
+        editText.setHint(R.string.rkp_hostname_empty)
+        editText.setText(data)
+        editText.setPadding(dp24, dp18, dp24, dp18)
+        editText.requestFocus()
+
+        AlertDialog.Builder(context)
+            .setView(editText)
+            .setTitle(R.string.rkp_hostname)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.rkp(editText.text?.toString())
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     override fun onCommonDataClick(data: Data) {
@@ -125,7 +146,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
 
         menu.setGroupVisible(R.id.menu_id_type_group, viewModel.preferShizuku)
         menu.findItem(R.id.menu_include_unique_id).isVisible =
-                viewModel.preferShizuku && viewModel.canIncludeUniqueId
+            viewModel.preferShizuku && viewModel.canIncludeUniqueId
+        menu.findItem(R.id.menu_rkp_test).isVisible =
+            viewModel.preferShizuku && viewModel.canCheckRkp
 
         menu.findItem(R.id.menu_save).isVisible = viewModel.hasCertificates()
     }
@@ -198,6 +221,9 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             R.id.menu_include_unique_id -> {
                 viewModel.preferIncludeUniqueId = status
                 viewModel.load()
+            }
+            R.id.menu_rkp_test -> {
+                viewModel.rkp()
             }
             R.id.menu_reset -> {
                 viewModel.load(true)

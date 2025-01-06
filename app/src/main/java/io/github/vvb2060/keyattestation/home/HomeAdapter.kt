@@ -1,11 +1,15 @@
 package io.github.vvb2060.keyattestation.home
 
 import android.util.Base64
+import android.util.Pair
 import com.google.common.io.BaseEncoding
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.attestation.*
 import io.github.vvb2060.keyattestation.lang.AttestationException
+import io.github.vvb2060.keyattestation.lang.AttestationException.Companion.CODE_RKP
 import io.github.vvb2060.keyattestation.repository.AttestationData
+import io.github.vvb2060.keyattestation.repository.BaseData
+import io.github.vvb2060.keyattestation.repository.RemoteProvisioningData
 import rikka.recyclerview.IdBasedRecyclerViewAdapter
 
 class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
@@ -13,6 +17,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     interface Listener {
         fun onCommonDataClick(data: Data)
         fun onAttestationInfoClick(data: Attestation)
+        fun onRkpHostnameClick(data: String)
     }
 
     init {
@@ -20,9 +25,16 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
         setListener(listener)
     }
 
-    fun updateData(attestationData: AttestationData) {
+    fun updateData(baseData: BaseData) {
         clear()
-        when (attestationData.status) {
+        when (baseData.status) {
+            RootPublicKey.Status.NULL -> {
+                addItem(HeaderViewHolder.CREATOR, HeaderData(
+                        R.string.error_remote_key_provisioning,
+                        0,
+                        R.drawable.ic_error_outline_24,
+                        rikka.material.R.attr.colorInactive), ID_CERT_STATUS)
+            }
             RootPublicKey.Status.FAILED -> {
                 addItem(HeaderViewHolder.CREATOR, HeaderData(
                         R.string.cert_chain_not_trusted,
@@ -73,17 +85,27 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                         rikka.material.R.attr.colorSafe), ID_CERT_STATUS)
             }
         }
-        addItem(BootStateViewHolder.CREATOR, attestationData, ID_BOOT_STATUS)
 
         var id = ID_CERT_INFO_START
         addItem(SubtitleViewHolder.CREATOR, CommonData(
                 R.string.cert_chain,
                 R.string.cert_chain_description), id++)
-        attestationData.certs.forEach { certInfo ->
+        baseData.certs.forEach { certInfo ->
             addItem(CommonItemViewHolder.CERT_INFO_CREATOR, certInfo, id++)
         }
 
-        id = ID_DESCRIPTION_START
+        when (baseData) {
+            is AttestationData -> updateData(baseData)
+            is RemoteProvisioningData -> updateData(baseData)
+        }
+
+        notifyDataSetChanged()
+    }
+
+    private fun updateData(attestationData: AttestationData) {
+        addItemAt(1, BootStateViewHolder.CREATOR, attestationData, ID_BOOT_STATUS)
+
+        var id = ID_DESCRIPTION_START
         val attestation = attestationData.showAttestation ?: return
         addItem(CommonItemViewHolder.SECURITY_LEVEL_CREATOR, SecurityLevelData(
                 R.string.attestation,
@@ -161,8 +183,50 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     R.string.knox_record_hash_description,
                     BaseEncoding.base16().lowerCase().encode(attestation.recordHash)), id++)
         }
+    }
 
-        notifyDataSetChanged()
+    private fun updateData(rkpData: RemoteProvisioningData) {
+        if (rkpData.status == RootPublicKey.Status.NULL) {
+            removeItemAt(1)
+            var e = AttestationException(CODE_RKP, rkpData.error)
+            addItemAt(1, ErrorViewHolder.CREATOR, e, ID_CERT_INFO_START)
+        }
+
+        if (rkpData.rkpHostname != null) {
+            addItem(CommonItemViewHolder.HOSTNAME_CREATOR, StringData(
+                R.string.rkp_hostname,
+                rkpData.rkpHostname), ID_RKP_HOSTNAME)
+        }
+
+        var id = ID_DESCRIPTION_START
+        var hardware = rkpData.hardwareInfo
+        addItem(SubtitleViewHolder.CREATOR, CommonData(
+            R.string.rpc_hardware_info,
+            R.string.rpc_hardware_info_description), id++)
+
+        addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+            R.string.rpc_version_number,
+            R.string.rpc_version_number_description,
+            hardware.versionNumber.toString()), id++)
+
+        addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+            R.string.rpc_author_name,
+            R.string.rpc_author_name_description,
+            hardware.rpcAuthorName.toString()), id++)
+
+        addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+            R.string.rpc_unique_id,
+            R.string.rpc_unique_id_description,
+            hardware.uniqueId), id++)
+
+        id = ID_AUTHORIZATION_LIST_START
+        addItem(SubtitleViewHolder.CREATOR, CommonData(
+            R.string.rkp_device_info,
+            R.string.rkp_device_info_description), id++)
+
+        rkpData.deviceInfo.forEach { key, value ->
+            addItem(CommonItemViewHolder.SIMPLE_CREATOR, Pair(key, value), id++)
+        }
     }
 
     fun updateData(e: AttestationException) {
@@ -199,9 +263,10 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
     companion object {
 
         private const val ID_ERROR = 0L
-        private const val ID_BOOT_STATUS = 1L
-        private const val ID_CERT_STATUS = 2L
-        private const val ID_CERT_INFO_START = 2000L
+        private const val ID_CERT_STATUS = 1L
+        private const val ID_BOOT_STATUS = 2L
+        private const val ID_CERT_INFO_START = 1000L
+        private const val ID_RKP_HOSTNAME = 2000L
         private const val ID_DESCRIPTION_START = 3000L
         private const val ID_AUTHORIZATION_LIST_START = 4000L
         private const val ID_KNOX_START = 5000L

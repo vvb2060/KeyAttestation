@@ -18,9 +18,9 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.vvb2060.keyattestation.AppApplication
-import io.github.vvb2060.keyattestation.repository.AttestationData
-import io.github.vvb2060.keyattestation.repository.AttestationRepository
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
+import io.github.vvb2060.keyattestation.repository.AttestationRepository
+import io.github.vvb2060.keyattestation.repository.BaseData
 import io.github.vvb2060.keyattestation.util.Resource
 import rikka.shizuku.Shizuku
 
@@ -40,7 +40,7 @@ class HomeViewModel(
     }
 
     private val attestationRepository = AttestationRepository()
-    private val attestationData = MutableLiveData<Resource<AttestationData>>()
+    private val attestationData = MutableLiveData<Resource<BaseData>>()
 
     val hasStrongBox = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
             pm.hasSystemFeature(PackageManager.FEATURE_STRONGBOX_KEYSTORE)
@@ -104,13 +104,19 @@ class HomeViewModel(
             sp.edit { putBoolean("prefer_include_unique_id", value) }
         }
 
+    val canCheckRkp: Boolean
+        get() {
+            if (KeyStoreManager.getRemoteKeyStore() == null) return false
+            return attestationRepository.canRkp(false)
+        }
+
     init {
         load()
     }
 
     fun hasCertificates() = attestationRepository.hasCertificates()
 
-    fun getAttestationData(): LiveData<Resource<AttestationData>> = attestationData
+    fun getAttestationData(): LiveData<Resource<BaseData>> = attestationData
 
     fun save(uri: Uri?) = AppApplication.executor.execute {
         if (uri == null || !attestationRepository.hasCertificates()) return@execute
@@ -183,5 +189,17 @@ class HomeViewModel(
             Log.e(AppApplication.TAG, "import: ", e)
             AppApplication.toast(e.message)
         }
+    }
+
+    fun rkp(newHostname: String? = null) = AppApplication.executor.execute {
+        if (!canCheckRkp && !preferShizuku) return@execute
+
+        attestationData.postValue(Resource.loading(null))
+
+        val useStrongBox = hasStrongBox && preferStrongBox && attestationRepository.canRkp(true)
+        attestationRepository.setHostname(newHostname)
+        val result = attestationRepository.checkRkp(useStrongBox)
+
+        attestationData.postValue(result)
     }
 }
