@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.samsung.android.security.keystore.AttestationUtils
 import io.github.vvb2060.keyattestation.AppApplication
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import io.github.vvb2060.keyattestation.repository.AttestationRepository
@@ -104,6 +105,20 @@ class HomeViewModel(
             sp.edit { putBoolean("prefer_include_unique_id", value) }
         }
 
+    val hasSak = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+            runCatching { AttestationUtils.DEFAULT_KEYSTORE }.isSuccess
+    val canSak: Boolean
+        get() {
+            if (KeyStoreManager.getRemoteKeyStore() == null) return false
+            val name = "com.samsung.android.security.permission.SAMSUNG_KEYSTORE_PERMISSION"
+            return Shizuku.checkRemotePermission(name) == PackageManager.PERMISSION_GRANTED
+        }
+    var preferSak = sp.getBoolean("prefer_sak", false)
+        set(value) {
+            field = value
+            sp.edit { putBoolean("prefer_sak", value) }
+        }
+
     val canCheckRkp: Boolean
         get() {
             if (KeyStoreManager.getRemoteKeyStore() == null) return false
@@ -156,22 +171,26 @@ class HomeViewModel(
     fun load(reset: Boolean = false) = AppApplication.executor.execute {
         attestationData.postValue(Resource.loading(null))
 
-        val useAttestKey = hasAttestKey && preferAttestKey
-        val useStrongBox = hasStrongBox && preferStrongBox
-        val includeProps = hasDeviceIds && preferIncludeProps && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         var uniqueIdIncluded = false
+        var useSak = false
         var idFlags = 0
         if (preferShizuku) {
             uniqueIdIncluded = canIncludeUniqueId && preferIncludeUniqueId
+            useSak = hasSak && canSak && preferSak
             if (hasDeviceIds) {
                 if (preferIdAttestationSerial) idFlags = DevicePolicyManager.ID_TYPE_SERIAL
                 if (hasIMEI && preferIdAttestationIMEI) idFlags = idFlags or DevicePolicyManager.ID_TYPE_IMEI
                 if (hasMEID && preferIdAttestationMEID) idFlags = idFlags or DevicePolicyManager.ID_TYPE_MEID
             }
         }
+        val useAttestKey = hasAttestKey && preferAttestKey
+        val useStrongBox = hasStrongBox && preferStrongBox
+        val includeProps = hasDeviceIds && preferIncludeProps &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
 
         val result = attestationRepository.attest(reset, useAttestKey, useStrongBox,
-                includeProps, uniqueIdIncluded, idFlags)
+                includeProps, uniqueIdIncluded, idFlags, useSak)
 
         attestationData.postValue(result)
     }

@@ -149,6 +149,8 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             viewModel.preferShizuku && viewModel.canIncludeUniqueId
         menu.findItem(R.id.menu_rkp_test).isVisible =
             viewModel.preferShizuku && viewModel.canCheckRkp
+        menu.findItem(R.id.menu_use_sak)?.isVisible =
+            viewModel.preferShizuku && viewModel.canSak
 
         menu.findItem(R.id.menu_save).isVisible = viewModel.hasCertificates()
     }
@@ -162,6 +164,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         menu.findItem(R.id.menu_id_type_imei).isChecked = viewModel.preferIdAttestationIMEI
         menu.findItem(R.id.menu_id_type_meid).isChecked = viewModel.preferIdAttestationMEID
         menu.findItem(R.id.menu_include_unique_id).isChecked = viewModel.preferIncludeUniqueId
+        menu.findItem(R.id.menu_use_sak).isChecked = viewModel.preferSak
+        if (!viewModel.hasSak) {
+            menu.removeItem(R.id.menu_use_sak)
+        }
         if (!viewModel.hasStrongBox) {
             menu.removeItem(R.id.menu_use_strongbox)
         }
@@ -192,6 +198,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
         when (item.itemId) {
             R.id.menu_use_shizuku -> {
                 viewModel.preferShizuku = status
+                viewModel.load()
+            }
+            R.id.menu_use_sak -> {
+                viewModel.preferSak = status
                 viewModel.load()
             }
             R.id.menu_use_strongbox -> {

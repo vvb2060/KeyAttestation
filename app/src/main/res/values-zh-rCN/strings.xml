@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">密钥认证</string>
     <string name="use_shizuku">使用 Shizuku</string>
+    <string name="use_sak">使用 Knox 认证</string>
     <string name="use_strongbox">使用安全模块</string>
     <string name="use_attest_key">使用认证密钥</string>
     <string name="import_attest_key">导入认证密钥</string>

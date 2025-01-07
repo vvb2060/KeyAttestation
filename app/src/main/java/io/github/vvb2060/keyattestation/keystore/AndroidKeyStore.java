@@ -24,6 +24,8 @@ import android.security.keystore.KeyProtection;
 import android.system.Os;
 import android.util.Log;
 
+import com.samsung.android.security.keystore.AttestParameterSpec;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -235,18 +237,42 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
         return builder.build();
     }
 
+    private static AttestParameterSpec genSakParameter(KeyGenParameterSpec params) {
+        var alias = params.getKeystoreAlias();
+        var challenge = params.getAttestationChallenge();
+        var packageName = ActivityThread.currentApplication().getPackageName();
+        var builder = new AttestParameterSpec.Builder(alias, challenge)
+                .setAlgorithm(KeyProperties.KEY_ALGORITHM_EC)
+                .setKeyGenParameterSpec(params)
+                .setVerifiableIntegrity(true)
+                .setPackageName(packageName);
+        return builder.build();
+    }
+
     @Override
     public byte[] generateKeyPair(String alias,
                                   String attestKeyAlias,
                                   boolean useStrongBox,
                                   boolean includeProps,
                                   boolean uniqueIdIncluded,
-                                  int idFlags) {
-        var params = genParameter(alias, attestKeyAlias, useStrongBox,
+                                  int idFlags,
+                                  boolean useSak) {
+        var params = (KeyGenParameterSpec) genParameter(alias, attestKeyAlias, useStrongBox,
                 includeProps, uniqueIdIncluded, flagsToArray(idFlags));
         try {
-            keyPairGenerator.initialize((KeyGenParameterSpec) params);
+            keyPairGenerator.initialize(params);
             keyPairGenerator.generateKeyPair();
+            if (useSak) {
+                var utils = new com.samsung.android.security.keystore.AttestationUtils();
+                var spec = genSakParameter(params);
+                Iterable<byte[]> certChain;
+                if (spec.isDeviceAttestation()) {
+                    certChain = utils.attestDevice(spec);
+                } else {
+                    certChain = utils.attestKey(spec);
+                }
+                utils.storeCertificateChain(alias, certChain);
+            }
             return null;
         } catch (Exception exception) {
             Log.e(AppApplication.TAG, "generateKeyPair", exception);

@@ -43,6 +43,10 @@
             android:exported="false"
             tools:ignore="MissingClass"
             tools:node="remove" />
+
+        <uses-library
+            android:name="samsungkeystoreutils"
+            android:required="false" />
     </application>
 
 </manifest>

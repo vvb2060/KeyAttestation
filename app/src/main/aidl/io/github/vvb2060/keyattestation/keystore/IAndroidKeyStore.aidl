@@ -9,7 +9,8 @@ interface IAndroidKeyStore {
     void deleteAllEntry();
     void importKeyBox(String alias, boolean useStrongBox, in ParcelFileDescriptor pfd);
     byte[] generateKeyPair(String alias, String attestKeyAlias, boolean useStrongBox,
-                           boolean includeProps, boolean uniqueIdIncluded, int idFlags);
+                           boolean includeProps, boolean uniqueIdIncluded, int idFlags,
+                           boolean useSak);
     byte[] attestDeviceIds(int idFlags);
     void setRkpHostname(String hostname);
     String getRkpHostname();
