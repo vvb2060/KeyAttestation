@@ -188,6 +188,7 @@
     <string name="authorization_list_usageCountLimit">Usage count limit</string>
     <string name="authorization_list_deviceUniqueAttestation">Device unique attestation</string>
     <string name="authorization_list_identityCredentialKey">Identity credential key</string>
+    <string name="authorization_list_moduleHash">Module hash</string>
 
     <string name="authorization_list_description"><![CDATA[
     This data structure contains the key pair\'s properties themselves, as defined in the Keymaster or KeyMint hardware abstraction layer (HAL). You compare these values to the device\'s current state or to a set of expected values to verify that a key pair is still valid for use in your app.
@@ -324,6 +325,9 @@
     ]]></string>
     <string name="authorization_list_identityCredentialKey_description"><![CDATA[
     It is used in attestations produced by the IIdentityCredential HAL when that HAL attests to Credential Keys. IIdentityCredential produces KeyMint-style attestations.
+    ]]></string>
+    <string name="authorization_list_moduleHash_description"><![CDATA[
+    Specifies the SHA-256 hash of the DER-encoded module information.
     ]]></string>
 
     <string name="knox">Samsung Knox Attestation</string>

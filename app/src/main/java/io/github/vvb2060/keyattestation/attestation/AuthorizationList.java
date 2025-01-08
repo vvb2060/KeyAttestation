@@ -25,6 +25,7 @@ import android.util.Log;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.io.BaseEncoding;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -54,7 +55,7 @@ public class AuthorizationList {
     public static final int KM_EC_CURVE_P256 = 1;
     public static final int KM_EC_CURVE_P384 = 2;
     public static final int KM_EC_CURVE_P521 = 3;
-    public static final int KM_EC_CURVE_CURVE_25519 = 4;
+    public static final int KM_EC_CURVE_25519 = 4;
 
     // Padding modes.
     public static final int KM_PAD_NONE = 1;
@@ -155,6 +156,7 @@ public class AuthorizationList {
     public static final int KM_TAG_DEVICE_UNIQUE_ATTESTATION = KM_BOOL | 720;
     public static final int KM_TAG_IDENTITY_CREDENTIAL_KEY = KM_BOOL | 721;
     public static final int KM_TAG_ATTESTATION_ID_SECOND_IMEI = KM_BYTES | 723;
+	public static final int KM_TAG_MODULE_HASH = KM_BYTES | 724;
 
     // Map for converting padding values to strings
     private static final ImmutableMap<Integer, String> paddingMap = ImmutableMap
@@ -235,6 +237,7 @@ public class AuthorizationList {
     private Boolean deviceUniqueAttestation;
     private Boolean identityCredentialKey;
     private String secondImei;
+	private byte[] moduleHash;
 
     public AuthorizationList(ASN1Encodable asn1Encodable) throws CertificateParsingException {
         if (!(asn1Encodable instanceof ASN1Sequence sequence)) {
@@ -382,6 +385,9 @@ public class AuthorizationList {
                     break;
                 case KM_TAG_ATTESTATION_ID_SECOND_IMEI & KEYMASTER_TAG_TYPE_MASK:
                     secondImei = Asn1Utils.getStringFromAsn1OctetStreamAssumingUTF8(value);
+                    break;
+                case KM_TAG_MODULE_HASH & KEYMASTER_TAG_TYPE_MASK:
+                    moduleHash = Asn1Utils.getByteArrayFromAsn1(value);
                     break;
             }
         }
@@ -578,7 +584,7 @@ public class AuthorizationList {
             case KM_EC_CURVE_P256 -> "secp256r1";
             case KM_EC_CURVE_P384 -> "secp384r1";
             case KM_EC_CURVE_P521 -> "secp521r1";
-            case KM_EC_CURVE_CURVE_25519 -> "CURVE_25519";
+            case KM_EC_CURVE_25519 -> "CURVE_25519";
             default -> "unknown (" + ecCurve + ")";
         };
     }
@@ -759,6 +765,10 @@ public class AuthorizationList {
         return secondImei;
     }
 
+    public byte[] getModuleHash() {
+        return moduleHash;
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -926,6 +936,9 @@ public class AuthorizationList {
         }
         if (model != null) {
             s.append("\nModel: ").append(model);
+        }
+        if (moduleHash != null) {
+            s.append("\nModule Hash: ").append(BaseEncoding.base16().lowerCase().encode(moduleHash));
         }
         return s.toString();
     }

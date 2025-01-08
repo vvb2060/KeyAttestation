@@ -317,6 +317,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     list.bootPatchLevel?.toString(),
                     list.deviceUniqueAttestation?.toString(),
                     list.identityCredentialKey?.toString(),
+                    list.moduleHash?.let { BaseEncoding.base16().lowerCase().encode(it) },
             )
         }
 
@@ -364,6 +365,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_bootPatchLevel,
                 R.string.authorization_list_deviceUniqueAttestation,
                 R.string.authorization_list_identityCredentialKey,
+                R.string.authorization_list_moduleHash,
         )
 
         private val authorizationItemDescriptions = arrayOf(
@@ -410,6 +412,7 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                 R.string.authorization_list_bootPatchLevel_description,
                 R.string.authorization_list_deviceUniqueAttestation_description,
                 R.string.authorization_list_identityCredentialKey_description,
+                R.string.authorization_list_moduleHash_description,
         )
     }
 }

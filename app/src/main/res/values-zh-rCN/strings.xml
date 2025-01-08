@@ -178,6 +178,7 @@
     <string name="authorization_list_usageCountLimit">使用次数限制</string>
     <string name="authorization_list_deviceUniqueAttestation">设备唯一认证</string>
     <string name="authorization_list_identityCredentialKey">身份凭据密钥</string>
+    <string name="authorization_list_moduleHash">模块摘要</string>
 
     <string name="authorization_list_description"><![CDATA[
     此数据结构包含密钥对的属性本身，如 Keymaster 或 KeyMint 硬件抽象层 (HAL) 中所定义。将这些值与设备的当前状态或一组预期值进行比较，以验证密钥对是否仍适用于您的应用。
@@ -253,7 +254,7 @@
     ]]></string>
     <string name="authorization_list_rootOfTrust_description"><![CDATA[
     这个值集合可以定义与设备状态有关的密钥信息。<br/><p>
-    verifiedBootKey: <br/>验证系统映像的密钥的安全散列值。<br/><br/>
+    verifiedBootKey: <br/>验证系统映像的密钥的摘要值。<br/><br/>
     deviceLocked: <br/>在设备的引导加载程序处于锁定状态时为 true，这将启用启动时验证检查，并防止将未签名的设备映像刷写到设备上。<br/><br/>
     verifiedBootState: <br/>此数据结构提供设备的当前启动状态，表示在设备完成启动后为用户和应用提供的保护级别。<br/><br/>
     verifiedBootHash: <br/>受启动时验证保护的所有数据的摘要。对于使用 Android 启动时验证功能实现（针对启动时验证功能）的设备，此值包含 VBMeta 结构或启动时验证元数据结构的摘要。
@@ -315,6 +316,9 @@
     <string name="authorization_list_identityCredentialKey_description"><![CDATA[
     当 IIdentityCredential HAL 对凭据密钥进行认证时，它将被用于该 HAL 生成的认证中。IIdentityCredential 生成 KeyMint 样式的证明。
     ]]></string>
+    <string name="authorization_list_moduleHash_description"><![CDATA[
+    用于指定 DER 编码的 APEX 模块信息的 SHA-256 摘要值
+    ]]></string>
 
     <string name="knox">三星 Knox 认证</string>
     <string name="knox_description"><![CDATA[
@@ -329,8 +333,8 @@
     <li gap="8sp">硬件保险丝读数显示设备上是否加载过不受信任的固件。</li>
     </ul>
     ]]></string>
-    <string name="knox_record_hash">认证记录散列</string>
+    <string name="knox_record_hash">认证记录摘要</string>
     <string name="knox_record_hash_description"><![CDATA[
-    向 ICCC 请求完整性状态数据的 TA 的 SHA256 散列。
+    向 ICCC 请求完整性状态数据的 TA 的 SHA256 摘要。
     ]]></string>
 </resources>
