@@ -183,8 +183,8 @@ class HomeViewModel(
                 if (hasMEID && preferIdAttestationMEID) idFlags = idFlags or DevicePolicyManager.ID_TYPE_MEID
             }
         }
-        val useAttestKey = hasAttestKey && preferAttestKey
-        val useStrongBox = hasStrongBox && preferStrongBox
+        val useAttestKey = hasAttestKey && preferAttestKey && !useSak
+        val useStrongBox = hasStrongBox && preferStrongBox && !useSak
         val includeProps = hasDeviceIds && preferIncludeProps &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 

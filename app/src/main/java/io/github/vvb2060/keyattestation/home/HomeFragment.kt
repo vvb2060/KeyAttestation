@@ -142,7 +142,10 @@ class HomeFragment : AppFragment(), HomeAdapter.Listener, MenuProvider {
             isChecked = viewModel.preferShizuku
         }
 
-        menu.findItem(R.id.menu_import_attest_key)?.isVisible = viewModel.preferAttestKey
+        menu.findItem(R.id.menu_use_strongbox)?.isVisible = !viewModel.preferSak
+        menu.findItem(R.id.menu_use_attest_key)?.isVisible = !viewModel.preferSak
+        menu.findItem(R.id.menu_import_attest_key)?.isVisible = !viewModel.preferSak
+                && viewModel.preferAttestKey
 
         menu.setGroupVisible(R.id.menu_id_type_group, viewModel.preferShizuku)
         menu.findItem(R.id.menu_include_unique_id).isVisible =
