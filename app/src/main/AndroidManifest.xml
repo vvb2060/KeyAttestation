@@ -13,17 +13,21 @@
 
     <application
         android:name=".AppApplication"
+        android:enableOnBackInvokedCallback="true"
+        android:hasFragileUserData="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup">
+        tools:remove="android:appComponentFactory"
+        tools:targetApi="33">
         <activity
             android:name=".home.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

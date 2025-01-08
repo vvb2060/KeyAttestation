@@ -3,10 +3,9 @@ package io.github.vvb2060.keyattestation.home
 import android.view.View
 import io.github.vvb2060.keyattestation.R
 import io.github.vvb2060.keyattestation.databinding.HomeErrorBinding
-import io.github.vvb2060.keyattestation.ktx.toHtml
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import rikka.html.text.HtmlCompat
-import rikka.recyclerview.BaseViewHolder.Creator
+import rikka.html.text.toHtml
 
 class ErrorViewHolder(itemView: View, binding: HomeErrorBinding) : HomeViewHolder<AttestationException, HomeErrorBinding>(itemView, binding) {
 

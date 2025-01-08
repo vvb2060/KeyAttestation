@@ -25,11 +25,11 @@ import io.github.vvb2060.keyattestation.attestation.Attestation
 import io.github.vvb2060.keyattestation.attestation.CertificateInfo
 import io.github.vvb2060.keyattestation.databinding.HomeBinding
 import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
-import io.github.vvb2060.keyattestation.ktx.activityViewModels
-import io.github.vvb2060.keyattestation.ktx.toHtml
 import io.github.vvb2060.keyattestation.lang.AttestationException
 import io.github.vvb2060.keyattestation.util.Status
 import rikka.html.text.HtmlCompat
+import rikka.html.text.toHtml
+import rikka.lifecycle.activityViewModels
 import rikka.shizuku.Shizuku
 import rikka.widget.borderview.BorderView
 
