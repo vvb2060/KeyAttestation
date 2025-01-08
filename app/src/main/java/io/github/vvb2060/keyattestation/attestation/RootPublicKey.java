@@ -49,16 +49,30 @@ public class RootPublicKey {
             MdsGUmX4RFlXYfC78hdLt0GAZMAoDo9Sd47b0ke2RekZyOmLw9vCkT/X11DEHTVm\
             +Vfkl5YLCazOkjWFmwIDAQAB""";
 
+    private static final String KNOX_SAKV1_ROOT_PUBLIC_KEY = """
+            MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBs9Qjr//REhkXW7jUqjY9KNwWac4r\
+            5+kdUGk+TZjRo1YEa47Axwj6AJsbOjo4QsHiYRiWTELvFeiuBsKqyuF0xyAAKvDo\
+            fBqrEq1/Ckxo2mz7Q4NQes3g4ahSjtgUSh0k85fYwwHjCeLyZ5kEqgHG9OpOH526\
+            FFAK3slSUgC8RObbxys=""";
+
     private static final String KNOX_SAKV2_ROOT_PUBLIC_KEY = """
             MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBhbGuLrpql5I2WJmrE5kEVZOo+dgA\
             46mKrVJf/sgzfzs2u7M9c1Y9ZkCEiiYkhTFE9vPbasmUfXybwgZ2EM30A1ABPd12\
             4n3JbEDfsB/wnMH1AcgsJyJFPbETZiy42Fhwi+2BCA5bcHe7SrdkRIYSsdBRaKBo\
             ZsapxB0gAOs0jSPRX5M=""";
 
+    private static final String KNOX_SAKMV1_ROOT_PUBLIC_KEY = """
+            MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQB9XeEN8lg6p5xvMVWG42P2Qi/aRKX\
+            2rPRNgK92UlO9O/TIFCKHC1AWCLFitPVEow5W+yEgC2wOiYxgepY85TOoH0AuEkL\
+            oiC6ldbF2uNVU3rYYSytWAJg3GFKd1l9VLDmxox58Hyw2Jmdd5VSObGiTFQ/SgKs\
+            n2fbQPtpGlNxgEfd6Y8=""";
+
     private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
+    private static final byte[] knoxSakv1Key = Base64.decode(KNOX_SAKV1_ROOT_PUBLIC_KEY, 0);
     private static final byte[] knoxSakv2Key = Base64.decode(KNOX_SAKV2_ROOT_PUBLIC_KEY, 0);
+    private static final byte[] knoxSakmv1Key = Base64.decode(KNOX_SAKMV1_ROOT_PUBLIC_KEY, 0);
     private static final Set<PublicKey> oemKeys = getOemPublicKey();
 
     private static Set<PublicKey> getOemPublicKey() {
@@ -100,6 +114,10 @@ public class RootPublicKey {
         } else if (Arrays.equals(publicKey, aospRsaKey)) {
             return Status.AOSP;
         } else if (Arrays.equals(publicKey, knoxSakv2Key)) {
+            return Status.KNOX;
+        } else if (Arrays.equals(publicKey, knoxSakv1Key)) {
+            return Status.KNOX;
+        } else if (Arrays.equals(publicKey, knoxSakmv1Key)) {
             return Status.KNOX;
         } else if (oemKeys != null) {
             for (var key : oemKeys) {
