@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Key Attestation</string>
+    <string name="use_shizuku">Usar Shizuku</string>
+    <string name="use_sak">Usar o atestado Knox</string>
     <string name="use_strongbox">Usar StrongBox</string>
-    <string name="use_attest_key">Usar chave de atestado gerada pelo app</string>
+    <string name="use_attest_key">Usar chave de atestado</string>
+    <string name="import_attest_key">Importar chave de atestado</string>
     <string name="attest_device_props">Atestar props do dispositivo</string>
+    <string name="id_type_serial">Atestar número de série do dispositivo</string>
+    <string name="id_type_imei">Atestar IMEI do dispositivo</string>
+    <string name="id_type_meid">Atestar MEID do dispositivo</string>
+    <string name="include_unique_id">Incluir ID exclusivo</string>
+    <string name="rkp_test">Testar RKP</string>
     <string name="reset">Redefinir</string>
     <string name="load_certs">Carregar do arquivo</string>
     <string name="save_certs">Salvar em arquivo</string>
     <string name="about">Sobre</string>
     <string name="open_source_info">Este software é de código aberto sob %2$s (%1$s).</string>
+    <string name="install_shizuku">Instale o Shizuku para usar o atestado de identificação (%s).</string>
+    <string name="start_shizuku">Shizuku não está em execução.</string>
 
     <string name="bootloader_locked">Bootloader bloqueado</string>
     <string name="bootloader_user">Root de confiança definida pelo usuário final</string>
@@ -22,9 +32,11 @@
     <string name="aosp_root_cert">Certificado root de atestado de software AOSP</string>
     <string name="aosp_root_cert_summary">A chave privada da chave de atestado é bem conhecida, a cadeia de certificados pode ser adulterada.</string>
     <string name="google_root_cert">Certificado root de atestado de hardware do Google</string>
-    <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar chaves de atestado assinadas pelo Google.</string>
+    <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar chave de atestado assinada pelo.</string>
+    <string name="google_root_cert_rkp">Provisionamento de chave remota do Google</string>
+    <string name="google_root_cert_rkp_summary">A chave de atestado provisionada remotamente tem maior segurança e maior disponibilidade.</string>
     <string name="knox_root_cert">Certificado root de atestado do Samsung Knox</string>
-    <string name="knox_root_cert_summary">O atestado Knox é assinado usando a chave de atestado Samsung.</string>
+    <string name="knox_root_cert_summary">O atestado Knox é assinado usando a chave de atestado Samsung (SAK).</string>
     <string name="oem_root_cert">Certificado root OEM</string>
     <string name="oem_root_cert_summary">Este dispositivo confia neste certificado root, mas pode não ser confiável para outras pessoas.</string>
 
@@ -38,13 +50,15 @@
     <string name="cert_error_revoked">revogado: </string>
     <string name="cert_error_expired">expirado: </string>
     <string name="provisioning_info_certs_issued">número de certificados emitidos nos últimos 30 dias: </string>
+    <string name="provisioning_info_manufacturer">fabricante: </string>
 
     <string name="error_message_subtitle">Mensagens detalhadas:</string>
     <string name="error_unknown">Erro desconhecido</string>
     <string name="error_unavailable">Não é possível atestar</string>
     <string name="error_unavailable_summary">
-    O dispositivo não suporta o atestado ou a chave de atestado fornecida de fábrica foi perdida, possivelmente devido a uma configuração incorreta do OEM ou à gravação do usuário final na partição persist.
-    Recomenda-se tentar novamente após ajustar as opções do menu.
+    Falha no teste, ajuste as opções no menu e tente novamente.
+    Um motivo comum para falhas consistentes no atestado é a incapacidade de usar a chave de atestado fornecida de fábrica,
+    possivelmente devido a uma configuração incorreta ou a uma partição persist corrompida.
     </string>
     <string name="error_cant_parse_cert">Não foi possível analisar o certificado</string>
     <string name="error_cant_parse_cert_summary">
@@ -56,26 +70,67 @@
     </string>
     <string name="error_deviceids_unavailable">Não foi possível atestar os IDs dos dispositivos</string>
     <string name="error_deviceids_unavailable_summary">
-    Este dispositivo foi declarado como tendo suporte para atestado de ID, mas os IDs não correspondem ou o dispositivo não pode mais atestar seus IDs.
+    Este dispositivo foi declarado como tendo suporte para atestado de ID, mas os IDs não existem, não correspondem,
+    ou o dispositivo não pode mais atestar seus IDs. Ajuste as opções no menu e tente novamente.
     </string>
     <string name="error_out_of_keys">Nenhuma chave provisionada remotamente para o atestado</string>
     <string name="error_out_of_keys_summary">
-    Este dispositivo não está registrado no servidor de provisionamento de chaves ou o servidor recusa a emissão de chaves.
+    Este dispositivo não está registrado no servidor de provisionamento de chaves ou o servidor se recusa permanentemente a emitir chaves.
     </string>
     <string name="error_out_of_keys_transient">Atualmente não há chaves provisionadas remotamente para o atestado</string>
     <string name="error_out_of_keys_transient_summary">
-    O conjunto de chaves provisionadas remotamente se esgotou. Tente novamente pela internet ou verifique se há atualizações do sistema.
+    O conjunto de chaves está esgotado. Tente novamente após a rede.
+    Se o servidor se recusar temporariamente a emitir chaves, verifique se há atualizações do sistema.
     </string>
     <string name="error_unavailable_transient">Atualmente não é possível atestar</string>
     <string name="error_unavailable_transient_summary">
-    Este problema é temporário. Tente redefinir no menu ou verifique se há atualizações do sistema.
+    O problema é temporário, ajuste as opções do menu ou tente novamente mais tarde.
+    </string>
+    <string name="error_keys_not_provisioned">Sem chaves de atestado</string>
+    <string name="error_keys_not_provisioned_summary">
+    Não é possível buscar chaves de atestado provisionadas remotamente e nenhuma chave de atestado provisionada de fábrica.
+    </string>
+    <string name="error_remote_key_provisioning">Erro de provisionamento remoto de chave</string>
+    <string name="error_remote_key_provisioning_summary">
+    Não é possível buscar a chave de atestado do servidor de provisionamento de chaves.
     </string>
 
+    <string name="rpc_hardware_info">Informações de hardware</string>
+    <string name="rpc_hardware_info_description">
+    As informações de hardware do componente provisionado remotamente.
+    </string>
+    <string name="rpc_version_number">Versão</string>
+    <string name="rpc_version_number_description">
+    Versão de implementação do componente de hardware provisionado remotamente.
+    A versão fornecida aqui deve corresponder à versão informada no CsrPayload produzido pela interface HAL.
+    </string>
+    <string name="rpc_author_name">Fornecedor</string>
+    <string name="rpc_author_name_description">
+    O nome da organização do autor da implementação IRemotelyProvisionedComponent.
+    </string>
+    <string name="rpc_unique_id">Identificador</string>
+    <string name="rpc_unique_id_description">
+    Um identificador opaco para esta implementação de IRemotelyProvisionedComponent.
+    Cada implementação deve ter um identificador distinto de todas as outras implementações e deve ser consistente em todos os dispositivos.
+    </string>
+    <string name="rkp_device_info">Informações do dispositivo</string>
+    <string name="rkp_device_info_description">
+    As informações do dispositivo contêm informações sobre o dispositivo assinado pelo HAL IRemotelyProvisionedComponent.
+    Esses valores devem ser verificados pelo servidor para verificar se a solicitação da assinatura de certificado
+    criada por uma instância HAL IRemotelyProvisionedComponent vem do dispositivo esperado
+    com base nos valores carregados inicialmente durante a fabricação do dispositivo na fábrica.
+    </string>
+    <string name="rkp_hostname">Nome do host de provisionamento remoto</string>
+    <string name="rkp_hostname_empty">Provisionamento remoto de chave desativado</string>
+
+    <string name="attestation">Atestado</string>
     <string name="attestation_version_description"><![CDATA[<font face="sans-serif-medium">Versão:</font><br>A versão do recurso de atestado principal.]]></string>
     <string name="keymaster_version_description"><![CDATA[<font face="sans-serif-medium">Versão:</font><br>A versão da camada de abstração de hardware Keymaster ou KeyMint (HAL).]]></string>
     <string name="security_level_description"><![CDATA[<font face="sans-serif-medium">Nível de segurança:</font><br>Esta estrutura de dados indica até que ponto um recurso de software, como um par de chaves, é protegido com base em sua localização no dispositivo.<p><ul><li gap="8sp"><font face="sans-serif-medium">Software</font><br>A lógica de criação e gerenciamento do recurso está implementada no sistema Android. Para fins de criação e armazenamento de pares de chaves, esse local é menos seguro que o TEE, mas é mais seguro que o espaço de processo do seu app.</li><li gap="8sp"><font face="sans-serif-medium">TrustedEnvironment</font><br>A lógica para criar e gerenciar o recurso é implementada em hardware seguro, como um TEE. Para fins de criação e armazenamento de pares de chaves, esse local é mais seguro porque o hardware seguro é altamente resistente ao comprometimento remoto.</li><li gap="8sp"><font face="sans-serif-medium">StrongBox</font><br>A lógica para criar e gerenciar o recurso é implementada em um ambiente dedicado <a href="https://developer.android.com/training/articles/keystore#HardwareSecurityModule">Módulo de segurança de hardware</a>. Para fins de criação e armazenamento de pares de chaves, esse local é mais seguro porque é altamente resistente a comprometimentos remotos e ataques de hardware contra o módulo.</li></ul>]]></string>
     <string name="attestation_summary_format">Versão: %1$s\nNível de segurança: %2$s</string>
+    <string name="attestation_challenge">Desafio de atestado</string>
     <string name="attestation_challenge_description">Contém o desafio fornecido no momento da criação da chave. Verifique se este valor corresponde ao valor fornecido pelo seu servidor. Caso contrário, seu serviço poderá ficar vulnerável à reprodução de certificados de atestado antigos.</string>
+    <string name="unique_id">ID exclusivo</string>
     <string name="unique_id_description"><![CDATA[Este valor identifica o dispositivo, mas apenas por um período limitado de tempo. Ele é <a href="https://source.android.com/security/keystore/attestation#unique-id">computado</a> e usado apenas por apps do sistema. Em todos os outros apps, uniqueId está vazio.]]></string>
 
     <string name="empty">(vazio)</string>
@@ -83,8 +138,8 @@
     <string name="security_level_trusted_environment">TrustedEnvironment</string>
     <string name="security_level_strongbox">StrongBox</string>
 
-    <string name="sw_enforced_description"><![CDATA[Este item é aplicado pelo sistema Android, não pelo TEE do dispositivo.]]></string>
-    <string name="tee_enforced_description"><![CDATA[Este item é aplicado pelo TEE do dispositivo.]]></string>
+    <string name="sw_enforced_description"><![CDATA[Este item é aplicado pelo sistema Android, não pelo hardware do dispositivo.]]></string>
+    <string name="tee_enforced_description"><![CDATA[Este item é aplicado pelo hardware do dispositivo.]]></string>
 
     <string name="authorization_list">Lista de autorização</string>
     <string name="authorization_list_purpose">Propósito</string>
@@ -113,16 +168,16 @@
     <string name="authorization_list_rootOfTrust">Root de confiança</string>
     <string name="authorization_list_osVersion">Versão do OS</string>
     <string name="authorization_list_osPatchLevel">Nível de patch do OS</string>
-    <string name="authorization_list_attestationApplicationId">ID de atestado do app</string>
-    <string name="authorization_list_attestationIdBrand">ID de atestado da marca</string>
-    <string name="authorization_list_attestationIdDevice">ID de atestado do dispositivo</string>
-    <string name="authorization_list_attestationIdProduct">ID de atestado do produto</string>
-    <string name="authorization_list_attestationIdSerial">ID de atestado do número de série</string>
-    <string name="authorization_list_attestationIdImei">ID de atestado do IMEI</string>
-    <string name="authorization_list_attestationIdSecondImei">ID de atestado do segundo IMEI</string>
-    <string name="authorization_list_attestationIdMeid">ID de atestado do MEID</string>
-    <string name="authorization_list_attestationIdManufacturer">ID de atestado do fabricante</string>
-    <string name="authorization_list_attestationIdModel">ID de atestado do modelo</string>
+    <string name="authorization_list_attestationApplicationId">ID do app</string>
+    <string name="authorization_list_attestationIdBrand">marca</string>
+    <string name="authorization_list_attestationIdDevice">dispositivo</string>
+    <string name="authorization_list_attestationIdProduct">produto</string>
+    <string name="authorization_list_attestationIdSerial">número de série</string>
+    <string name="authorization_list_attestationIdImei">IMEI</string>
+    <string name="authorization_list_attestationIdSecondImei">segundo IMEI</string>
+    <string name="authorization_list_attestationIdMeid">MEID</string>
+    <string name="authorization_list_attestationIdManufacturer">fabricante</string>
+    <string name="authorization_list_attestationIdModel">modelo</string>
     <string name="authorization_list_vendorPatchLevel">Nível do patch do fornecedor</string>
     <string name="authorization_list_bootPatchLevel">Nível do patch de inicialização</string>
     <string name="authorization_list_mgfDigest">Rsa Oaep Mgf Digest</string>
@@ -130,6 +185,7 @@
     <string name="authorization_list_usageCountLimit">Limite de contagem de uso</string>
     <string name="authorization_list_deviceUniqueAttestation">Atestado exclusivo do dispositivo</string>
     <string name="authorization_list_identityCredentialKey">Chave de credencial de identidade</string>
+    <string name="authorization_list_moduleHash">Hash do módulo</string>
 
     <string name="authorization_list_description"><![CDATA[
     Essa estrutura de dados contém as próprias propriedades do par de chaves, conforme definido na camada de abstração de hardware (HAL) Keymaster ou KeyMint. Você compara esses valores com o estado atual do dispositivo ou com um conjunto de valores esperados para verificar se um par de chaves ainda é válido para uso no seu app.
@@ -232,13 +288,13 @@
     Fornece o número de série do dispositivo. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    Fornece o IMEI de um dos rádios do aparelho para operações de geração/importação de chaves atestadas. Este campo deve ser definido somente ao solicitar atestado dos identificadores do dispositivo.
+    Fornece o IMEI de um dos rádios do aparelho para operações de geração/importação de chaves atestadas. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
-    Fornece um IMEI adicional de um dos rádios do dispositivo para operações de geração/importação de chaves atestadas.
+    Fornece um IMEI adicional de um dos rádios do dispositivo para operações de geração/importação de chaves atestadas. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdMeid_description"><![CDATA[
-    Fornece os MEIDs para todos os rádios do dispositivo. Este campo só será definido ao solicitar atestado dos identificadores do dispositivo.
+    Fornece os MEIDs para todos os rádios do dispositivo. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdManufacturer_description"><![CDATA[
     Fornece o nome do fabricante do dispositivo, conforme retornado por Build.MANUFACTURER no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
@@ -267,9 +323,17 @@
     <string name="authorization_list_identityCredentialKey_description"><![CDATA[
     Ele é usado em atestados produzidos pelo HAL IIdentityCredential quando esse HAL atesta chaves de credenciais. IIdentityCredential produz atestados estilo KeyMint.
     ]]></string>
+    <string name="authorization_list_moduleHash_description"><![CDATA[
+    Especifica o hash SHA-256 das informações do módulo codificado em DER.
+    ]]></string>
 
+    <string name="knox">Samsung Knox Attestation</string>
     <string name="knox_description"><![CDATA[
     Samsung Knox Attestation é um recurso que verifica a integridade dos dados de um dispositivo Samsung, verificando se o dispositivo não está rooteado ou executando firmware não oficial.
+    ]]></string>
+    <string name="knox_device_id">ID do dispositivo</string>
+    <string name="knox_device_id_description"><![CDATA[
+    Verifique se o IMEI e o número de série foram modificados.
     ]]></string>
     <string name="knox_integrity">Status de integridade</string>
     <string name="knox_integrity_description"><![CDATA[
