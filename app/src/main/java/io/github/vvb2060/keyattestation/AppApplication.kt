@@ -10,6 +10,7 @@ import io.github.vvb2060.keyattestation.keystore.KeyStoreManager
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import rikka.html.text.HtmlCompat
 import rikka.material.app.DayNightDelegate
+import rikka.sui.Sui
 import java.security.Security
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -35,7 +36,12 @@ class AppApplication : Application() {
         DayNightDelegate.setDefaultNightMode(DayNightDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         HtmlCompat.setContext(this)
         installProvider(this)
-        KeyStoreManager.requestBinder(this)
+
+        if (Sui.init(BuildConfig.APPLICATION_ID)) {
+            KeyStoreManager.requestPermission();
+        } else {
+            KeyStoreManager.requestBinder(this)
+        }
     }
 
     private fun installProvider(context: Context) {
