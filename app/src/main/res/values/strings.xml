@@ -336,6 +336,10 @@
     ]]></string>
     <string name="knox_challenge">@string/attestation_challenge</string>
     <string name="knox_challenge_description">@string/attestation_challenge_description</string>
+    <string name="knox_id_attest">ID attestation</string>
+    <string name="knox_id_attest_description"><![CDATA[
+    Check if the IMEI and serial number have been modified.
+    ]]></string>
     <string name="knox_integrity">Integrity status</string>
     <string name="knox_integrity_description"><![CDATA[
     The Keymaster Trusted Application (TA) in Secure World gathers this data:

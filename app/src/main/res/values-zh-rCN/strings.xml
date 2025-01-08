@@ -324,6 +324,10 @@
     <string name="knox_description"><![CDATA[
     三星 Knox 认证通过检查设备是否被 Root 或运行非官方固件来验证三星设备的数据完整性。
     ]]></string>
+    <string name="knox_id_attest">ID 认证</string>
+    <string name="knox_id_attest_description"><![CDATA[
+    检查 IMEI 和序列号是否被修改。
+    ]]></string>
     <string name="knox_integrity">完整性状态</string>
     <string name="knox_integrity_description"><![CDATA[
     安全世界中的密钥管理可信应用（TA）收集这些数据：

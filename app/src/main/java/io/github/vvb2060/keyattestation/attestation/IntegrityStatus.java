@@ -65,7 +65,7 @@ public class IntegrityStatus {
                 "\nICD: " + statusToString(icd) +
                 "\nKernel Status: " + statusToString(kernelStatus) +
                 "\nSystem Status: " + statusToString(systemStatus) +
-                "\nCaller auth(with PROCA) Status: \n" +
+                "\nCaller auth(with PROCA) Status: " +
                 (authResult == null ? "Not performed" : authResult.toString());
     }
 }

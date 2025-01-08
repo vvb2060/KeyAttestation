@@ -44,7 +44,7 @@ public class AuthResult {
 
     @Override
     public String toString() {
-        return "Caller Auth Result: " + IntegrityStatus.statusToString(callerAuthResult) +
+        return "\nCaller Auth Result: " + IntegrityStatus.statusToString(callerAuthResult) +
                 "\nCalling Package: " + callingPackage +
                 "\nCalling Package Signatures: " + callingPackageSigs +
                 "\nCalling Package Auth Result: " + IntegrityStatus.statusToString(callingPackageAuthResult);

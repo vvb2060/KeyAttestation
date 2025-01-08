@@ -11,10 +11,12 @@ import java.security.cert.X509Certificate;
 // https://docs.samsungknox.com/dev/knox-attestation/
 public class KnoxAttestation extends Asn1Attestation {
     private static final int CHALLENGE = 0;
+    private static final int ID_ATTEST = 4;
     private static final int INTEGRITY = 5;
     private static final int ATTESTATION_RECORD_HASH = 6;
 
     private String challenge;
+    private String idAttest;
     private IntegrityStatus knoxIntegrity;
     private byte[] recordHash;
 
@@ -30,6 +32,7 @@ public class KnoxAttestation extends Asn1Attestation {
             var value = taggedObject.getBaseObject().toASN1Primitive();
             switch (tag) {
                 case CHALLENGE -> challenge = Asn1Utils.getStringFromASN1PrintableString(value);
+                case ID_ATTEST -> idAttest = Asn1Utils.getStringFromASN1PrintableString(value);
                 case INTEGRITY -> knoxIntegrity = new IntegrityStatus(value);
                 case ATTESTATION_RECORD_HASH -> recordHash = Asn1Utils.getByteArrayFromAsn1(value);
                 default -> throw new CertificateParsingException("invalid tag no: " + tag);
@@ -50,6 +53,10 @@ public class KnoxAttestation extends Asn1Attestation {
         return challenge;
     }
 
+    public String getIdAttest() {
+        return idAttest;
+    }
+
     public IntegrityStatus getKnoxIntegrity() {
         return knoxIntegrity;
     }
@@ -62,6 +69,7 @@ public class KnoxAttestation extends Asn1Attestation {
     public String toString() {
         return super.toString() +
                 "\n\nExtension type: " + getClass().getSimpleName() +
+                "\nID attestation: " + idAttest +
                 "\nChallenge: " + challenge +
                 "\nIntegrity status: " + knoxIntegrity +
                 "\nAttestation record hash: " + BaseEncoding.base16().lowerCase().encode(recordHash);

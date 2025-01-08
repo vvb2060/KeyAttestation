@@ -174,6 +174,11 @@ class HomeAdapter(listener: Listener) : IdBasedRecyclerViewAdapter() {
                     attestation.knoxChallenge), id++)
 
             addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
+                R.string.knox_id_attest,
+                R.string.knox_id_attest_description,
+                attestation.idAttest), id++)
+
+            addItem(CommonItemViewHolder.COMMON_CREATOR, CommonData(
                     R.string.knox_integrity,
                     R.string.knox_integrity_description,
                     attestation.knoxIntegrity.toString()), id++)

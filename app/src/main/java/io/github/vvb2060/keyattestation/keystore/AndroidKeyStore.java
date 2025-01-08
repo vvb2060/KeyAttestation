@@ -245,6 +245,7 @@ public class AndroidKeyStore extends IAndroidKeyStore.Stub {
                 .setAlgorithm(KeyProperties.KEY_ALGORITHM_EC)
                 .setKeyGenParameterSpec(params)
                 .setVerifiableIntegrity(true)
+                .setDeviceAttestation(true)
                 .setPackageName(packageName);
         return builder.build();
     }
