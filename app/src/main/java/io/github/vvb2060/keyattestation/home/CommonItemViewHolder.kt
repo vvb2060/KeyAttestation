@@ -49,10 +49,10 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
 
                 override fun onBind() {
                     binding.title.setText(data.title)
-                    if (data.data.isNotBlank()) {
-                        binding.summary.text = data.data
-                    } else {
+                    if (data.data.isEmpty()) {
                         binding.summary.setText(R.string.rkp_hostname_empty)
+                    } else {
+                        binding.summary.text = data.data
                     }
                 }
             }
@@ -73,10 +73,10 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
 
                 override fun onBind() {
                     binding.title.setText(data.title)
-                    if (!data.data.isNullOrBlank()) {
-                        binding.summary.text = data.data
-                    } else {
+                    if (data.data.isNullOrEmpty()) {
                         binding.summary.setText(R.string.empty)
+                    } else {
+                        binding.summary.text = data.data
                     }
                 }
             }
@@ -98,13 +98,11 @@ open class CommonItemViewHolder<T>(itemView: View, binding: HomeCommonItemBindin
                 override fun onBind() {
                     binding.apply {
                         title.setText(data.title)
-                        if (!data.data.isNullOrBlank()) {
-                            summary.text = data.data
-                            text1.setText(if (data.tee) R.string.tee_enforced else R.string.sw_enforced)
-                            text1.isVisible = true
-                        } else {
+                        text1.setText(if (data.tee) R.string.tee_enforced else R.string.sw_enforced)
+                        if (data.data.isEmpty()) {
                             summary.setText(R.string.empty)
-                            text1.isVisible = false
+                        } else {
+                            summary.text = data.data
                         }
                     }
                 }

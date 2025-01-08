@@ -36,14 +36,13 @@ class HeaderData(
 class AuthorizationItemData(
     override val title: Int,
     override val description: Int,
-    val data: String?,
+    val data: String,
     val tee: Boolean
 ) : Data() {
     constructor(title: Int, description: Int, data: String?, fallback: String?) :
-            this(title, description, data ?: fallback, data != null)
+            this(title, description, data ?: fallback!!, data != null)
 
     override fun getMessage(context: Context): CharSequence {
-        if (data.isNullOrBlank()) return super.getMessage(context)
         val id = if (tee) R.string.tee_enforced_description else R.string.sw_enforced_description
         return "${context.getString(description)}<p>* ${context.getString(id)}"
             .toHtml(HtmlCompat.FROM_HTML_OPTION_TRIM_WHITESPACE)
