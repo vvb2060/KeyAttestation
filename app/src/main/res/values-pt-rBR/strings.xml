@@ -17,7 +17,7 @@
     <string name="save_certs">Salvar em arquivo</string>
     <string name="about">Sobre</string>
     <string name="open_source_info">Este software é de código aberto sob %2$s (%1$s).</string>
-    <string name="install_shizuku">Instale o Shizuku para usar o atestado de identificação (%s).</string>
+    <string name="install_shizuku">Instale o Shizuku para usar o Atestado de ID (%s).</string>
     <string name="start_shizuku">Shizuku não está em execução.</string>
 
     <string name="bootloader_locked">Bootloader bloqueado</string>
@@ -32,7 +32,7 @@
     <string name="aosp_root_cert">Certificado root de atestado de software AOSP</string>
     <string name="aosp_root_cert_summary">A chave privada da chave de atestado é bem conhecida, a cadeia de certificados pode ser adulterada.</string>
     <string name="google_root_cert">Certificado root de atestado de hardware do Google</string>
-    <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar chave de atestado assinada pelo.</string>
+    <string name="google_root_cert_summary">Dispositivos compatíveis com GMS podem usar uma chave de atestado assinada pelo Google.</string>
     <string name="google_root_cert_rkp">Provisionamento de chave remota do Google</string>
     <string name="google_root_cert_rkp_summary">A chave de atestado provisionada remotamente tem maior segurança e maior disponibilidade.</string>
     <string name="knox_root_cert">Certificado root de atestado do Samsung Knox</string>
@@ -41,7 +41,7 @@
     <string name="oem_root_cert_summary">Este dispositivo confia neste certificado root, mas pode não ser confiável para outras pessoas.</string>
 
     <string name="cert_chain">Cadeia de certificados</string>
-    <string name="cert_chain_description">A cadeia de certificados é uma lista de certificados usados ​​para autenticar uma chave. A cadeia começa com o certificado dessa chave e cada certificado da cadeia é assinado pelo próximo certificado da cadeia. A cadeia termina com um certificado root. A confiabilidade do atestado depende do certificado root da cadeia.</string>
+    <string name="cert_chain_description">A cadeia de certificados é uma lista de certificados usados para autenticar uma chave. A cadeia começa com o certificado associado a essa chave, e cada certificado é assinado pelo próximo na cadeia. A cadeia termina com um certificado root, e a confiabilidade do atestado depende do certificado root da cadeia.</string>
     <string name="cert_info">Informações do certificado</string>
     <string name="cert_subject">assunto: </string>
     <string name="cert_not_before">não antes: </string>
@@ -56,7 +56,7 @@
     <string name="error_unknown">Erro desconhecido</string>
     <string name="error_unavailable">Não é possível atestar</string>
     <string name="error_unavailable_summary">
-    Falha no teste, ajuste as opções no menu e tente novamente.
+    Falha no teste. Ajuste as opções no menu e tente novamente.
     Um motivo comum para falhas consistentes no atestado é a incapacidade de usar a chave de atestado fornecida de fábrica,
     possivelmente devido a uma configuração incorreta ou a uma partição persist corrompida.
     </string>
@@ -66,11 +66,11 @@
     </string>
     <string name="error_strongbox_unavailable">StrongBox não disponível</string>
     <string name="error_strongbox_unavailable_summary">
-    Este dispositivo foi declarado como tendo suporte para StrongBox, mas na verdade não está disponível.
+    Este dispositivo foi declarado como tendo suporte para StrongBox, mas não está disponível no momento.
     </string>
     <string name="error_deviceids_unavailable">Não foi possível atestar os IDs dos dispositivos</string>
     <string name="error_deviceids_unavailable_summary">
-    Este dispositivo foi declarado como tendo suporte para atestado de ID, mas os IDs não existem, não correspondem,
+    Este dispositivo foi declarado como tendo suporte para Atestado de ID, mas os IDs não existem, não correspondem,
     ou o dispositivo não pode mais atestar seus IDs. Ajuste as opções no menu e tente novamente.
     </string>
     <string name="error_out_of_keys">Nenhuma chave provisionada remotamente para o atestado</string>
@@ -84,7 +84,7 @@
     </string>
     <string name="error_unavailable_transient">Atualmente não é possível atestar</string>
     <string name="error_unavailable_transient_summary">
-    O problema é temporário, ajuste as opções do menu ou tente novamente mais tarde.
+    O problema é temporário. Ajuste as opções do menu ou tente novamente mais tarde.
     </string>
     <string name="error_keys_not_provisioned">Sem chaves de atestado</string>
     <string name="error_keys_not_provisioned_summary">
@@ -111,13 +111,13 @@
     <string name="rpc_unique_id">Identificador</string>
     <string name="rpc_unique_id_description">
     Um identificador opaco para esta implementação de IRemotelyProvisionedComponent.
-    Cada implementação deve ter um identificador distinto de todas as outras implementações e deve ser consistente em todos os dispositivos.
+    Cada implementação deve ter um identificador distinto de todas as outras implementações, e deve ser consistente em todos os dispositivos.
     </string>
     <string name="rkp_device_info">Informações do dispositivo</string>
     <string name="rkp_device_info_description">
     As informações do dispositivo contêm informações sobre o dispositivo assinado pelo HAL IRemotelyProvisionedComponent.
     Esses valores devem ser verificados pelo servidor para verificar se a solicitação da assinatura de certificado
-    criada por uma instância HAL IRemotelyProvisionedComponent vem do dispositivo esperado
+    criada por uma instância HAL IRemotelyProvisionedComponent, vem do dispositivo esperado
     com base nos valores carregados inicialmente durante a fabricação do dispositivo na fábrica.
     </string>
     <string name="rkp_hostname">Nome do host de provisionamento remoto</string>
@@ -263,8 +263,8 @@
     Esta coleção de valores define informações importantes sobre o status do dispositivo.<br/><p>
     verifiedBootKey: <br/>Um hash seguro da chave que verifica a imagem do sistema.<br/><br/>
     deviceLocked: <br/>True se o bootloader do dispositivo estiver bloqueado, o que permite a Inicialização verificada e evita que uma imagem de dispositivo não assinada seja flashada no dispositivo.<br/><br/>
-    verifiedBootState: <br/>Essa estrutura de dados fornece o estado de inicialização atual do dispositivo, que representa o nível de proteção fornecido ao usuário e aos apps após a inicialização do dispositivo.<br/><br/>
-    verifiedBootHash: <br/>Um resumo de todos os dados protegidos pela Inicialização verificada. Para dispositivos que usam a implementação da Inicialização verificada do Android, esse valor contém o resumo da estrutura VBMeta ou a estrutura de metadados da Inicialização verificada.
+    verifiedBootState: <br/>Essa estrutura de dados fornece o estado de boot atual do dispositivo, que representa o nível de proteção fornecido ao usuário e aos apps após a inicialização do dispositivo.<br/><br/>
+    verifiedBootHash: <br/>Um resumo de todos os dados protegidos pela Inicialização verificada. Para dispositivos que usam a implementação da Inicialização verificada do Android da Inicialização verificada, esse valor contém o resumo da estrutura VBMeta ou a estrutura de metadados da Inicialização verificada.
     </p>]]></string>
     <string name="authorization_list_osVersion_description"><![CDATA[
     A versão do sistema operacional Android associada ao Keymaster, especificada como um número inteiro de seis dígitos. Por exemplo, a versão 8.1.0 é representada como 080100.
@@ -288,7 +288,7 @@
     Fornece o número de série do dispositivo. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdImei_description"><![CDATA[
-    Fornece o IMEI de um dos rádios do aparelho para operações de geração/importação de chaves atestadas. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
+    Fornece o IMEI de um dos rádios do dispositvo para operações de geração/importação de chaves atestadas. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_attestationIdSecondImei_description"><![CDATA[
     Fornece um IMEI adicional de um dos rádios do dispositivo para operações de geração/importação de chaves atestadas. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
@@ -303,10 +303,10 @@
     Fornece o nome do modelo do dispositivo, conforme retornado por Build.MODEL no Android. Este campo é definido apenas ao solicitar atestado dos identificadores do dispositivo.
     ]]></string>
     <string name="authorization_list_vendorPatchLevel_description"><![CDATA[
-    Especifica o nível do patch de segurança da imagem do fornecedor que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do fornecedor. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 1 de agosto de 2018 do fornecedor instalado, esse valor seria 20180801.
+    Especifica o nível do patch de segurança da imagem do fornecedor que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato AAAAMMDD, representando a data do patch de segurança do fornecedor. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 1 de agosto de 2018 do fornecedor instalado, esse valor seria 20180801.
     ]]></string>
     <string name="authorization_list_bootPatchLevel_description"><![CDATA[
-    Especifica o nível do patch de segurança da imagem do kernel que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato YYYYMMDD, representando a data do patch de segurança do sistema. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 5 de agosto de 2018 do sistema instalado, esse valor seria 20180805.
+    Especifica o nível do patch de segurança da imagem do kernel que deve ser instalado no dispositivo para que essa chave seja usada. O valor aparece no formato AAAAMMDD, representando a data do patch de segurança do sistema. Por exemplo, se uma chave fosse gerada em um dispositivo Android com o patch de segurança de 5 de agosto de 2018 do sistema instalado, esse valor seria 20180805.
     ]]></string>
     <string name="authorization_list_mgfDigest_description"><![CDATA[
     Especifica os algoritmos de resumo MGF1 que podem ser usados ​​com criptografia/descriptografia RSA com preenchimento OAEP. Os valores possíveis são definidos pela enumeração Digest.
@@ -331,8 +331,8 @@
     <string name="knox_description"><![CDATA[
     Samsung Knox Attestation é um recurso que verifica a integridade dos dados de um dispositivo Samsung, verificando se o dispositivo não está rooteado ou executando firmware não oficial.
     ]]></string>
-    <string name="knox_device_id">ID do dispositivo</string>
-    <string name="knox_device_id_description"><![CDATA[
+    <string name="knox_id_attest">Atestado de ID</string>
+    <string name="knox_id_attest_description"><![CDATA[
     Verifique se o IMEI e o número de série foram modificados.
     ]]></string>
     <string name="knox_integrity">Status de integridade</string>
