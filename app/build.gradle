@@ -34,7 +34,7 @@ android {
         targetSdk = 35
         versionCode = gitCommitCount
         versionName = '1.8.3'
-        resourceConfigurations += ['en', 'zh-rCN', 'pt-rBR']
+        resourceConfigurations += ['en', 'zh-rCN', 'zh-rTW', 'pt-rBR']
         optimization {
             keepRules {
                 ignoreFromAllExternalDependencies true
