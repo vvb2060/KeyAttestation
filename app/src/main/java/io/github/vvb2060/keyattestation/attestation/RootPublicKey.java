@@ -3,12 +3,13 @@ package io.github.vvb2060.keyattestation.attestation;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.common.collect.ImmutableMap;
 import java.io.ByteArrayInputStream;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import io.github.vvb2060.keyattestation.AppApplication;
@@ -39,6 +40,11 @@ public class RootPublicKey {
             ixPvZtXQpUpuL12ab+9EaDK8Z4RHJYYfCT3Q5vNAXaiWQ+8PTWm2QgBR/bkwSWc+\
             NpUFgNPN9PvQi8WEg5UmAGMCAwEAAQ==""";
 
+    private static final String GOOGLE_RKP_ROOT_PUBLIC_KEY = """
+            MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEI9ojcU7fPlsFCjxy6IRqzgeOoK0b+YsV\
+            9FPQywiyw8EQRTkJ9u3qwfnI4DGoSLlBqClTXJfgfCcZvs60FikNMHnu4fkRzObf\
+            gDkU2KNXezT9/RQ+XvNslxPHrHCowhGr""";
+
     private static final String AOSP_ROOT_EC_PUBLIC_KEY = """
             MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7l1ex+HA220Dpn7mthvsTWpdamgu\
             D/9/SQ59dx9EIm29sa/6FsvHrcV30lacqrewLVQBXT5DKyqO107sSHVBpA==""";
@@ -67,23 +73,34 @@ public class RootPublicKey {
             oiC6ldbF2uNVU3rYYSytWAJg3GFKd1l9VLDmxox58Hyw2Jmdd5VSObGiTFQ/SgKs\
             n2fbQPtpGlNxgEfd6Y8=""";
 
-    private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
-    private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
-    private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
-    private static final byte[] knoxSakv1Key = Base64.decode(KNOX_SAKV1_ROOT_PUBLIC_KEY, 0);
-    private static final byte[] knoxSakv2Key = Base64.decode(KNOX_SAKV2_ROOT_PUBLIC_KEY, 0);
-    private static final byte[] knoxSakmv1Key = Base64.decode(KNOX_SAKMV1_ROOT_PUBLIC_KEY, 0);
-    private static final Set<PublicKey> oemKeys = getOemPublicKey();
+    private static final Map<String, RootPublicKey.Status> pubkeys;
 
-    private static Set<PublicKey> getOemPublicKey() {
+    static {
+        ImmutableMap.Builder<String, Status> builder = ImmutableMap.builder();
+        getOemKeys()
+            .stream()
+            .map(k -> Base64.encodeToString(k.getEncoded(), Base64.NO_WRAP))
+            .forEach(s -> builder.put(s, Status.OEM));
+        pubkeys = builder
+            .put(GOOGLE_ROOT_PUBLIC_KEY, Status.GOOGLE)
+            .put(GOOGLE_RKP_ROOT_PUBLIC_KEY, Status.GOOGLE_RKP)
+            .put(AOSP_ROOT_EC_PUBLIC_KEY, Status.AOSP)
+            .put(AOSP_ROOT_RSA_PUBLIC_KEY, Status.AOSP)
+            .put(KNOX_SAKV1_ROOT_PUBLIC_KEY, Status.KNOX)
+            .put(KNOX_SAKV2_ROOT_PUBLIC_KEY, Status.KNOX)
+            .put(KNOX_SAKMV1_ROOT_PUBLIC_KEY, Status.KNOX)
+            .buildKeepingLast(); // keep our explicitly defined values over vendor-defined certs
+    }
+
+    private static Set<PublicKey> getOemKeys() {
         var resName = "android:array/vendor_required_attestation_certificates";
         var res = AppApplication.app.getResources();
         // noinspection DiscouragedApi
         var id = res.getIdentifier(resName, null, null);
-        if (id == 0) {
-            return null;
-        }
         var set = new HashSet<PublicKey>();
+        if (id == 0) {
+            return set;
+        }
         try {
             var cf = CertificateFactory.getInstance("X.509");
             for (var s : res.getStringArray(id)) {
@@ -96,36 +113,14 @@ public class RootPublicKey {
             }
         } catch (CertificateException e) {
             Log.e(AppApplication.TAG, "getOemKeys: ", e);
-            return null;
-        }
-        set.removeIf(key -> Arrays.equals(key.getEncoded(), googleKey));
-        if (set.isEmpty()) {
-            return null;
+            return Set.of();
         }
         set.forEach(key -> Log.i(AppApplication.TAG, "getOemKeys: " + key));
         return set;
     }
 
     public static Status check(byte[] publicKey) {
-        if (Arrays.equals(publicKey, googleKey)) {
-            return Status.GOOGLE;
-        } else if (Arrays.equals(publicKey, aospEcKey)) {
-            return Status.AOSP;
-        } else if (Arrays.equals(publicKey, aospRsaKey)) {
-            return Status.AOSP;
-        } else if (Arrays.equals(publicKey, knoxSakv2Key)) {
-            return Status.KNOX;
-        } else if (Arrays.equals(publicKey, knoxSakv1Key)) {
-            return Status.KNOX;
-        } else if (Arrays.equals(publicKey, knoxSakmv1Key)) {
-            return Status.KNOX;
-        } else if (oemKeys != null) {
-            for (var key : oemKeys) {
-                if (Arrays.equals(publicKey, key.getEncoded())) {
-                    return Status.OEM;
-                }
-            }
-        }
-        return Status.UNKNOWN;
+        String encodedPublicKey = Base64.encodeToString(publicKey, Base64.NO_WRAP);
+        return pubkeys.getOrDefault(encodedPublicKey, Status.UNKNOWN);
     }
 }
