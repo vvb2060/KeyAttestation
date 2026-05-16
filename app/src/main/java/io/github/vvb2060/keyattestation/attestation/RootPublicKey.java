@@ -39,6 +39,11 @@ public class RootPublicKey {
             ixPvZtXQpUpuL12ab+9EaDK8Z4RHJYYfCT3Q5vNAXaiWQ+8PTWm2QgBR/bkwSWc+\
             NpUFgNPN9PvQi8WEg5UmAGMCAwEAAQ==""";
 
+    private static final String GOOGLE_ROOT_PUBLIC_KEY_NEW = """
+            MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAEI9ojcU7fPlsFCjxy6IRqzgeOoK0b+YsV\
+            9FPQywiyw8EQRTkJ9u3qwfnI4DGoSLlBqClTXJfgfCcZvs60FikNMHnu4fkRzObf\
+            gDkU2KNXezT9/RQ+XvNslxPHrHCowhGr""";
+
     private static final String AOSP_ROOT_EC_PUBLIC_KEY = """
             MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE7l1ex+HA220Dpn7mthvsTWpdamgu\
             D/9/SQ59dx9EIm29sa/6FsvHrcV30lacqrewLVQBXT5DKyqO107sSHVBpA==""";
@@ -68,6 +73,7 @@ public class RootPublicKey {
             n2fbQPtpGlNxgEfd6Y8=""";
 
     private static final byte[] googleKey = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY, 0);
+    private static final byte[] googleKeyNew = Base64.decode(GOOGLE_ROOT_PUBLIC_KEY_NEW, 0);
     private static final byte[] aospEcKey = Base64.decode(AOSP_ROOT_EC_PUBLIC_KEY, 0);
     private static final byte[] aospRsaKey = Base64.decode(AOSP_ROOT_RSA_PUBLIC_KEY, 0);
     private static final byte[] knoxSakv1Key = Base64.decode(KNOX_SAKV1_ROOT_PUBLIC_KEY, 0);
@@ -109,6 +115,8 @@ public class RootPublicKey {
     public static Status check(byte[] publicKey) {
         if (Arrays.equals(publicKey, googleKey)) {
             return Status.GOOGLE;
+        } else if (Arrays.equals(publicKey, googleKeyNew)) {
+            return Status.GOOGLE_RKP;
         } else if (Arrays.equals(publicKey, aospEcKey)) {
             return Status.AOSP;
         } else if (Arrays.equals(publicKey, aospRsaKey)) {
